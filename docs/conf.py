@@ -13,11 +13,14 @@ sys.path.insert(0, os.path.abspath('../'))
 
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.todo',
     'sphinxcontrib.httpdomain'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
+
+todo_include_todos = True
 
 # The suffix of source filenames.
 source_suffix = '.rst'

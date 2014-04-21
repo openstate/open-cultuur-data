@@ -5,14 +5,14 @@ Developer Interface
 
 .. module:: ocd_backend
 
-Extracting Items
+Extracting items
 ----------------
 
 .. autoclass:: ocd_backend.extractors.BaseExtractor
    :inherited-members:
 
 
-Transforming Items
+Transforming items
 ------------------
 
 .. autoclass:: ocd_backend.transformers.BaseTransformer
@@ -31,5 +31,5 @@ Transforming Items
 .. autoclass:: ocd_backend.items.StrictMappingDict
    :members:
 
-Loading Items
+Loading items
 -------------

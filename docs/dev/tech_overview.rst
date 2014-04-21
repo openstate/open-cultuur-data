@@ -3,3 +3,9 @@
 Technical Overview
 ==================
 
+.. todo::
+   
+   Document the following:
+
+   - ETL process
+   - Used software
