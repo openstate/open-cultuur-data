@@ -1,0 +1,7 @@
+.. _datasets:
+
+Datasets
+========
+
+Rijksmuseum
+-----------
