@@ -51,7 +51,7 @@ class BaseExtractor(object):
         """
         raise NotImplementedError
 
-    @task(name='ocd_backend.extractor.BaseExtractor.run_extractor',
+    @task(name='ocd_backend.extractors.BaseExtractor.run_extractor',
           ignore_result=True)
     def run_extractor(self):
         self.start()

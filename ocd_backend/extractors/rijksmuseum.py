@@ -9,7 +9,7 @@ from ocd_backend.exceptions import NotFound
 
 class RijksmuseumExtractor(BaseExtractor):
     api_base_url = 'https://www.rijksmuseum.nl/api/nl/'
-    items_per_page = 5 # The number of items to request in a single API call
+    items_per_page = 100 # The number of items to request in a single API call
 
     def _api_call(self, url, params={}):
         params.update(key=self.source_definition['rijksmuseum_api_key'],
