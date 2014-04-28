@@ -54,4 +54,4 @@ class RijksmuseumExtractor(BaseExtractor):
     def start(self):
         for item in self.get_collection_objects():
             content_type, raw_content, item = self.get_object(item['objectNumber'])
-            self.transform_item(raw_content, content_type, item)
+            self.transform_item(content_type, raw_content, item)
