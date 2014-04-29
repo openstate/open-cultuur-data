@@ -5,7 +5,7 @@ Install notes (work-in-progress)
 - Python-setuptools
 - PIP
 
-- Reids:
+- Redis:
   
    $ sudo add-apt-repository ppa:rwky/redis
    $ sudo apt-get update
