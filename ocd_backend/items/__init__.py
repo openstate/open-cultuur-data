@@ -100,7 +100,7 @@ class BaseItem(object):
         item['meta'] = dict(self.meta)
         item['retrieved_data'] = {
             'mime_type': self.retrieved_data_content_type,
-            'data': self.retrieved_data_
+            'data': self.retrieved_data
         }
         item.update(dict(self.combined_index_data))
         item.update(self.index_data)

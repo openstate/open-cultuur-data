@@ -28,8 +28,9 @@ class ElasticsearchLoader(BaseLoader):
             'host': ELASTICSEARCH_HOST,
             'port': ELASTICSEARCH_PORT
         }])
-        print '-' * 10
-        print 'load_item'
-        log.info('Indexing document...')
+
+        log.info('Indexing documents...')
         es.index(index='ocd_combined_index', doc_type='item',
-                      body=item['combined_index_doc'])
+                 body=item['combined_index_doc'])
+        es.index(index='ocd_%s' % self.source_definition['id'], doc_type='item',
+                 body=item['index_doc'])

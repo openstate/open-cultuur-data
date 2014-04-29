@@ -21,7 +21,7 @@ class BaseTransformer(object):
         loader = self.loader(self.source_definition)
         loader.load_item.delay({
           'combined_index_doc': item.get_combined_index_doc(),
-          #'index_doc': item.get_index_doc()
+          'index_doc': item.get_index_doc()
         })
         print '*' * 10
 
