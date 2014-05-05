@@ -2,7 +2,7 @@ import requests
 
 from ocd_backend.extractors import BaseExtractor
 from ocd_backend.extractors import log
-from ocd_backend.util.misc import parse_oai_response
+from ocd_backend.utils.misc import parse_oai_response
 
 class OaiExtractor(BaseExtractor):
     metadata_prefix = 'oai_dc'

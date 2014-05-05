@@ -35,7 +35,7 @@ class BaseTransformer(Task):
         if raw_item_content_type == 'application/json':
             return json.loads(raw_item)
         elif raw_item_content_type == 'application/xml':
-            return lxml.XML(raw_item)
+            return etree.XML(raw_item)
         else:
             raise NoDeserializerAvailable('Item with content_type %s'
                                           % raw_item_content_type)
@@ -52,7 +52,7 @@ class BaseTransformer(Task):
         :param raw_item: the data in it's original format, as retrieved
             from the source (as a string)
         :type item: dict
-        :param item: the deserialized item, as retrieved from the source
+        :param item: the deserialized item
         :returns: a tuple containing the new object id, the item sturctured
             for the combined index (as a dict) and the item item sturctured
             for the source specific index.
