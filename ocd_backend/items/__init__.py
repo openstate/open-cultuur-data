@@ -1,5 +1,9 @@
+from hashlib import sha1
 from datetime import datetime
 from collections import MutableMapping
+
+from ocd_backend.exceptions import UnableToGenerateObjectId
+
 
 class BaseItem(object):
     """Represents a single extracted and transformed item.
@@ -7,12 +11,12 @@ class BaseItem(object):
     :param source_definition: The configuration of a single source in
         the form of a dictionary (as defined in the settings).
     :type source_definition: dict
-    :param retrieved_data_content_type: The content-type of the data retrieved
+    :param data_content_type: The content-type of the data retrieved
         from the source (e.g. ``application/json``).
-    :type retrieved_data_content_type: str
-    :param retrieved_data: The data in it's original format, as retrieved
+    :type data_content_type: str
+    :param data: The data in it's original format, as retrieved
         from the source.
-    :type retrieved_data: unicode
+    :type data: unicode
     :param item: the deserialized item retrieved from the source.
     :param processing_started: The datetime we started processing this
         itme. If ``None``, the current datetime is used.
@@ -41,14 +45,14 @@ class BaseItem(object):
         'all_text': unicode
     }
 
-    def __init__(self, source_definition, retrieved_data_content_type,
-                 retrieved_data, item, processing_started=None):
+    def __init__(self, source_definition, data_content_type, data, item,
+                 processing_started=None):
         self.source_definition = source_definition
-        self.retrieved_data_content_type = retrieved_data_content_type
-        self.retrieved_data = retrieved_data
+        self.data_content_type = data_content_type
+        self.data = data
         self.original_item = item
 
-        # On init, all data should be aivailable to construct self.meta
+        # On init, all data should be available to construct self.meta
         # and self.combined_item
         self._construct_object_meta(processing_started)
         self._construct_combined_index_data()
@@ -98,9 +102,9 @@ class BaseItem(object):
         item =  {}
 
         item['meta'] = dict(self.meta)
-        item['retrieved_data'] = {
-            'mime_type': self.retrieved_data_content_type,
-            'data': self.retrieved_data
+        item['data'] = {
+            'mime_type': self.data_content_type,
+            'data': self.data
         }
         item.update(dict(self.combined_index_data))
         item.update(self.index_data)
@@ -108,14 +112,43 @@ class BaseItem(object):
         return item
 
     def get_original_object_id(self):
-        """Retrieves the ID used by the source the identify this item.
+        """Retrieves the ID used by the source for identify this item.
 
         This method should be implmented by the class that inherits from
-        :py:class:`BaseItem`.
+        :class:`.BaseItem`.
 
         :rtype: unicode.
         """
         raise NotImplementedError
+
+    def get_object_id(self):
+        """Generates a new object ID which is used within OCD to identify
+        the item.
+
+        By default, we use a hash containing the id of the source, the
+        original object id of the item (:meth:`~.get_original_object_id`)
+        and the original urls (:meth:`~.get_original_object_urls`).
+
+        :raises UnableToGenerateObjectId: when both the original object
+            id and urls are missing.
+        :rtype: str
+        """
+        try:
+            object_id = self.get_original_object_id()
+        except NotImplementedError:
+            object_id = u''
+
+        try:
+            urls = self.get_original_object_urls()
+        except NotImplementedError:
+            urls = {}
+
+        if not object_id and not urls:
+            raise UnableToGenerateObjectId('Both original id and urls missing')
+
+        hash_content = self.source_definition['id'] + object_id + ''.join(sorted(urls.values()))
+
+        return sha1(hash_content).hexdigest()
 
     def get_original_object_urls(self):
         """Retrieves the item's original URLs at the source location.
@@ -124,7 +157,7 @@ class BaseItem(object):
         URL, points (e.g. ``json``, ``html`` or ``csv``).
 
         This method should be implmented by the class that inherits from
-        :py:class:`BaseItem`.
+        :class:`.BaseItem`.
 
         :rtype: dict.
         """
@@ -137,7 +170,7 @@ class BaseItem(object):
         example of a possible value of rights.
 
         This method should be implmented by the class that inherits from
-        :py:class:`BaseItem`.
+        :class:`.BaseItem`.
 
         :rtype: unicode.
         """
@@ -145,26 +178,41 @@ class BaseItem(object):
 
     def get_object_types(self):
         """Retrieves a list containing the types of this item. Some
-        examples of types are: "schilderij", "beeldhouwwerk" or "film".
+        examples of types are: "schilderij", "beeldhouwwerk", "film",
+        etcetera.
 
         This method should be implmented by the class that inherits from
-        :py:class:`BaseItem`.
+        :class:`.BaseItem`.
 
         :rtype: list.
         """
         raise NotImplementedError
 
     def get_combined_index_data(self):
+        """Returns a dictionary containing the data that is suitable to
+        be indexed in a combined/normalized repository, togehter with
+        items from other collections. Only keys defined in
+        :attr:`.combined_index_fields`
+        are allowed.
+
+        This method should be implmented by the class that inherits from
+        :class:`.BaseItem`.
+
+        :rtype: dict
+        """
+        raise NotImplementedError
+
+    def get_index_data(self):
         raise NotImplementedError
 
     def get_all_text(self):
         """Retrieves all textual content of the item as a concatenated
         string. This text is used in the combined index to allow
         retrieving content that is not included in one of the
-        py:attribute::`combined_index_fields` fields.
+        :attr:`.combined_index_fields` fields.
 
         This method should be implmented by the class that inherits from
-        :py:class:`BaseItem`.
+        :class:`.BaseItem`.
 
         :rtype: unicode.
         """
@@ -176,9 +224,9 @@ class StrictMappingDict(MutableMapping):
     key-value pairs.
 
     When setting an item, the key is first checked against
-    mapping. If the key is not in the mapping, a :py:exc:`KeyError` is
+    mapping. If the key is not in the mapping, a :exc:`KeyError` is
     raised. If the value is not of the datetype that is specified in the
-    mapping, a :py:exc:`TypeError` is raised.
+    mapping, a :exc:`TypeError` is raised.
 
     :param mapping: the mapping of allowed keys and value datatypes.
     :type mapping: dict

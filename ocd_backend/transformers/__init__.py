@@ -1,33 +1,36 @@
-from celery.contrib.methods import task
+from celery import Task
 
 from ocd_backend.utils.misc import load_object
 
-class BaseTransformer(object):
-    def __init__(self, source_definition):
-        self.source_definition = source_definition
-        self.item_class = load_object(source_definition['item'])
-        self.loader = load_object(source_definition['loader'])
+class BaseTransformer(Task):
+    def run(self, *args, **kwargs):
+        """Start tranformation of a single item.
 
-    @task(name='ocd_backend.transformers.BaseTransformer.transform_item',
-          ignore_result=True)
+        This method is called by the extractor and expects args to
+        contain the content-type, the original item (as a string) and
+        the deserialized item. Kwargs should contain the ``source_definition``
+        dict.
+
+        :type raw_item_content_type: string
+        :param raw_item_content_type: the content-type of the data
+            retrieved from the source (e.g. ``application/json``)
+        :type raw_item: string
+        :param raw_item: the data in it's original format, as retrieved
+            from the source (as a string)
+        :type item: dict
+        :param item: the deserialized item, as retrieved from the source
+        :param source_definition: The configuration of a single source in
+            the form of a dictionary (as defined in the settings).
+        :type source_definition: dict.
+        :returns: the output of :py:meth:`~BaseTransformer.transform_item`
+        """
+        self.source_definition = kwargs['source_definition']
+        self.item_class = load_object(kwargs['source_definition']['item'])
+
+        return self.transform_item(*args)
+
     def transform_item(self, raw_item_content_type, raw_item, item):
-        self.raw_item_content_type = raw_item_content_type
-        self.raw_item = raw_item
-        self.item = item
+        item = self.item_class(self.source_definition, raw_item_content_type,
+                               raw_item, item)
 
-        item = self.process_item()
-        print '*' * 10
-        print 'transform_item'
-        loader = self.loader(self.source_definition)
-        loader.load_item.delay({
-          'combined_index_doc': item.get_combined_index_doc(),
-          'index_doc': item.get_index_doc()
-        })
-        print '*' * 10
-
-
-    def process_item(self):
-        return self.item_class(self.source_definition,
-                               self.raw_item_content_type,
-                               self.raw_item,
-                               self.item)
+        return item.get_combined_index_doc(), {}

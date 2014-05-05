@@ -8,6 +8,10 @@ Rijksmuseum
 
 This datasets contains items from the collection of the `Rijksmuseum <https://www.rijksmuseum.nl/>`_. Content is harvested by using the publicly accessible `Rijksmuseum API <http://rijksmuseum.github.io/>`_.
 
+
+Combined index
+^^^^^^^^^^^^^^
+
 +------------------------+--------------------------------------+----------------------------------------+
 | Combined index field   | Source field(s)                      | Comment                                |
 +========================+======================================+========================================+
@@ -22,4 +26,13 @@ This datasets contains items from the collection of the `Rijksmuseum <https://ww
 +------------------------+--------------------------------------+----------------------------------------+
 | ``authors``            | ``principalMakers.name``             |                                        |
 +------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``webImage``                         | ``media_urls`` contains a array entry  |
+|                        |                                      | width an object that contains details  |
+|                        |                                      | from ``webImage`` (``url``, ``width``, | 
+|                        |                                      | ``height`` and ``content_type``).      |
++------------------------+--------------------------------------+----------------------------------------+
 
+Rijksmuseum index
+^^^^^^^^^^^^^^^^^
+
+ 

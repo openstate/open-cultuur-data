@@ -51,7 +51,6 @@ class RijksmuseumExtractor(BaseExtractor):
 
         return 'application/json', json.dumps(resp), resp['artObject']
 
-    def start(self):
+    def run(self):
         for item in self.get_collection_objects():
-            content_type, raw_content, item = self.get_object(item['objectNumber'])
-            self.transform_item(content_type, raw_content, item)
+            yield self.get_object(item['objectNumber'])

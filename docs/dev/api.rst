@@ -16,7 +16,7 @@ Transforming items
 ------------------
 
 .. autoclass:: ocd_backend.transformers.BaseTransformer
-   :inherited-members:
+   :members: run, transform_item
 
 .. autoclass:: ocd_backend.items.BaseItem
    :members:
@@ -33,3 +33,9 @@ Transforming items
 
 Loading items
 -------------
+
+.. autoclass:: ocd_backend.loaders.BaseLoader
+   :members: run, load_item
+
+.. autoclass:: ocd_backend.loaders.ElasticsearchLoader
+   :members: es
