@@ -11,7 +11,7 @@ class RijksmuseumExtractor(BaseExtractor):
     api_base_url = 'https://www.rijksmuseum.nl/api/nl/'
     items_per_page = 100 # The number of items to request in a single API call
 
-    def _api_call(self, url, params={}):
+    def api_call(self, url, params={}):
         params.update(key=self.source_definition['rijksmuseum_api_key'],
                       format='json')
         url = '%s%s' % (self.api_base_url, url)
@@ -24,7 +24,7 @@ class RijksmuseumExtractor(BaseExtractor):
 
     def get_collection_objects(self):
         # Perform an initial call to get the total number of results
-        resp = self._api_call('collection/', params={'p': 0, 'ps': 1})
+        resp = self.api_call('collection/', params={'p': 0, 'ps': 1})
         total_items = resp['count']
 
         # Calculate the total number of pages that are available
@@ -34,7 +34,7 @@ class RijksmuseumExtractor(BaseExtractor):
 
         for p in range(0, total_pages)[:1]:
             log.info('Getting collection items page %s of %s', p, total_pages)
-            resp = self._api_call('collection/', params={
+            resp = self.api_call('collection/', params={
                 'p': p,
                 'ps': self.items_per_page
             })
@@ -45,11 +45,11 @@ class RijksmuseumExtractor(BaseExtractor):
     def get_object(self, object_number):
         log.info('Getting object: %s', object_number)
 
-        resp = self._api_call('collection/%s' % object_number)
+        resp = self.api_call('collection/%s' % object_number)
         if not resp['artObject']:
             raise NotFound
 
-        return 'application/json', json.dumps(resp), resp['artObject']
+        return 'application/json', json.dumps(resp['artObject'])
 
     def run(self):
         for item in self.get_collection_objects():

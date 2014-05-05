@@ -1,3 +1,6 @@
+from lxml import etree
+
+
 def load_object(path):
     """Load an object given it's absolute object path, and return it.
 
@@ -24,3 +27,22 @@ def load_object(path):
         raise NameError, "Module '%s' doesn't define any object named '%s'" % (module, name)
 
     return obj
+
+
+def parse_oai_response(content):
+    """Parses an OAI XML response and returns an XML tree.
+
+    The input source is expected to be in UTF-8. To get around
+    well-formedness errors (which occur in many responses), bad characters
+    are ignored.
+
+    :param content: the OAI XML response as a string.
+    :type content: string
+    :rtype: lxml.etree._Element
+    """
+    content = unicode(content, 'UTF-8', 'replace')
+    # get rid of character code 12 (form feed)
+    content = content.replace(chr(12), '?')
+    content = content.encode('UTF-8')
+
+    return etree.XML(content)

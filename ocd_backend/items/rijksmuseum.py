@@ -56,6 +56,9 @@ class RijksmuseumItem(BaseItem):
 
         return combined_index_data
 
+    def get_index_data(self):
+        return {}
+
     def get_all_text(self):
         text_items = []
 

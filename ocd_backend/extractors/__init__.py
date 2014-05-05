@@ -25,6 +25,5 @@ class BaseExtractor(object):
           ``application/json``)
         - the data in it's original format, as retrieved from the source
           (as a string)
-        - the deserialized item, as retrieved from the source
         """
         raise NotImplementedError

@@ -57,7 +57,7 @@ class BaseItem(object):
         self._construct_object_meta(processing_started)
         self._construct_combined_index_data()
 
-        self.index_data = {}
+        self.index_data = self.get_index_data()
 
     def _construct_object_meta(self, processing_started=None):
         self.meta = StrictMappingDict(self.meta_fields)
