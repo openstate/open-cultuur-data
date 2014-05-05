@@ -55,9 +55,9 @@ class ElasticsearchLoader(BaseLoader):
 
         return self._es
 
-    def load_item(self, combined_index_doc, doc):
+    def load_item(self, object_id, combined_index_doc, doc):
         log.info('Indexing documents...')
         self.es.index(index='ocd_combined_index', doc_type='item',
-                      body=combined_index_doc)
+                      id=object_id, body=combined_index_doc)
         self.es.index(index='ocd_%s' % self.source_definition['id'], doc_type='item',
-                      body=doc)
+                      id=object_id, body=doc)
