@@ -43,6 +43,7 @@ def parse_oai_response(content):
     content = unicode(content, 'UTF-8', 'replace')
     # get rid of character code 12 (form feed)
     content = content.replace(chr(12), '?')
-    content = content.decode('utf8')
 
-    return etree.XML(content)
+    parser = etree.XMLParser(recover=True, encoding='utf-8')
+
+    return etree.fromstring(content.encode('utf-8'), parser=parser)

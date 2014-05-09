@@ -12,6 +12,14 @@ class OpenbeeldenItem(BaseItem):
 
     media_mime_types = {
         'webm': 'video/webm',
+        'ogv': 'video/ogg',
+        'ogg': 'audio/ogg',
+        'mp4': 'video/mp4',
+        'm3u8': 'application/x-mpegURL',
+        'ts': 'video/MP2T',
+        'mpeg': 'video/mpeg',
+        'mpg': 'video/mpeg',
+        'png': 'image/png'
     }
 
     def _get_text_or_none(self, xpath_expression):
@@ -52,10 +60,22 @@ class OpenbeeldenItem(BaseItem):
         if date:
             combined_index_data['date'] = datetime.strptime(self._get_text_or_none('.//oi:date'),
                                                             '%Y-%m-%d')
-            combined_index_data['date_granularity'] = 8
+        combined_index_data['date_granularity'] = 8
         authors = self._get_text_or_none('.//oi:attributionName[@xml:lang="nl"]')
         if authors:
             combined_index_data['authors'] = [authors]
+
+        mediums = self.original_item.findall('.//oi:medium',
+            namespaces=self.namespaces)
+
+        if mediums is not None:
+            combined_index_data['media_urls'] = []
+
+            for medium in mediums:
+                combined_index_data['media_urls'].append({
+                    'url': medium.text,
+                    'content_type': self.media_mime_types[medium.text.split('.')[-1]]
+                })
 
         return combined_index_data
 
