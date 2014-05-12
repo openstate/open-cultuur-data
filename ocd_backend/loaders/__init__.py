@@ -1,7 +1,6 @@
 from celery import Task
-from elasticsearch import Elasticsearch
 
-from ocd_backend.settings import ELASTICSEARCH_HOST, ELASTICSEARCH_PORT
+from ocd_backend.es import elasticsearch
 from ocd_backend.log import get_source_logger
 
 log = get_source_logger('loader')
@@ -35,29 +34,12 @@ class ElasticsearchLoader(BaseLoader):
 
     Each item is added to two indexes: a 'combined' index that contains
     items from different sources, and an index that only contains items
-    of the same source as th item.
+    of the same source as the item.
     """
-
-    _es = None
-
-    @property
-    def es(self):
-        """The Elasticsearch connection.
-
-        :returns: instance of :class:`~elasticsearch.client.Elasticsearch`
-        """
-        if self._es is None:
-            log.debug('Setting up Elasticsearch connection')
-            self._es = Elasticsearch([{
-                'host': ELASTICSEARCH_HOST,
-                'port': ELASTICSEARCH_PORT
-            }])
-
-        return self._es
 
     def load_item(self, object_id, combined_index_doc, doc):
         log.info('Indexing documents...')
-        self.es.index(index='ocd_combined_index', doc_type='item',
-                      id=object_id, body=combined_index_doc)
-        self.es.index(index='ocd_%s' % self.source_definition['id'], doc_type='item',
-                      id=object_id, body=doc)
+        elasticsearch.index(index='ocd_combined_index', doc_type='item',
+                            id=object_id, body=combined_index_doc)
+        elasticsearch.index(index='ocd_%s' % self.source_definition['id'],
+                            doc_type='item', id=object_id, body=doc)
