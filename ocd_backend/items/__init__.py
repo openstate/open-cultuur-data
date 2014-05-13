@@ -102,8 +102,8 @@ class BaseItem(object):
         item =  {}
 
         item['meta'] = dict(self.meta)
-        item['data'] = {
-            'mime_type': self.data_content_type,
+        item['source_data'] = {
+            'content_type': self.data_content_type,
             'data': self.data
         }
         item.update(dict(self.combined_index_data))
