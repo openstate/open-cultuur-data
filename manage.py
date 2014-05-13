@@ -6,6 +6,7 @@ from glob import glob
 import click
 
 from ocd_backend.es import elasticsearch as es
+from ocd_backend.pipeline import setup_pipeline
 from ocd_backend.settings import SOURCES_CONFIG_FILE
 from ocd_backend.utils.misc import load_sources_config
 
@@ -84,12 +85,35 @@ def extract_list_sources(sources_config):
     """Show a list of available sources."""
     if not sources_config:
         sources_config = SOURCES_CONFIG_FILE
-
     sources = load_sources_config(sources_config)
 
     click.echo('Available sources:')
     for source in sources:
         click.echo(' - %s' % source['id'])
+
+@extract.command('start')
+@click.option('--sources_config', default=None, type=click.File('rb'))
+@click.argument('source_id')
+def extract_start(source_id, sources_config):
+    """Start extraction for a specified source."""
+    if not sources_config:
+        sources_config = SOURCES_CONFIG_FILE
+    sources = load_sources_config(sources_config)
+
+    # Find the requested source defenition in the list of available sources
+    source = None
+    for candidate_source in sources:
+        if candidate_source['id'] == source_id:
+            source = candidate_source
+            continue
+
+    # Without a config we can't do anything, notify the user and exit
+    if not source:
+        click.echo('Error: unable to find source with id "%s" in sources '
+                   'config' % source_id)
+        return
+
+    setup_pipeline(source)
 
 
 if __name__ == '__main__':

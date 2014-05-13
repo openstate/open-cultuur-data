@@ -52,5 +52,9 @@ class RijksmuseumExtractor(BaseExtractor):
         return 'application/json', json.dumps(resp['artObject'])
 
     def run(self):
+        if ('rijksmuseum_api_key' not in self.source_definition or not
+                self.source_definition['rijksmuseum_api_key']):
+            raise ValueError('Missing Rijksmuseum API key in source settings')
+
         for item in self.get_collection_objects():
             yield self.get_object(item['objectNumber'])
