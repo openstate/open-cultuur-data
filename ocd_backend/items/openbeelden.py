@@ -39,10 +39,6 @@ class OpenbeeldenItem(BaseItem):
             'xml': 'http://openbeelden.nl/feeds/oai/?verb=GetRecord&identifier=%s&metadataPrefix=oai_oi' % original_id
         }
 
-    def get_object_types(self):
-        return self.original_item.xpath('.//oi:type/text()',
-                                        namespaces=self.namespaces)
-
     def get_rights(self):
         return u'Creative Commons Attribution-ShareAlike'
 
@@ -129,5 +125,8 @@ class OpenbeeldenItem(BaseItem):
                                            namespaces=self.namespaces)
         for place in spatial:
             text_items.append(unicode(place.text))
+
+        # Type
+        text_items.append(self._get_text_or_none('.//oi:type'))
 
         return u' '.join([ti for ti in text_items if ti is not None])

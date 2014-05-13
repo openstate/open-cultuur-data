@@ -68,11 +68,6 @@
                         "type": "string",
                         "index": "not_analyzed"
                     },
-                    "object_types": {
-                        "type" : "string",
-                        "index": "not_analyzed",
-                        "index_name" : "object_type"
-                    },
                     "original_object_urls": {
                         "type": "object"
                     },

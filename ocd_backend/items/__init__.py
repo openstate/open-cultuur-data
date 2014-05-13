@@ -31,7 +31,6 @@ class BaseItem(object):
         'rights': unicode,
         'original_object_id': unicode,
         'original_object_urls': dict,
-        'object_types': list
     }
 
     #: Allowed key-value pairs for the document inserted int he 'combined index'
@@ -68,7 +67,6 @@ class BaseItem(object):
         self.meta['rights'] = self.get_rights()
         self.meta['original_object_id'] = self.get_original_object_id()
         self.meta['original_object_urls'] = self.get_original_object_urls()
-        self.meta['object_types'] = self.get_object_types()
 
     def _construct_combined_index_data(self):
         self.combined_index_data = StrictMappingDict(self.combined_index_fields)
@@ -173,18 +171,6 @@ class BaseItem(object):
         :class:`.BaseItem`.
 
         :rtype: unicode.
-        """
-        raise NotImplementedError
-
-    def get_object_types(self):
-        """Retrieves a list containing the types of this item. Some
-        examples of types are: "schilderij", "beeldhouwwerk", "film",
-        etcetera.
-
-        This method should be implmented by the class that inherits from
-        :class:`.BaseItem`.
-
-        :rtype: list.
         """
         raise NotImplementedError
 

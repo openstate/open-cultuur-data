@@ -15,9 +15,6 @@ class RijksmuseumItem(BaseItem):
     def get_rights(self):
         return u'Creative Commons Zero'
 
-    def get_object_types(self):
-        return self.original_item['objectTypes']
-
     def get_combined_index_data(self):
         combined_index_data = {}
 
@@ -144,5 +141,8 @@ class RijksmuseumItem(BaseItem):
 
         if self.original_item['productionPlaces']:
             text_items += [t for t in self.original_item['productionPlaces'] if t]
+
+        if self.original_item['objectTypes']:
+            text_items += [t for t in self.original_item['objectTypes'] if t]
 
         return u' '.join(text_items)
