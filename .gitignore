@@ -1,3 +1,6 @@
+local_settings.py
+local_sources.json
+
 # OSX Finder files
 .DS_Store
 .AppleDouble
