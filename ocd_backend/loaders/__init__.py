@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from celery import Task
 
 from ocd_backend.es import elasticsearch
@@ -23,7 +25,14 @@ class BaseLoader(Task):
         """
         self.source_definition = kwargs['source_definition']
 
-        return self.load_item(*args[0])
+        object_id, combined_index_doc, doc = args[0]
+
+        # Add the 'processing.finished' datetime to the documents
+        finished = datetime.now()
+        combined_index_doc['meta']['processing_finished'] = finished
+        doc['meta']['processing_finished'] = finished
+
+        return self.load_item(object_id, combined_index_doc, doc)
 
     def load_item(self, combined_index_doc, doc):
         raise NotImplemented
