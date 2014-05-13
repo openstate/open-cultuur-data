@@ -1,10 +1,13 @@
+#!/usr/bin/env python
+
 import json
 from glob import glob
 
 import click
 
 from ocd_backend.es import elasticsearch as es
-from ocd_backend.settings import SOURCES
+from ocd_backend.settings import SOURCES_CONFIG_FILE
+from ocd_backend.utils.misc import load_sources_config
 
 
 @click.group()
@@ -68,6 +71,25 @@ def put_all_mappings(mapping_dir):
         mapping_file.close()
 
         es.indices.put_mapping(index=index_name, body=mapping)
+
+
+@cli.group()
+def extract():
+    """Extraction pipeline"""
+
+
+@extract.command('list_sources')
+@click.option('--sources_config', default=None, type=click.File('rb'))
+def extract_list_sources(sources_config):
+    """Show a list of available sources."""
+    if not sources_config:
+        sources_config = SOURCES_CONFIG_FILE
+
+    sources = load_sources_config(sources_config)
+
+    click.echo('Available sources:')
+    for source in sources:
+        click.echo(' - %s' % source['id'])
 
 
 if __name__ == '__main__':

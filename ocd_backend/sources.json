@@ -1,0 +1,19 @@
+[
+    {
+        "id": "rijksmuseum",
+        "extractor": "ocd_backend.extractors.rijksmuseum.RijksmuseumExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.rijksmuseum.RijksmuseumItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "rijksmuseum_api_key": ""
+    },
+    {
+        "id": "openbeelden",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.openbeelden.OpenbeeldenItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "oai_base_url": "http://www.openbeelden.nl/feeds/oai/",
+        "oai_metadata_prefix": "oai_oi"
+    }
+]

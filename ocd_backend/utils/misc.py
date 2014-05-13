@@ -1,4 +1,21 @@
+import json
+
 from lxml import etree
+
+
+def load_sources_config(filename):
+    """Loads a JSON file containing the configuration of the available
+    sources.
+
+    :param filename: the filename of the JSON file.
+    :type filename: str.
+    """
+    try:
+        with open(filename) as json_file:
+            return json.load(json_file)
+    except IOError, e:
+        e.strerror = 'Unable to load sources configuration file (%s)' % e.strerror
+        raise
 
 
 def load_object(path):
@@ -9,7 +26,6 @@ def load_object(path):
     :param path: absolute object path (i.e. 'ocd_backend.extractor.BaseExtractor')
     :type path: str.
     """
-
     try:
         dot = path.rindex('.')
     except ValueError:
