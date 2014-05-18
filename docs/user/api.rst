@@ -47,6 +47,57 @@ Searching within multiple collections
 
    The default strategy is to perform an AND query.
 
+   **Facets**
+
+   The ``facets`` object determines which facets should be returned. The keys of this object should contain the names of a the requested facets, the values should be objects. These objects are used to set per facet options. Facet defaults will be used when the options dictionary is empty.
+
+   To specify the number of facet values that should be returned (for term based facets):
+
+   .. sourcecode:: javascript
+
+      {
+         "media_type": {"count": 100},
+         "author": {"count": 5}
+      }
+
+   For a date based facet the 'bucket size' of the histogram can be specified:
+
+   .. sourcecode:: javascript
+
+      {
+         "date": {"interval": "year"}
+      }
+
+   Allowed sizes are ``year``, ``quarter``, ``month``, ``week`` and ``day`` (the default size is ``month``).
+
+   **Filters**
+
+   Results can be filtered on one ore more properties. Each key of the ``filters`` object represents a filter, the values should be objects. When filtering on multiple fields only documents that match all filters are included in the result set. The names of the filters match those of the facets.The names of the filters match those of the facets.
+
+   For example, to retrieve documents that have media associated with them of the type ``image/jpeg`` **or** ``image/png`` **and** a  ``Rembrandt Harmensz. van Rijn`` as one of the authors:
+
+   .. sourcecode:: javascript
+
+      {
+         "media_content_type": {
+            "terms": ['image/jpeg', 'image/png']
+         },
+         "author": {
+            "terms": ["Rembrandt Harmensz. van Rijn"]
+         }
+      }
+
+   Use the following format to filter on a date range:
+
+   .. sourcecode:: javascript
+
+      {
+         "date": {
+            "from": "2011-12-24",
+            "to": "2011-12-28"
+         }
+      }
+
    :jsonparameter query: on or more keywords.
    :jsonparameter filters: an array of filter objects (optional, defaults to ``null``).
    :jsonparameter enabled_facets: array containing the names of the facets that should be returned (optional, defaults to ``[]``).
