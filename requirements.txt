@@ -3,3 +3,4 @@ elasticsearch==1.0.0
 Sphinx==1.2.2
 sphinxcontrib-httpdomain==1.2.1
 click==0.7
+Flask==0.10.1

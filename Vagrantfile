@@ -16,8 +16,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Elasticsearch
   config.vm.network :forwarded_port, guest: 9200, host: 9200
 
-  # Celery Flower
-  config.vm.network :forwarded_port, guest: 5555, host: 5555
+  # Frontend dev server
+  config.vm.network :forwarded_port, guest: 5000, host: 5000
 
   config.vm.provider :virtualbox do |vb|
     vb.customize ["modifyvm", :id, "--memory", "2048"]

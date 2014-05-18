@@ -4,11 +4,13 @@ import json
 from glob import glob
 
 import click
+from werkzeug.serving import run_simple
 
 from ocd_backend.es import elasticsearch as es
 from ocd_backend.pipeline import setup_pipeline
 from ocd_backend.settings import SOURCES_CONFIG_FILE
 from ocd_backend.utils.misc import load_sources_config
+from ocd_frontend.wsgi import application
 
 
 @click.group()
@@ -114,6 +116,18 @@ def extract_start(source_id, sources_config):
         return
 
     setup_pipeline(source)
+
+
+@cli.group()
+def frontend():
+    """Front-end API"""
+
+
+@frontend.command('runserver')
+@click.argument('host', default='0.0.0.0')
+@click.argument('port', default=5000, type=int)
+def frontend_runserver(host, port):
+    run_simple(host, port, application, use_reloader=True, use_debugger=True)
 
 
 if __name__ == '__main__':

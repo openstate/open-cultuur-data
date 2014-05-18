@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.abspath('../'))
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.todo',
+    'sphinx.ext.extlinks',
     'sphinxcontrib.httpdomain'
 ]
 
@@ -78,6 +79,10 @@ pygments_style = 'sphinx'
 # If true, keep warnings as "system message" paragraphs in the built documents.
 #keep_warnings = False
 
+
+extlinks = {
+    'rest_api_v0': ('http://api.opencultuurdata.nl/v0/%s', None)
+}
 
 # -- Options for HTML output ----------------------------------------------
 import sphinx_rtd_theme
