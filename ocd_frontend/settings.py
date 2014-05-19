@@ -32,10 +32,15 @@ AVAILABLE_FACETS = {
             'size': 10
         }
     },
-    'source': {
+    'source_id': {
         'terms': {
-            'field': 'meta.source',
+            'field': 'meta.source_id',
             'size': 10
+        }
+    },
+    'collection': {
+        'terms': {
+            'field': 'meta.collection'
         }
     },
     'author': {
