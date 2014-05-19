@@ -15,6 +15,9 @@ class RijksmuseumItem(BaseItem):
     def get_rights(self):
         return u'Creative Commons Zero'
 
+    def get_collection(self):
+        return u'Rijksmuseum'
+
     def get_combined_index_data(self):
         combined_index_data = {}
 

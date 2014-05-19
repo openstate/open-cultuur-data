@@ -61,6 +61,10 @@
                             "type": "string",
                             "index": "not_analyzed"
                         },
+                        "collection": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        },
                         "original_object_id": {
                             "type": "string",
                             "index": "not_analyzed"

@@ -42,6 +42,9 @@ class OpenbeeldenItem(BaseItem):
     def get_rights(self):
         return u'Creative Commons Attribution-ShareAlike'
 
+    def get_collection(self):
+        return u'Open Beelden'
+
     def get_combined_index_data(self):
         combined_index_data = {}
 
