@@ -250,3 +250,86 @@ Searching within a single collection
 Retrieving a single object
 --------------------------
 
+.. http:get:: /(source_id)/(object_id)
+   
+   Retrieve the contents of a single object.
+
+   **Example request**
+
+   .. sourcecode:: http
+
+      $ curl -i 'http://<domain>/api/v0/openbeelden/4558763df1b233a57f0176839dc572e9e8726a02'
+
+   **Example response**
+
+   .. sourcecode:: http
+
+      HTTP/1.0 200 OK
+      Content-Type: application/json
+      Content-Length: 2499
+      Date: Mon, 19 May 2014 20:35:29 GMT
+
+      {
+        "meta": {
+          "collection": "Open Beelden",
+          "original_object_id": "oai:openimages.eu:654062",
+          "original_object_urls": {
+            "html": "http://openbeelden.nl/media/654062/",
+            "xml": "http://openbeelden.nl/feeds/oai/?verb=GetRecord&identifier=oai:openimages.eu:654062&metadataPrefix=oai_oi"
+          },
+          "processing_finished": "2014-05-19T13:18:04.770080",
+          "processing_started": "2014-05-19T13:18:04.761080",
+          "rights": "Creative Commons Attribution-ShareAlike",
+          "source_id": "openbeelden"
+        },
+        "title": "Postduivenvluchten in Nederland"
+        "authors": [
+          "Polygoon-Profilti (producent) / Nederlands Instituut voor Beeld en Geluid (beheerder)"
+        ],
+        "date": "1952-07-01T00:00:00",
+        "date_granularity": 8,
+        "description": "In dit journaal wordt verslag gedaan van de manier waarop een wedstrijdvlucht met postduiven wordt uitgevoerd...",
+        "media_urls": [
+          {
+            "content_type": "video/webm",
+            "url": "http://www.openbeelden.nl/files/06/54/654208.654061.WEEKNUMMER522-HRE0000D77F.webm"
+          },
+          {
+            "content_type": "image/png",
+            "url": "http://www.openbeelden.nl/images/654279/Postduivenvluchten_in_Nederland_%280_56%29.png"
+          }
+        ]
+      }
+
+   :statuscode 200: OK, no errors.
+   :statuscode 404: The source and/or object does not exist.
+
+
+.. http:get:: /(source_id)/(object_id)/source
+
+   Retrieves the object's data in it's original and unmodified from, as used as input for the Open Cultuur Data extractor(s). Being able to retrieve the object in it's original form can be useful for debugging purposes (i.e. when fields are missing or odd values are returned in the OCD representation of the object).
+
+   The value of the ``Content-Type`` response header depends on the type of data that is returned by the data provider.
+
+   **Example request**
+
+   .. sourcecode:: http
+
+      $ curl -i 'http://<domain>/api/v0/openbeelden/4558763df1b233a57f0176839dc572e9e8726a02/source'
+
+   **Example response**
+   
+   .. sourcecode:: http
+
+      HTTP/1.0 200 OK
+      Content-Type: application/xml; charset=utf-8
+      Content-Length: 3914
+      Date: Mon, 19 May 2014 20:28:57 GMT
+
+      <?xml version="1.0" encoding="UTF-8"?>
+      <OAI-PMH xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.openarchives.org/OAI/2.0/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+        ... snip ...
+      </OAI-PMH>
+
+   :statuscode 200: OK, no errors.
+   :statuscode 404: The source and/or object does not exist.

@@ -6,3 +6,6 @@ class ElasticsearchService(object):
 
     def search(self, *args, **kwargs):
         return self.es.search(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        return self.es.get(*args, **kwargs)

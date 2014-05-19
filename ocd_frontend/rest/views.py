@@ -1,4 +1,5 @@
 from flask import Blueprint, current_app, request, jsonify
+from elasticsearch import NotFoundError
 
 from ocd_frontend.rest import OcdApiError, decode_json_post_data
 
@@ -188,3 +189,41 @@ def search():
     es_r = current_app.es.search(body=es_q, index=current_app.config['COMBINED_INDEX'])
 
     return jsonify(format_search_results(es_r))
+
+
+@bp.route('/<source_id>/<object_id>', methods=['GET'])
+def get_object(source_id, object_id):
+    index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'], source_id)
+
+    try:
+        obj = current_app.es.get(index=index_name, id=object_id,
+                                 _source_exclude=['source_data', 'all_text'])
+    except NotFoundError, e:
+        if e.error.startswith('IndexMissingException'):
+            message = 'Source \'%s\' does not exist' % source_id
+        else:
+            message = 'Document not found.'
+
+        raise OcdApiError(message, 404)
+
+    return jsonify(obj['_source'])
+
+
+@bp.route('/<source_id>/<object_id>/source')
+def get_source(source_id, object_id):
+    index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'], source_id)
+
+    try:
+        obj = current_app.es.get(index=index_name, id=object_id,
+                                 _source_include=['source_data'])
+    except NotFoundError, e:
+        if e.error.startswith('IndexMissingException'):
+            message = 'Source \'%s\' does not exist' % source_id
+        else:
+            message = 'Document not found.'
+
+        raise OcdApiError(message, 404)
+
+    resp = current_app.make_response(obj['_source']['source_data']['data'])
+    resp.mimetype = obj['_source']['source_data']['content_type']
+    return resp

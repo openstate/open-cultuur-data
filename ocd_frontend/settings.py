@@ -11,6 +11,9 @@ MAX_SEARCH_SIZE = 100
 # The name of the index containing documents from all sources
 COMBINED_INDEX = 'ocd_combined_index'
 
+#
+DEFAULT_INDEX_PREFIX = 'ocd'
+
 # The fields which can be used for sorting results via the REST API
 SORTABLE_FIELDS = (
     'meta.source', 'meta.processing_started', 'meta.processing_finished',
