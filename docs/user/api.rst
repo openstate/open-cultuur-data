@@ -16,22 +16,158 @@ All API URLs referenced in this documentation start with the following base part
 
     :rest_api_v0:`None`
 
-Collection overview and statistics
-----------------------------------
+.. Collection overview and statistics
+.. ----------------------------------
 
-.. http:get:: /collections
+.. .. http:get:: /collections
 
-   :statuscode 200: OK, no errors.
+..    :statuscode 200: OK, no errors.
 
-.. http:get:: /stats
+.. .. http:get:: /stats
 
-   :statuscode 200: OK, no errors.
+..    :statuscode 200: OK, no errors.
 
 
 Searching within multiple collections
 -------------------------------------
 
 .. http:post:: /search
+   
+   Search for objects through all indexed collections.
+
+   **Example request**
+
+   .. sourcecode:: http
+
+      $ curl -i -XPOST 'http://<domain>/api/v0/search' -d '{
+         "query": "journaal",
+         "facets": {
+            "collection": {},
+            "date": {"interval": "day"}
+         },
+         "filters": {
+            "media_content_type": {"terms": ["image/jpeg", "video/webm"]}
+         },
+         "size": 1
+      }'
+
+   **Example response**
+
+    .. sourcecode:: http
+
+       HTTP/1.0 200 OK
+       Content-Type: application/json
+       Content-Length: 1885
+       Date: Mon, 19 May 2014 12:58:43 GMT
+
+       {
+         "facets": {
+           "collection": {
+             "_type": "terms",
+             "missing": 0,
+             "other": 0,
+             "terms": [
+               {
+                 "count": 6,
+                 "term": "Open Beelden"
+               },
+               {
+                 "count": 2,
+                 "term": "Rijksmuseum"
+               }
+             ],
+             "total": 8
+           },
+           "date": {
+             "_type": "date_histogram",
+             "entries": [
+               {
+                 "count": 1,
+                 "time": -652579200000
+               },
+               {
+                 "count": 1,
+                 "time": -573350400000
+               },
+               {
+                 "count": 1,
+                 "time": -552355200000
+               },
+               {
+                 "count": 1,
+                 "time": -541728000000
+               },
+               {
+                 "count": 1,
+                 "time": -259632000000
+               },
+               {
+                 "count": 1,
+                 "time": -239846400000
+               },
+               {
+                 "count": 1,
+                 "time": -239328000000
+               },
+               {
+                 "count": 1,
+                 "time": 1300233600000
+               }
+             ]
+           }
+         },
+         "hits": {
+           "hits": [
+             {
+               "_id": "4558763df1b233a57f0176839dc572e9e8726a02",
+               "_score": 0.55381334,
+               "_source": {
+                 "meta": {
+                   "collection": "Open Beelden",
+                   "original_object_id": "oai:openimages.eu:654062",
+                   "original_object_urls": {
+                     "html": "http://openbeelden.nl/media/654062/",
+                     "xml": "http://openbeelden.nl/feeds/oai/?verb=GetRecord&identifier=oai:openimages.eu:654062&metadataPrefix=oai_oi"
+                   },
+                   "processing_finished": "2014-05-19T13:18:04.770080",
+                   "processing_started": "2014-05-19T13:18:04.761080",
+                   "rights": "Creative Commons Attribution-ShareAlike",
+                   "source_id": "openbeelden"
+                 },
+                 "title": "Postduivenvluchten in Nederland",
+                 "authors": [
+                   "Polygoon-Profilti (producent) / Nederlands Instituut voor Beeld en Geluid (beheerder)"
+                 ],
+                 "date": "1952-07-01T00:00:00",
+                 "date_granularity": 8,
+                 "description": "In dit journaal wordt verslag gedaan van de manier waarop een wedstrijdvlucht met postduiven wordt uitgevoerd...",
+                 "media_urls": [
+                   {
+                     "content_type": "video/webm",
+                     "url": "http://www.openbeelden.nl/files/06/54/654208.654061.WEEKNUMMER522-HRE0000D77F.webm"
+                   },
+                   {
+                     "content_type": "video/ogg",
+                     "url": "http://www.openbeelden.nl/files/06/54/654202.654061.WEEKNUMMER522-HRE0000D77F.ogv"
+                   },
+                   {
+                     "content_type": "video/ogg",
+                     "url": "http://www.openbeelden.nl/files/06/54/654200.654061.WEEKNUMMER522-HRE0000D77F.ogv"
+                   },
+                   {
+                     "content_type": "video/mp4",
+                     "url": "http://www.openbeelden.nl/files/06/54/654204.654061.WEEKNUMMER522-HRE0000D77F.mp4"
+                   }
+                 ]
+               }
+             }
+           ],
+           "max_score": 0.55381334,
+           "total": 8
+         },
+         "took": 22
+       }
+
 
    **Query**
 
@@ -56,7 +192,7 @@ Searching within multiple collections
    .. sourcecode:: javascript
 
       {
-         "media_type": {"count": 100},
+         "media_content_type": {"count": 100},
          "author": {"count": 5}
       }
 
@@ -99,9 +235,8 @@ Searching within multiple collections
       }
 
    :jsonparameter query: on or more keywords.
-   :jsonparameter filters: an array of filter objects (optional, defaults to ``null``).
-   :jsonparameter enabled_facets: array containing the names of the facets that should be returned (optional, defaults to ``[]``).
-   :jsonparameter facet_options: an object to specify options on a per facet basis (optional, defaults to ``null``)
+   :jsonparameter filters: an object with field and values to filter on (optional).
+   :jsonparameter facets: an object with fields for which to return facets (optional)
    :jsonparameter size: the maximum number of documents to return (optional, defaults to 10).
    :jsonparameter from: the offset from the first result (optional, defaults to 0).
    :statuscode 200: OK, no errors.
