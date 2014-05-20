@@ -28,12 +28,14 @@ All API URLs referenced in this documentation start with the following base part
 ..    :statuscode 200: OK, no errors.
 
 
+.. _rest_search:
+
 Searching within multiple collections
 -------------------------------------
 
 .. http:post:: /search
    
-   Search for objects through all indexed collections.
+   Search for objects through all indexed datasets.
 
    **Example request**
 
@@ -247,6 +249,22 @@ Searching within a single collection
 ------------------------------------
 
 
+.. http:post:: /(source_id)/search
+   
+   Search for objects within a specific dataset. The objects returned by this method will also include fields that are specific to the queried dataset, rather than only those fields that all indexed datasets have in common.
+
+   See specifications of the :ref:`search method <rest_search>` for the request and response format.
+
+   :jsonparameter query: on or more keywords.
+   :jsonparameter filters: an object with field and values to filter on (optional).
+   :jsonparameter facets: an object with fields for which to return facets (optional)
+   :jsonparameter size: the maximum number of documents to return (optional, defaults to 10).
+   :jsonparameter from: the offset from the first result (optional, defaults to 0).
+   :statuscode 200: OK, no errors.
+   :statuscode 400: Bad Request. An accompanying error message will explain why the request was invalid.
+   :statuscode 404: The requested source does not exist.
+
+
 Retrieving a single object
 --------------------------
 
@@ -332,4 +350,4 @@ Retrieving a single object
       </OAI-PMH>
 
    :statuscode 200: OK, no errors.
-   :statuscode 404: The source and/or object does not exist.
+   :statuscode 404: The requested source and/or object does not exist.

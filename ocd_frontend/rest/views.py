@@ -150,7 +150,6 @@ def search():
     search_req = parse_search_request(request.data)
 
     # Construct the query we are going to send to Elasticsearch
-
     es_q = {
         'query': {
             'filtered': {
@@ -191,6 +190,61 @@ def search():
     return jsonify(format_search_results(es_r))
 
 
+@bp.route('/<source_id>/search', methods=['POST'])
+@decode_json_post_data
+def search_source(source_id):
+    # Disallow searching in multiple indexes by providing a wildcard
+    if '*' in source_id:
+        raise OcdApiError('Invalid \'source_id\'', 400)
+
+    index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'], source_id)
+
+    search_req = parse_search_request(request.data)
+
+    # Construct the query we are going to send to Elasticsearch
+    es_q = {
+        'query': {
+            'filtered': {
+                'query': {
+                    'simple_query_string': {
+                        'query': search_req['query'],
+                        'default_operator': 'OR',
+                        'fields': [
+                            'title^3',
+                            'authors^2',
+                            'description^2',
+                            'meta.original_object_id',
+                            'all_text'
+                        ]
+                    }
+                },
+                'filter': {}
+            }
+        },
+        'facets': search_req['facets'],
+        'size': search_req['n_size'],
+        'from': search_req['n_from'],
+        'sort': {
+            search_req['sort']: {'order': search_req['order']}
+        },
+        '_source': {
+            'exclude': ['all_text', 'source_data']
+        }
+    }
+
+    if search_req['filters']:
+        es_q['query']['filtered']['filter'] = {
+            'bool': { 'must': search_req['filters']}
+        }
+
+    try:
+        es_r = current_app.es.search(body=es_q, index=index_name)
+    except NotFoundError, e:
+        raise OcdApiError('Source \'%s\' does not exist' % source_id, 404)
+
+    return jsonify(format_search_results(es_r))
+
+
 @bp.route('/<source_id>/<object_id>', methods=['GET'])
 def get_object(source_id, object_id):
     index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'], source_id)
@@ -210,7 +264,7 @@ def get_object(source_id, object_id):
 
 
 @bp.route('/<source_id>/<object_id>/source')
-def get_source(source_id, object_id):
+def get_object_source(source_id, object_id):
     index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'], source_id)
 
     try:
@@ -226,4 +280,5 @@ def get_source(source_id, object_id):
 
     resp = current_app.make_response(obj['_source']['source_data']['data'])
     resp.mimetype = obj['_source']['source_data']['content_type']
+
     return resp
