@@ -15,5 +15,14 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "oai_base_url": "http://www.openbeelden.nl/feeds/oai/",
         "oai_metadata_prefix": "oai_oi"
+    },
+    {
+        "id": "nationaal_archief_beeldbank",
+        "extractor": "ocd_backend.extractors.opensearch.OpensearchExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.nabeeldbank.NationaalArchiefBeeldbankItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "opensearch_url": "http://www.gahetna.nl/beeldbank-api/opensearch/",
+        "opensearch_query": "\"*:*\""
     }
 ]
