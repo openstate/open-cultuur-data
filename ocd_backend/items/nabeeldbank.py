@@ -1,8 +1,6 @@
 import re
 from datetime import datetime
 
-from lxml import etree
-
 from ocd_backend.items import BaseItem
 
 
