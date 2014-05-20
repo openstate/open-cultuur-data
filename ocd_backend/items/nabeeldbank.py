@@ -25,7 +25,7 @@ class NationaalArchiefBeeldbankItem(BaseItem):
         return texts
 
     def get_original_object_id(self):
-        return self._get_text_or_none('.//item/dc:identifier')
+        return self._get_text_or_none('.//item/guid').split('/')[-1]
 
     def get_original_object_urls(self):
         link = self._get_text_or_none('.//item/link')
