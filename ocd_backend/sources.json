@@ -15,5 +15,15 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "oai_base_url": "http://www.openbeelden.nl/feeds/oai/",
         "oai_metadata_prefix": "oai_oi"
+    },
+    {
+        "id": "amsterdammuseum",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.amsterdammusem.AmsterdamMuseumItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "oai_base_url": "http://ahm.adlibsoft.com/oaix/oai.ashx",
+        "oai_metadata_prefix": "oai_dc"
     }
+
 ]
