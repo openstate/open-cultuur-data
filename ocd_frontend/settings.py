@@ -75,3 +75,5 @@ AVAILABLE_FACETS = {
 # The allowed date intervals for an ES data_histogram that can be
 # requested via the REST API
 ALLOWED_DATE_INTERVALS = ('day', 'week', 'month', 'quarter', 'year')
+
+RESOLVER_URL_INDEX = 'ocd_resolver'
