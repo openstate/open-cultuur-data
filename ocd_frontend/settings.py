@@ -11,7 +11,7 @@ MAX_SEARCH_SIZE = 100
 # The name of the index containing documents from all sources
 COMBINED_INDEX = 'ocd_combined_index'
 
-#
+# The default prefix used for all ocd data
 DEFAULT_INDEX_PREFIX = 'ocd'
 
 # The fields which can be used for sorting results via the REST API
