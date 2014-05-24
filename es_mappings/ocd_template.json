@@ -92,13 +92,11 @@
                 },
                 "title": {
                     "type": "string",
-                    "analyzer": "text_nl",
-                    "index_options": "offsets"
+                    "analyzer": "text_nl"
                 },
                 "description": {
                     "type": "string",
-                    "analyzer": "text_nl",
-                    "index_options": "offsets"
+                    "analyzer": "text_nl"
                 },
                 "date": {
                     "type": "date",
