@@ -23,7 +23,7 @@ Have a bug or a feature request? Please first read the [issue guidelines](https:
 
 ## Documentation
 
-The documentaiton of the Open Cultuur API can be found at [docs.opencultuurdata.nl](http://docs.opencultuurdata.nl/).
+The documentation of the Open Cultuur API can be found at [docs.opencultuurdata.nl](http://docs.opencultuurdata.nl/).
 
 We use [Sphinx](http://sphinx-doc.org/) to create OCD's documentation. The source files are included in this repo under the `docs` directory.  
 
