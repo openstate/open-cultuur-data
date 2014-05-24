@@ -45,7 +45,7 @@ Searching within multiple collections
 
    .. sourcecode:: http
 
-      $ curl -i -XPOST 'http://<domain>/api/v0/search' -d '{
+      $ curl -i -XPOST 'http://api.opencultuurdata.nl/v0/search' -d '{
          "query": "journaal",
          "facets": {
             "collection": {},
@@ -61,118 +61,186 @@ Searching within multiple collections
 
     .. sourcecode:: http
 
-       HTTP/1.0 200 OK
-       Content-Type: application/json
-       Content-Length: 1885
-       Date: Mon, 19 May 2014 12:58:43 GMT
+      HTTP/1.0 200 OK
+      Content-Type: application/json
+      Content-Length: 1885
+      Date: Mon, 19 May 2014 12:58:43 GMT
 
-       {
-         "facets": {
-           "collection": {
-             "_type": "terms",
-             "missing": 0,
-             "other": 0,
-             "terms": [
-               {
-                 "count": 6,
-                 "term": "Open Beelden"
-               },
-               {
-                 "count": 2,
-                 "term": "Rijksmuseum"
-               }
-             ],
-             "total": 8
-           },
-           "date": {
-             "_type": "date_histogram",
-             "entries": [
-               {
-                 "count": 1,
-                 "time": -652579200000
-               },
-               {
-                 "count": 1,
-                 "time": -573350400000
-               },
-               {
-                 "count": 1,
-                 "time": -552355200000
-               },
-               {
-                 "count": 1,
-                 "time": -541728000000
-               },
-               {
-                 "count": 1,
-                 "time": -259632000000
-               },
-               {
-                 "count": 1,
-                 "time": -239846400000
-               },
-               {
-                 "count": 1,
-                 "time": -239328000000
-               },
-               {
-                 "count": 1,
-                 "time": 1300233600000
-               }
-             ]
-           }
-         },
-         "hits": {
-           "hits": [
-             {
-               "_id": "4558763df1b233a57f0176839dc572e9e8726a02",
-               "_score": 0.55381334,
-               "_source": {
-                 "meta": {
-                   "collection": "Open Beelden",
-                   "original_object_id": "oai:openimages.eu:654062",
-                   "original_object_urls": {
-                     "html": "http://openbeelden.nl/media/654062/",
-                     "xml": "http://openbeelden.nl/feeds/oai/?verb=GetRecord&identifier=oai:openimages.eu:654062&metadataPrefix=oai_oi"
-                   },
-                   "processing_finished": "2014-05-19T13:18:04.770080",
-                   "processing_started": "2014-05-19T13:18:04.761080",
-                   "rights": "Creative Commons Attribution-ShareAlike",
-                   "source_id": "openbeelden"
-                 },
-                 "title": "Postduivenvluchten in Nederland",
-                 "authors": [
-                   "Polygoon-Profilti (producent) / Nederlands Instituut voor Beeld en Geluid (beheerder)"
-                 ],
-                 "date": "1952-07-01T00:00:00",
-                 "date_granularity": 8,
-                 "description": "In dit journaal wordt verslag gedaan van de manier waarop een wedstrijdvlucht met postduiven wordt uitgevoerd...",
-                 "media_urls": [
-                   {
-                     "content_type": "video/webm",
-                     "url": "http://www.openbeelden.nl/files/06/54/654208.654061.WEEKNUMMER522-HRE0000D77F.webm"
-                   },
-                   {
-                     "content_type": "video/ogg",
-                     "url": "http://www.openbeelden.nl/files/06/54/654202.654061.WEEKNUMMER522-HRE0000D77F.ogv"
-                   },
-                   {
-                     "content_type": "video/ogg",
-                     "url": "http://www.openbeelden.nl/files/06/54/654200.654061.WEEKNUMMER522-HRE0000D77F.ogv"
-                   },
-                   {
-                     "content_type": "video/mp4",
-                     "url": "http://www.openbeelden.nl/files/06/54/654204.654061.WEEKNUMMER522-HRE0000D77F.mp4"
-                   }
-                 ]
-               }
-             }
-           ],
-           "max_score": 0.55381334,
-           "total": 8
-         },
-         "took": 22
-       }
+      {
+        "facets": {
+          "collection": {
+            "_type": "terms",
+            "missing": 0,
+            "other": 0,
+            "terms": [
+              {
+                "count": 13,
+                "term": "Open Beelden"
+              },
+              {
+                "count": 7,
+                "term": "Rijksmuseum"
+              }
+            ],
+            "total": 20
+          },
+          "date": {
+            "_type": "date_histogram",
+            "entries": [
+              {
+                "count": 1,
+                "time": -12307248000000
+              },
+              {
+                "count": 1,
+                "time": -11770704000000
+              },
+              {
+                "count": 2,
+                "time": -11644473600000
+              },
+              {
+                "count": 1,
+                "time": -11612937600000
+              },
+              {
+                "count": 1,
+                "time": -11581401600000
+              },
+              {
+                "count": 1,
+                "time": -11549865600000
+              },
+              {
+                "count": 1,
+                "time": -652579200000
+              },
+              {
+                "count": 1,
+                "time": -573350400000
+              },
+              {
+                "count": 1,
+                "time": -552355200000
+              },
+              {
+                "count": 1,
+                "time": -541728000000
+              },
+              {
+                "count": 1,
+                "time": -509414400000
+              },
+              {
+                "count": 1,
+                "time": -491184000000
+              },
+              {
+                "count": 1,
+                "time": -434332800000
+              },
+              {
+                "count": 1,
+                "time": -279244800000
+              },
+              {
+                "count": 1,
+                "time": -266198400000
+              },
+              {
+                "count": 1,
+                "time": -259632000000
+              },
+              {
+                "count": 1,
+                "time": -239846400000
+              },
+              {
+                "count": 1,
+                "time": -239328000000
+              },
+              {
+                "count": 1,
+                "time": 1300233600000
+              }
+            ]
+          }
+        },
+        "hits": {
+          "hits": [
+            {
+              "_id": "4558763df1b233a57f0176839dc572e9e8726a02",
+              "_score": 0.5564619,
+              "_source": {
+                "authors": [
+                  "Polygoon-Profilti (producent) / Nederlands Instituut voor Beeld en Geluid (beheerder)"
+                ],
+                "date": "1952-07-01T00:00:00",
+                "date_granularity": 8,
+                "description": "In dit journaal wordt verslag gedaan van de manier waarop een wedstrijdvlucht met postduiven wordt uitgevoerd. Met beelden van duivenhouders, duiventillen, het verenigingsgebouw en het lossen en de thuiskomst van de duiven.",
+                "media_urls": [
+                  {
+                    "content_type": "video/webm",
+                    "url": "http://api.opencultuurdata.nl/v0/resolve/53812149df7cd251530b19fbe41d2f1279ff41e4"
+                  },
+                  {
+                    "content_type": "video/ogg",
+                    "url": "http://api.opencultuurdata.nl/v0/resolve/5f2fec5142bdf8ac5618ca24c1024a6c8885aaef"
+                  },
+                  {
+                    "content_type": "video/ogg",
+                    "url": "http://api.opencultuurdata.nl/v0/resolve/862d18ac74e8deca6d4fb5dafe9e8f59551fec22"
+                  },
+                  {
+                    "content_type": "video/mp4",
+                    "url": "http://api.opencultuurdata.nl/v0/resolve/41bc80ef056c83272e2cd888d1ad6cf2a7f1939c"
+                  },
+                  {
+                    "content_type": "video/mp4",
+                    "url": "http://api.opencultuurdata.nl/v0/resolve/13b967ddb0415a70627c460de3a5bd4a6864b23d"
+                  },
+                  {
+                    "content_type": "application/x-mpegurl",
+                    "url": "http://api.opencultuurdata.nl/v0/resolve/736c4b8f5aa75af3dfe82d4e6c3cfa3ef7f00978"
+                  },
+                  {
+                    "content_type": "video/mp2t",
+                    "url": "http://api.opencultuurdata.nl/v0/resolve/110756a6f502797c2596f7e2b1cd751770bb7644"
+                  },
+                  {
+                    "content_type": "video/mpeg",
+                    "url": "http://api.opencultuurdata.nl/v0/resolve/f5fe55c4485a53dc5d04db7e3bd61121d3bad81e"
+                  },
+                  {
+                    "content_type": "video/mpeg",
+                    "url": "http://api.opencultuurdata.nl/v0/resolve/b33ac5a6ef77af37d347f069d502e6238b9e3c15"
+                  },
+                  {
+                    "content_type": "image/png",
+                    "url": "http://api.opencultuurdata.nl/v0/resolve/7fead9d2bd1d1ec09f19e45ff32b2ca9cee2cfe6"
+                  }
+                ],
+                "meta": {
+                  "collection": "Open Beelden",
+                  "original_object_id": "oai:openimages.eu:654062",
+                  "original_object_urls": {
+                    "html": "http://openbeelden.nl/media/654062/",
+                    "xml": "http://openbeelden.nl/feeds/oai/?verb=GetRecord&identifier=oai:openimages.eu:654062&metadataPrefix=oai_oi"
+                  },
+                  "processing_finished": "2014-05-24T13:47:46.910313",
+                  "processing_started": "2014-05-24T13:47:46.905950",
+                  "rights": "Creative Commons Attribution-ShareAlike",
+                  "source_id": "openbeelden"
+                },
+                "title": "Postduivenvluchten in Nederland"
+              }
+            }
+          ],
+          "max_score": 0.5564619,
+          "total": 20
+        },
+        "took": 58
+      }
 
 
    **Query**
@@ -283,7 +351,7 @@ Retrieving a single object
 
    .. sourcecode:: http
 
-      $ curl -i 'http://<domain>/api/v0/openbeelden/4558763df1b233a57f0176839dc572e9e8726a02'
+      $ curl -i 'http://api.opencultuurdata.nl/v0/openbeelden/4558763df1b233a57f0176839dc572e9e8726a02'
 
    **Example response**
 
@@ -291,10 +359,59 @@ Retrieving a single object
 
       HTTP/1.0 200 OK
       Content-Type: application/json
-      Content-Length: 2499
-      Date: Mon, 19 May 2014 20:35:29 GMT
+      Content-Length: 2419
+      Server: Werkzeug/0.9.4 Python/2.7.3
+      Date: Sat, 24 May 2014 14:56:32 GMT
 
       {
+        "authors": [
+          "Polygoon-Profilti (producent) / Nederlands Instituut voor Beeld en Geluid (beheerder)"
+        ],
+        "date": "1952-07-01T00:00:00",
+        "date_granularity": 8,
+        "description": "In dit journaal wordt verslag gedaan van de manier waarop een wedstrijdvlucht met postduiven wordt uitgevoerd. Met beelden van duivenhouders, duiventillen, het verenigingsgebouw en het lossen en de thuiskomst van de duiven.",
+        "media_urls": [
+          {
+            "content_type": "video/webm",
+            "url": "http://api.opencultuurdata.nl/v0/resolve/53812149df7cd251530b19fbe41d2f1279ff41e4"
+          },
+          {
+            "content_type": "video/ogg",
+            "url": "http://api.opencultuurdata.nl/v0/resolve/5f2fec5142bdf8ac5618ca24c1024a6c8885aaef"
+          },
+          {
+            "content_type": "video/ogg",
+            "url": "http://api.opencultuurdata.nl/v0/resolve/862d18ac74e8deca6d4fb5dafe9e8f59551fec22"
+          },
+          {
+            "content_type": "video/mp4",
+            "url": "http://api.opencultuurdata.nl/v0/resolve/41bc80ef056c83272e2cd888d1ad6cf2a7f1939c"
+          },
+          {
+            "content_type": "video/mp4",
+            "url": "http://api.opencultuurdata.nl/v0/resolve/13b967ddb0415a70627c460de3a5bd4a6864b23d"
+          },
+          {
+            "content_type": "application/x-mpegurl",
+            "url": "http://api.opencultuurdata.nl/v0/resolve/736c4b8f5aa75af3dfe82d4e6c3cfa3ef7f00978"
+          },
+          {
+            "content_type": "video/mp2t",
+            "url": "http://api.opencultuurdata.nl/v0/resolve/110756a6f502797c2596f7e2b1cd751770bb7644"
+          },
+          {
+            "content_type": "video/mpeg",
+            "url": "http://api.opencultuurdata.nl/v0/resolve/f5fe55c4485a53dc5d04db7e3bd61121d3bad81e"
+          },
+          {
+            "content_type": "video/mpeg",
+            "url": "http://api.opencultuurdata.nl/v0/resolve/b33ac5a6ef77af37d347f069d502e6238b9e3c15"
+          },
+          {
+            "content_type": "image/png",
+            "url": "http://api.opencultuurdata.nl/v0/resolve/7fead9d2bd1d1ec09f19e45ff32b2ca9cee2cfe6"
+          }
+        ],
         "meta": {
           "collection": "Open Beelden",
           "original_object_id": "oai:openimages.eu:654062",
@@ -302,28 +419,12 @@ Retrieving a single object
             "html": "http://openbeelden.nl/media/654062/",
             "xml": "http://openbeelden.nl/feeds/oai/?verb=GetRecord&identifier=oai:openimages.eu:654062&metadataPrefix=oai_oi"
           },
-          "processing_finished": "2014-05-19T13:18:04.770080",
-          "processing_started": "2014-05-19T13:18:04.761080",
+          "processing_finished": "2014-05-24T13:47:46.910313",
+          "processing_started": "2014-05-24T13:47:46.905950",
           "rights": "Creative Commons Attribution-ShareAlike",
           "source_id": "openbeelden"
         },
         "title": "Postduivenvluchten in Nederland"
-        "authors": [
-          "Polygoon-Profilti (producent) / Nederlands Instituut voor Beeld en Geluid (beheerder)"
-        ],
-        "date": "1952-07-01T00:00:00",
-        "date_granularity": 8,
-        "description": "In dit journaal wordt verslag gedaan van de manier waarop een wedstrijdvlucht met postduiven wordt uitgevoerd...",
-        "media_urls": [
-          {
-            "content_type": "video/webm",
-            "url": "http://www.openbeelden.nl/files/06/54/654208.654061.WEEKNUMMER522-HRE0000D77F.webm"
-          },
-          {
-            "content_type": "image/png",
-            "url": "http://www.openbeelden.nl/images/654279/Postduivenvluchten_in_Nederland_%280_56%29.png"
-          }
-        ]
       }
 
    :statuscode 200: OK, no errors.
@@ -340,7 +441,7 @@ Retrieving a single object
 
    .. sourcecode:: http
 
-      $ curl -i 'http://<domain>/api/v0/openbeelden/4558763df1b233a57f0176839dc572e9e8726a02/source'
+      $ curl -i 'http://api.opencultuurdata.nl/v0/openbeelden/4558763df1b233a57f0176839dc572e9e8726a02/source'
 
    **Example response**
 
@@ -374,7 +475,7 @@ Similar items
 
   .. sourcecode:: http
 
-    $ curl -i -XPOST 'http://<domain>/api/v0/similar/<object_id>' -d '{
+    $ curl -i -XPOST 'http://api.opencultuurdata.nl/v0/similar/<object_id>' -d '{
        "facets": {
           "collection": {},
           "date": {"interval": "day"}
@@ -422,17 +523,17 @@ The OpenCultuurData API provides all (media) urls as :ref:`OpenCultuurData Resol
 
     .. sourcecode:: http
 
-      $ curl -i -Haccept:application/json -XGET http://<domain>/v0/resolve/<url_hash>
+      $ curl -i -Haccept:application/json -XGET http://api.opencultuurdata.nl/v0/resolve/<url_hash>
 
     **Example browser-like request**
 
-      $ curl -i -Haccept:text/html -XGET http://<domain>/v0/resolve/<url_hash>
+      $ curl -i -Haccept:text/html -XGET http://api.opencultuurdata.nl/v0/resolve/<url_hash>
 
     **Example success response**
 
     .. sourcecode:: http
 
-      HTTP/1.1 302 Found
+      HTTP/1.0 302 Found
       Location: http://example.com/example.jpg
 
     **Example failed json response**
