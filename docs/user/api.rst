@@ -16,6 +16,10 @@ All API URLs referenced in this documentation start with the following base part
 
     :rest_api_v0:`None`
 
+All API endpoints are designed according to the idea that there is an operation within a *context*: methods on the "root" context are executed across all datasets; :ref:`/search <rest_search>` executes a search across all collections, whereas :ref:`/openbeelden/search <rest_source_search>` executes a search on the OpenBeelden collection.
+
+Arguments to an endpoint are placed behind the method definition, or supplied as JSON in a POST request. For instance, the :ref:`similar objects endpoint <rest_similar>` can be executed within the context of a collection, and needs an ``object_id`` to execute on.
+
 .. Collection overview and statistics
 .. ----------------------------------
 
@@ -245,6 +249,7 @@ Searching within multiple collections
    :statuscode 200: OK, no errors.
    :statuscode 400: Bad Request. An accompanying error message will explain why the request was invalid.
 
+.. _rest_source_search:
 
 Searching within a single collection
 ------------------------------------
@@ -354,6 +359,7 @@ Retrieving a single object
    :statuscode 200: OK, no errors.
    :statuscode 404: The requested source and/or object does not exist.
 
+.. _rest_similar:
 
 Similar items
 -------------
