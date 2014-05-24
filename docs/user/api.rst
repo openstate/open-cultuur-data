@@ -407,3 +407,59 @@ Similar items
   :jsonparameter from: the offset from the first result (optional, defaults to 0).
   :statuscode 200: OK, no errors.
   :statuscode 400: Bad Request. An accompanying error message will explain why the request was invalid.
+
+.. _rest_resolver:
+
+Resolver
+--------
+The OpenCultuurData API provides all (media) urls as :ref:`OpenCultuurData Resolver URLs <rest_resolver>`. This will route all requests for content through the API, which will process and validate the URL, and provide a redirect to the original content source. This will allow for caching or rate limiting on API level in the future, to precent excessive amounts of requests to the sources.
+
+.. http:get:: /resolve/(url_hash)
+
+  Resolves the provided URL, and redirects the request with a 302 if it is valid. If it is not, a 404 is returned. Depending on the Accept header in the request, it returns a JSON-encoded response detailing what went wrong, or a HTML-page, allowing for transparent use in websites.
+
+    **Example json request**
+
+    .. sourcecode:: http
+
+      $ curl -i -Haccept:application/json -XGET http://<domain>/v0/resolve/<url_hash>
+
+    **Example browser-like request**
+
+      $ curl -i -Haccept:text/html -XGET http://<domain>/v0/resolve/<url_hash>
+
+    **Example success response**
+
+    .. sourcecode:: http
+
+      HTTP/1.1 302 Found
+      Location: http://example.com/example.jpg
+
+    **Example failed json response**
+
+    .. sourcecode:: http
+
+      HTTP/1.0 404 NOT FOUND
+      Content-Type: application/json
+      Content-Length: 98
+      Date: Sat, 24 May 2014 14:33:00 GMT
+
+      {
+        "error": "URL is not available; the source may no longer be available",
+        "status": "error"
+      }
+
+    **Example failed HTML response**
+
+    .. sourcecode:: http
+
+      HTTP/1.0 404 NOT FOUND
+      Content-Type: text/html; charset=utf-8
+      Content-Length: 123
+      Date: Sat, 24 May 2014 14:32:37 GMT
+
+      <html>
+        <body>
+          There is no original url available. You may have an outdated URL, or the resolve id is incorrect.
+        </body>
+      </html>
