@@ -197,7 +197,7 @@ def search():
     return jsonify(format_search_results(es_r))
 
 
-@bp.route('/<source_id>/search', methods=['POST'])
+@bp.route('/search/<source_id>', methods=['POST'])
 @decode_json_post_data
 def search_source(source_id):
     # Disallow searching in multiple indexes by providing a wildcard
