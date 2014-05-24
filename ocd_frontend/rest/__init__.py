@@ -6,6 +6,7 @@ from flask import jsonify, request
 from ocd_frontend.factory import create_app_factory
 from ocd_frontend.es import ElasticsearchService
 
+
 def create_app(settings_override=None):
     """Returns the REST API application instance."""
     app = create_app_factory(__name__, __path__, settings_override)
@@ -69,3 +70,9 @@ def decode_json_post_data(fn):
         return fn(*args, **kwargs)
 
     return wrapped_function
+
+
+def request_wants_json():
+    best = request.accept_mimetypes.best_match(['application/json', 'text/html'])
+    return best == 'application/json' and \
+        request.accept_mimetypes[best] > request.accept_mimetypes['text/html']

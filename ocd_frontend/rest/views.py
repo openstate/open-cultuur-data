@@ -1,7 +1,8 @@
-from flask import Blueprint, current_app, request, jsonify
+from flask import (Blueprint, current_app, request, jsonify, redirect, url_for,)
 from elasticsearch import NotFoundError
 
-from ocd_frontend.rest import OcdApiError, decode_json_post_data
+from ocd_frontend.rest import (OcdApiError, decode_json_post_data,
+                               request_wants_json)
 
 bp = Blueprint('api', __name__)
 
@@ -147,6 +148,12 @@ def format_search_results(results):
     for hit in results['hits']['hits']:
         del hit['_index']
         del hit['_type']
+        kwargs = {
+            'object_id': hit['_id'],
+            'source_id': hit['_source']['meta']['source_id'],
+            '_external': True
+        }
+        hit['_source']['meta']['ocd_url'] = url_for('api.get_object', **kwargs)
 
     return results
 
@@ -183,7 +190,7 @@ def search():
             search_req['sort']: {'order': search_req['order']}
         },
         '_source': {
-            'exclude': ['all_text']
+            'exclude': ['all_text', 'media_urls.original_url']
         }
     }
 
@@ -235,7 +242,7 @@ def search_source(source_id):
             search_req['sort']: {'order': search_req['order']}
         },
         '_source': {
-            'exclude': ['all_text', 'source_data']
+            'exclude': ['all_text', 'source_data', 'media_urls.original_url']
         }
     }
 
@@ -258,7 +265,8 @@ def get_object(source_id, object_id):
 
     try:
         obj = current_app.es.get(index=index_name, id=object_id,
-                                 _source_exclude=['source_data', 'all_text'])
+                                 _source_exclude=['source_data', 'all_text',
+                                                  'media_urls.original_url'])
     except NotFoundError, e:
         if e.error.startswith('IndexMissingException'):
             message = 'Source \'%s\' does not exist' % source_id
@@ -342,6 +350,22 @@ def similar(object_id, source_id=None):
             'bool': {'must': search_params['filters']}
         }
 
-    es_r = current_app.es.search(body=es_q, index=index_name)
+    es_r = current_app.es.search(body=es_q, index=index_name,
+                                 _source_exclude=['media_urls.original_url'])
 
     return jsonify(format_search_results(es_r))
+
+
+@bp.route('/resolve/<url_id>', methods=['GET'])
+def resolve(url_id):
+    try:
+        resp = current_app.es.get(index=current_app.config['RESOLVER_URL_INDEX'],
+                                  doc_type='url', id=url_id)
+        return redirect(resp['_source']['original_url'])
+    except NotFoundError:
+        if request_wants_json():
+            raise OcdApiError('URL is not available; the source may no longer '
+                              'be available', 404)
+        return '<html><body>There is no original url available. You may '\
+               'have an outdated URL, or the resolve id is incorrect.</body>'\
+               '</html>', 404
