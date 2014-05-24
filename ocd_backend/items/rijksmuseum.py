@@ -47,7 +47,7 @@ class RijksmuseumItem(BaseItem):
         if self.original_item['webImage']:
             combined_index_data['media_urls'] = [
                 {
-                    'url': self.original_item['webImage']['url'],
+                    'original_url': self.original_item['webImage']['url'],
                     'content_type': 'image/jpeg',
                     'width': self.original_item['webImage']['width'],
                     'height': self.original_item['webImage']['height']

@@ -125,6 +125,10 @@
                             "type": "string",
                             "index": "no"
                         },
+                        "original_url": {
+                            "type": "string",
+                            "index": "no"
+                        },
                         "width": {
                             "type": "integer"
                         },
