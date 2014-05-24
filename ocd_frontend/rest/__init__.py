@@ -13,6 +13,12 @@ def create_app(settings_override=None):
     app.es = ElasticsearchService(app.config['ELASTICSEARCH_HOST'],
                                   app.config['ELASTICSEARCH_PORT'])
 
+    def add_cors_headers(resp):
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
+
+    app.after_request(add_cors_headers)
+
     return app
 
 
