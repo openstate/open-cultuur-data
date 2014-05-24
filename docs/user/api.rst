@@ -10,7 +10,7 @@ RESTful API
 General notes
 -------------
 
-The API accepts requests with JSON content and returns JSON data in all of its responses (unless stated otherwise). Standard HTTP response codes are used to indicate errors. In case of an error, a more detailed description can be found in the JSON response body. UTF-8 character encoding is used in both requests and responses. 
+The API accepts requests with JSON content and returns JSON data in all of its responses (unless stated otherwise). Standard HTTP response codes are used to indicate errors. In case of an error, a more detailed description can be found in the JSON response body. UTF-8 character encoding is used in both requests and responses.
 
 All API URLs referenced in this documentation start with the following base part:
 
@@ -34,7 +34,7 @@ Searching within multiple collections
 -------------------------------------
 
 .. http:post:: /search
-   
+
    Search for objects through all indexed datasets.
 
    **Example request**
@@ -238,7 +238,8 @@ Searching within multiple collections
 
    :jsonparameter query: on or more keywords.
    :jsonparameter filters: an object with field and values to filter on (optional).
-   :jsonparameter facets: an object with fields for which to return facets (optional)
+   :jsonparameter facets: an object with fields for which to return facets (optional).
+   :jsonparameter sort: the field the search results are sorted on. By default, results are sorted by relevancy to the query.
    :jsonparameter size: the maximum number of documents to return (optional, defaults to 10).
    :jsonparameter from: the offset from the first result (optional, defaults to 0).
    :statuscode 200: OK, no errors.
@@ -249,15 +250,16 @@ Searching within a single collection
 ------------------------------------
 
 
-.. http:post:: /(source_id)/search
-   
+.. http:post:: /search/(source_id)
+
    Search for objects within a specific dataset. The objects returned by this method will also include fields that are specific to the queried dataset, rather than only those fields that all indexed datasets have in common.
 
    See specifications of the :ref:`search method <rest_search>` for the request and response format.
 
    :jsonparameter query: on or more keywords.
    :jsonparameter filters: an object with field and values to filter on (optional).
-   :jsonparameter facets: an object with fields for which to return facets (optional)
+   :jsonparameter facets: an object with fields for which to return facets (optional).
+   :jsonparameter sort: the field the search results are sorted on. By default, results are sorted by relevancy to the query.
    :jsonparameter size: the maximum number of documents to return (optional, defaults to 10).
    :jsonparameter from: the offset from the first result (optional, defaults to 0).
    :statuscode 200: OK, no errors.
@@ -269,7 +271,7 @@ Retrieving a single object
 --------------------------
 
 .. http:get:: /(source_id)/(object_id)
-   
+
    Retrieve the contents of a single object.
 
    **Example request**
@@ -325,7 +327,7 @@ Retrieving a single object
 
 .. http:get:: /(source_id)/(object_id)/source
 
-   Retrieves the object's data in it's original and unmodified from, as used as input for the Open Cultuur Data extractor(s). Being able to retrieve the object in it's original form can be useful for debugging purposes (i.e. when fields are missing or odd values are returned in the OCD representation of the object).
+   Retrieves the object's data in its original and unmodified form, as used as input for the Open Cultuur Data extractor(s). Being able to retrieve the object in it's original form can be useful for debugging purposes (i.e. when fields are missing or odd values are returned in the OCD representation of the object).
 
    The value of the ``Content-Type`` response header depends on the type of data that is returned by the data provider.
 
@@ -336,7 +338,7 @@ Retrieving a single object
       $ curl -i 'http://<domain>/api/v0/openbeelden/4558763df1b233a57f0176839dc572e9e8726a02/source'
 
    **Example response**
-   
+
    .. sourcecode:: http
 
       HTTP/1.0 200 OK
@@ -351,3 +353,51 @@ Retrieving a single object
 
    :statuscode 200: OK, no errors.
    :statuscode 404: The requested source and/or object does not exist.
+
+
+Similar items
+-------------
+
+.. http:post:: /similar/(object_id)
+
+  Retrieve objects similar to the object with id ``object_id`` across all indexed datasets (i.e. it could return similarly described paintings from different collection). From the contents of the object, the most descriptive terms ("descriptive" here means the terms with the highest tf-idf value in the document) are used to search across collections.
+
+  As a search is executed, the response format is exactly the same as the response returned by the :ref:`search endpoint <rest_search>`. The request format is almost the same, with the exception that a query can't be specified (as the document with id ``object_id`` is considered the query). That means that faceting, filtering and sorting on the resulting set are fully supported.
+
+  **Example request**
+
+  .. sourcecode:: http
+
+    $ curl -i -XPOST 'http://<domain>/api/v0/similar/<object_id>' -d '{
+       "facets": {
+          "collection": {},
+          "date": {"interval": "day"}
+       },
+       "filters": {
+          "media_content_type": {"terms": ["image/jpeg", "video/webm"]}
+       },
+       "size": 10,
+       "from": 30,
+       "sort": "date"
+    }'
+
+  :jsonparameter filters: an object with field and values to filter on (optional).
+  :jsonparameter facets: an object with fields for which to return facets (optional).
+  :jsonparameter sort: the field the search results are sorted on. By default, results are sorted by relevancy to the query.
+  :jsonparameter size: the maximum number of documents to return (optional, defaults to 10).
+  :jsonparameter from: the offset from the first result (optional, defaults to 0).
+  :statuscode 200: OK, no errors.
+  :statuscode 400: Bad Request. An accompanying error message will explain why the request was invalid.
+
+
+.. http:post:: /similar/(source_id)/(object_id)
+
+  Retrieve objects similar to the object with id ``object_id`` from the dataset specified by ``source_id``. You can find similar objects in the same collection, or objects in a different collection that are similar to the provided object.
+
+  :jsonparameter filters: an object with field and values to filter on (optional).
+  :jsonparameter facets: an object with fields for which to return facets (optional).
+  :jsonparameter sort: the field the search results are sorted on. By default, results are sorted by relevancy to the query.
+  :jsonparameter size: the maximum number of documents to return (optional, defaults to 10).
+  :jsonparameter from: the offset from the first result (optional, defaults to 0).
+  :statuscode 200: OK, no errors.
+  :statuscode 400: Bad Request. An accompanying error message will explain why the request was invalid.
