@@ -1,5 +1,4 @@
-from flask import (Blueprint, current_app, request, jsonify, redirect,
-                   render_template)
+from flask import (Blueprint, current_app, request, jsonify, redirect,)
 from elasticsearch import NotFoundError
 
 from ocd_frontend.rest import (OcdApiError, decode_json_post_data,
@@ -185,7 +184,7 @@ def search():
             search_req['sort']: {'order': search_req['order']}
         },
         '_source': {
-            'exclude': ['all_text']
+            'exclude': ['all_text', 'media_urls.original_url']
         }
     }
 
@@ -237,7 +236,7 @@ def search_source(source_id):
             search_req['sort']: {'order': search_req['order']}
         },
         '_source': {
-            'exclude': ['all_text', 'source_data']
+            'exclude': ['all_text', 'source_data', 'media_urls.original_url']
         }
     }
 
@@ -260,7 +259,8 @@ def get_object(source_id, object_id):
 
     try:
         obj = current_app.es.get(index=index_name, id=object_id,
-                                 _source_exclude=['source_data', 'all_text'])
+                                 _source_exclude=['source_data', 'all_text',
+                                                  'media_urls.original_url'])
     except NotFoundError, e:
         if e.error.startswith('IndexMissingException'):
             message = 'Source \'%s\' does not exist' % source_id
@@ -344,7 +344,8 @@ def similar(object_id, source_id=None):
             'bool': {'must': search_params['filters']}
         }
 
-    es_r = current_app.es.search(body=es_q, index=index_name)
+    es_r = current_app.es.search(body=es_q, index=index_name,
+                                 _source_exclude=['media_urls.original_url'])
 
     return jsonify(format_search_results(es_r))
 
