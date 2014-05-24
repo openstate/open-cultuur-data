@@ -1,4 +1,4 @@
-from flask import (Blueprint, current_app, request, jsonify, redirect,)
+from flask import (Blueprint, current_app, request, jsonify, redirect, url_for,)
 from elasticsearch import NotFoundError
 
 from ocd_frontend.rest import (OcdApiError, decode_json_post_data,
@@ -148,6 +148,12 @@ def format_search_results(results):
     for hit in results['hits']['hits']:
         del hit['_index']
         del hit['_type']
+        kwargs = {
+            'object_id': hit['_id'],
+            'source_id': hit['_source']['meta']['source_id'],
+            '_external': True
+        }
+        hit['_source']['meta']['ocd_url'] = url_for('api.get_object', **kwargs)
 
     return results
 

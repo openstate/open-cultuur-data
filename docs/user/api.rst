@@ -222,6 +222,7 @@ Searching within multiple collections
                 ],
                 "meta": {
                   "collection": "Open Beelden",
+                  "ocd_url": "http://api.opencultuurdata.nl/openbeelden/4558763df1b233a57f0176839dc572e9e8726a02",
                   "original_object_id": "oai:openimages.eu:654062",
                   "original_object_urls": {
                     "html": "http://openbeelden.nl/media/654062/",
@@ -414,6 +415,7 @@ Retrieving a single object
         ],
         "meta": {
           "collection": "Open Beelden",
+          "ocd_url": "http://api.opencultuurdata.nl/openbeelden/4558763df1b233a57f0176839dc572e9e8726a02",
           "original_object_id": "oai:openimages.eu:654062",
           "original_object_urls": {
             "html": "http://openbeelden.nl/media/654062/",
