@@ -93,6 +93,7 @@ def extract_list_sources(sources_config):
     for source in sources:
         click.echo(' - %s' % source['id'])
 
+
 @extract.command('start')
 @click.option('--sources_config', default=None, type=click.File('rb'))
 @click.argument('source_id')
