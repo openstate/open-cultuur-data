@@ -250,7 +250,7 @@ Searching within a single collection
 ------------------------------------
 
 
-.. http:post:: /search/(source_id)
+.. http:post:: /(source_id)/search
 
    Search for objects within a specific dataset. The objects returned by this method will also include fields that are specific to the queried dataset, rather than only those fields that all indexed datasets have in common.
 
@@ -390,7 +390,7 @@ Similar items
   :statuscode 400: Bad Request. An accompanying error message will explain why the request was invalid.
 
 
-.. http:post:: /similar/(source_id)/(object_id)
+.. http:post:: /(source_id)/similar/(object_id)
 
   Retrieve objects similar to the object with id ``object_id`` from the dataset specified by ``source_id``. You can find similar objects in the same collection, or objects in a different collection that are similar to the provided object.
 
