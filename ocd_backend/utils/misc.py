@@ -10,6 +10,9 @@ def load_sources_config(filename):
     :param filename: the filename of the JSON file.
     :type filename: str.
     """
+    if type(filename) == file:
+        # Already an open file
+        return json.load(filename)
     try:
         with open(filename) as json_file:
             return json.load(json_file)
