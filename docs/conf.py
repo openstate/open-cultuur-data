@@ -31,7 +31,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Open Cultuur Data API'
-copyright = u'(c) 2014, Bart de Goede and Justin van Wees; documentation is released under Creative Commons Attribution 4.0'
+copyright = u'2014, Bart de Goede and Justin van Wees; documentation is released under Creative Commons Attribution 4.0'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
