@@ -17,12 +17,15 @@ class CentraalMuseumUtrechtItem(BaseItem):
     def get_collection(self):
 
         # there are multiple collections in this case. returning a join by dashes of the collections
-        return unicode(' - '.join([cl.text for cl in self.original_item.iter('collection')]))
+        # would be return unicode(' - '.join([cl.text for cl in self.original_item.iter('collection')]))
+
+        # but
+        return u'Centraal Museum Utrecht'
 
     def get_rights(self):
 
         # rights are defined for the whole collection.
-        return unicode(self.source_definition['rights'])
+        return u'To be resolved.'
 
     def _get_date_and_granularity(self):
 
@@ -38,28 +41,19 @@ class CentraalMuseumUtrechtItem(BaseItem):
 
     def get_combined_index_data(self):
 
-
-        '''
-        'title': unicode,
-        'description': unicode,     IS BLANK, NO DESCRIPTION
-        'date': datetime,
-        'date_granularity': int,
-        'authors': list,
-        'media_urls': list,
-        'all_text': unicode
-        '''
-
-        # author is optional
-        index_data['authors'] = [unicode(c.text) for c in self.original_item.iter('creator')]
-
         date, gran = self._get_date_and_granularity()
+        index_date = dict()
         index_data = {
             'title' : unicode(self.original_item.find('title').text),
             'date' : date,
             'date_granularity' : gran,
         }
 
-        index_data['all_text'] = get_all_text(self)
+        index_data['all_text'] = self.get_all_text()
+
+        # author is optional
+        index_data['authors'] = [unicode(c.text) for c in self.original_item.iter('creator')]
+
 
         return index_data
 
@@ -69,6 +63,7 @@ class CentraalMuseumUtrechtItem(BaseItem):
 
     def get_all_text(self):
 
+        # all text consists of a simple space concatenation of the fields
         fields = 'title', 'creator', 'notes'
-        text = ' '.join([self.original_item.find(f).text for f in fields])
+        text = ' '.join([self.original_item.find(f).text for f in fields if not self.original_item.find(f) is None])
         return unicode(text)
