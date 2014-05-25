@@ -32,6 +32,13 @@ We use [Sphinx](http://sphinx-doc.org/) to create OCD's documentation. The sourc
 
 Please read through our [contributing guidelines](https://github.com/openstate/open-cultuur-data/blob/master/docs/dev/getting_started.rst). Included are directions for opening issues, coding standards, and notes on development.
 
+## Development
+
+```
+python ocd_backend/extractors/arts_holland.py
+python ocd_backend/transformers/arts_holland.py
+```
+
 ## Authors and contributors
 
 Authors:
