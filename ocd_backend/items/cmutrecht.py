@@ -25,7 +25,7 @@ class CentraalMuseumUtrechtItem(BaseItem):
     def get_rights(self):
 
         # rights are defined for the whole collection.
-        return u'To be resolved.'
+        return u'No Rights Reserved / Public Domain'
 
     def _get_date_and_granularity(self):
 

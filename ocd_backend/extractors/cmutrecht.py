@@ -20,9 +20,7 @@ class CentraalMuseumUtrechtExtractor(BaseExtractor):
         """
         Loops through one XML file, yields all records
         """
-        result = self.call()
-        parser = etree.XMLParser(recover=True, encoding='utf-8')
-        tree = etree.fromstring(result.encode('utf-8'), parser=parser)
+        tree = parse_oai_response(self.call())
         for record in tree.xpath('//adlibXML/recordList/record'):
             yield 'application/xml', etree.tostring(record)
 
