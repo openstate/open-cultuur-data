@@ -12,14 +12,13 @@ sudo dpkg -i elasticsearch-1.2.0.deb > /dev/null
 sudo service elasticsearch start
 
 sudo apt-get install -y libxml2-dev libxslt1-dev python-dev python-setuptools python-virtualenv git > /dev/null
-sudo easy_install -q pip 
-virtualenv -q ocd 
+sudo easy_install -q pip
+virtualenv -q ocd
 
 source ocd/bin/activate
-git clone https://github.com/openstate/open-cultuur-data.git > /dev/null
 
 echo "Installing requirements"
-cd open-cultuur-data/
+cd /vagrant
 pip install -q -r requirements.txt
 
 echo "Starting"
@@ -30,4 +29,4 @@ echo ". ocd/bin/activate"
 echo "python ./manage.py frontend runserver"
 echo "python ./manage.py extract list_sources"
 echo "python ./manage.py extract start rijksmuseum"
-echo "celery --app=ocd_backend:celery_app worker --loglevel=info --concurrency=2" 
+echo "celery --app=ocd_backend:celery_app worker --loglevel=info --concurrency=2"
