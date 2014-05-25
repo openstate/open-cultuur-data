@@ -1,0 +1,27 @@
+echo "Provisioning"
+sudo add-apt-repository -y ppa:rwky/redis > /dev/null
+sudo apt-get update -qq
+sudo apt-get install -y -qq python-software-properties
+sudo apt-get install -y -qq redis-server
+sudo apt-get install -y -qq openjdk-7-jre-headless
+
+echo "Installing Elasticsearch"
+wget -q https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.2.0.deb
+sudo dpkg -i elasticsearch-1.2.0.deb > /dev/null
+sudo service elasticsearch start
+
+sudo apt-get install -y libxml2-dev libxslt1-dev python-dev python-setuptools python-virtualenv git > /dev/null
+sudo easy_install -q pip 
+virtualenv -q ocd 
+
+source ocd/bin/activate
+git clone https://github.com/openstate/open-cultuur-data.git > /dev/null
+
+echo "Installing requirements"
+cd open-cultuur-data/
+pip install -q -r requirements.txt
+
+echo "Starting"
+./manage.py elasticsearch put_template
+
+
