@@ -24,5 +24,13 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "opensearch_url": "http://www.gahetna.nl/beeldbank-api/opensearch/",
         "opensearch_query": "\"*:*\""
+    },
+    {
+        "id": "centraal_museum_utrecht",
+        "extractor": "ocd_backend.extractors.cmutrecht.CentraalMuseumUtrechtExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.cmutrecht.CentraalMuseumUtrechtItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "file_url": "https://gist.githubusercontent.com/bennokr/5114e2c86dea2460e2f2/raw/4fe48aae6f3e071f0a5343929a6b6e36cd304ff3/cmu.xml"
     }
 ]
