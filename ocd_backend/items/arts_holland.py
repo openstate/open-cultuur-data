@@ -15,7 +15,7 @@ class ArtsHollandItem(BaseItem):
         }
 
     def get_rights(self):
-        return u'Unknown'
+        return u'CC-0'
 
     def get_collection(self):
         return u'Arts Holland'
