@@ -14,6 +14,7 @@ mkdir -p $HOSTPATH
 sudo docker run --name $CONTAINER -v $HOSTPATH:$LOCALPATH:rw \
  -t -i -d $IMAGE
 
+
 #Run Redis, inpersistant
 IMAGE=i-redis
 CONTAINER=c-redis

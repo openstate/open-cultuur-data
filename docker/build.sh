@@ -5,7 +5,9 @@
 
 #Build Elastic Search
 IMAGE=i-es
-sudo docker build -t $IMAGE github.com/orchardup/docker-elasticsearch
+#sudo docker build -t $IMAGE github.com/orchardup/docker-elasticsearch
+sudo docker build -t $IMAGE github.com/ajslaghu/docker-elasticsearch
+#https://github.com/ajslaghu/docker-elasticsearch.git
 
 #Build Redis
 IMAGE=i-redis
