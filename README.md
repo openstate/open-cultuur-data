@@ -16,6 +16,7 @@
  - [Official source code repo](https://github.com/openstate/open-cultuur-data/)
  - [Documentation](http://docs.opencultuurdata.nl/)
  - [Issue tracker](https://github.com/openstate/open-cultuur-data/issues)
+ - [List of wanted datasets](https://docs.google.com/spreadsheet/ccc?key=0AmRloQFePSo3dHd1RFVVSkZiNXBFMjQwanRkTTA5S3c&usp=sharing)
 
 ## Bugs and feature requests
 
