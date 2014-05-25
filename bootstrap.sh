@@ -1,7 +1,8 @@
 echo "Provisioning"
-sudo add-apt-repository -y ppa:rwky/redis > /dev/null
 sudo apt-get update -qq
 sudo apt-get install -y -qq python-software-properties
+sudo add-apt-repository -y ppa:rwky/redis > /dev/null
+sudo apt-get update -qq
 sudo apt-get install -y -qq redis-server
 sudo apt-get install -y -qq openjdk-7-jre-headless
 
@@ -25,3 +26,7 @@ echo "Starting"
 ./manage.py elasticsearch put_template
 
 
+echo ". ocd/bin/activate"
+echo "python ./manage.py frontend runserver"
+echo "python ./manage.py extract list_sources"
+echo "python ./manage.py extract start rijksmuseum"
