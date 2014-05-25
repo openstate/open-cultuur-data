@@ -37,10 +37,10 @@ class ArchiefEemlandItem(BaseItem):
         return {}
 
     def get_rights(self):
-        return u'Creative Commons Attribution-ShareAlike'
+        return u'CC-0'
 
     def get_collection(self):
-        return u'Beeldbank Nationaal Archief'
+        return u'Regionaal Archief Eemland'
 
     def get_combined_index_data(self):
         combined_index_data = {}
