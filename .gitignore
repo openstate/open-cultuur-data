@@ -1,7 +1,7 @@
 local_settings.py
 local_sources.json
 
-./Vagrantfile
+Vagrantfile
 
 # OSX Finder files
 .DS_Store
