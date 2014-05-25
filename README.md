@@ -39,6 +39,10 @@ Authors:
 * Bart de Goede ([@bartdegoede](https://twitter.com/bartdegoede))
 * Justin van Wees ([@justin_v_w](https://twitter.com/justin_v_w))
 
+Contributors:
+
+* [DutchCoders](http://dutchcoders.io/)
+
 ## Copyright and license
 
 The OCD documentation is released under the  [Creative Commons Attribution 4.0 International license](http://creativecommons.org/licenses/by/4.0/).
