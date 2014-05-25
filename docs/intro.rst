@@ -7,7 +7,7 @@ Introduction
 
    - include introduction text
 
-     - pragmatic approach; in stead of trying to normalize and standardize each and every available field of all collections, OCD makes basic textual searching for objects across collections possible
+     - pragmatic approach; instead of trying to normalize and standardize each and every available field of all collections, OCD makes basic textual searching for objects across collections possible
      - the goal is not to provide an exhaustive data mapping between collection, but to give a developer access to a simple API that provides all kinds of cultural heritage data.
      - the API follows a common design (REST) and document format (JSON) known by many developers.
      - on a per collection basis, more advanced questions can be asked
