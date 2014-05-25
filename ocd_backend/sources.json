@@ -24,5 +24,14 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "opensearch_url": "http://www.gahetna.nl/beeldbank-api/opensearch/",
         "opensearch_query": "\"*:*\""
+    },
+    {
+        "id": "archief_eemland",
+        "extractor": "ocd_backend.extractors.opensearch.OpensearchExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.eemland.ArchiefEemlandItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "opensearch_url": "http://gam.pictura-dp.nl/api/opensearch/",
+        "opensearch_query": "\"*:*\""
     }
 ]
