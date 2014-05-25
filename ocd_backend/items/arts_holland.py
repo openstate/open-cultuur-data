@@ -9,7 +9,10 @@ class ArtsHollandItem(BaseItem):
         return self.original_item.get('id')
 
     def get_original_object_urls(self):
-        return {}
+        return {
+            'html': 'http://api.artsholland.com/%s' % self.get_original_object_id(),
+            'xml': 'http://api.artsholland.com/%s' % self.get_original_object_id()
+        }
 
     def get_rights(self):
         return u'Unknown'

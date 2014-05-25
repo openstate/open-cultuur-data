@@ -63,6 +63,7 @@ class ArtsHollandExtractor(BaseExtractor):
 	result = self.call(self.url, data={'query': query.format(url)}, headers=headers)
 
 	binding = result.get('results').get('bindings')
+
 	return (json.dumps(binding))
 
     def get_all_results(self):
