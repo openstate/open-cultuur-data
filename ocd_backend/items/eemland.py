@@ -146,14 +146,14 @@ class ArchiefEemlandItem(BaseItem):
             # Only include the description if it differs from the title
             if description != title:
                 text_items.append(description)
-
+        
+        text_items += self._get_all_text('.//item/dc:coverage')
         text_items += self._get_all_text('.//item/dc:subject')
         text_items += self._get_all_text('.//item/dc:creator')
         text_items += self._get_all_text('.//item/dc:coverage')
         text_items += self._get_all_text('.//item/dc:type')
         text_items += self._get_all_text('.//item/dc:identifier')
         text_items += self._get_all_text('.//item/ese:provider')
-
         text_items.append(self._get_text_or_none('.//memorix:MEMORIX/field[@name="Annotatie"]/value'))
 
         return u' '.join([ti for ti in text_items if ti is not None])
