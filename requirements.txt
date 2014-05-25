@@ -7,3 +7,4 @@ requests==2.2.1
 Sphinx==1.2.2
 sphinxcontrib-httpdomain==1.2.1
 sphinx-rtd-theme==0.1.6
+python-dateutil==2.1

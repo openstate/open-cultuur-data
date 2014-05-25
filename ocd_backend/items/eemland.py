@@ -1,12 +1,14 @@
 import re
+ 
 from datetime import datetime
+from dateutil import parser
 
 from ocd_backend.items import BaseItem
 
 
 class ArchiefEemlandItem(BaseItem):
     R_IMG_RES = re.compile(r'http://.+/thumb/(?P<width>\d+)x(?P<height>\d+)/.+$')
-
+    
     def _get_text_or_none(self, xpath_expression):
         node = self.original_item.find(xpath_expression, namespaces=self.original_item.nsmap)
         if node is not None and node.text is not None:
@@ -25,8 +27,7 @@ class ArchiefEemlandItem(BaseItem):
         return texts
 
     def get_original_object_id(self):
-	print self	 
-        return self._get_text_or_none('.//item/guid').split('/')[-1]
+        return self._get_text_or_none('.//item/guid')
 
     def get_original_object_urls(self):
         link = self._get_text_or_none('.//item/link')
@@ -58,10 +59,43 @@ class ArchiefEemlandItem(BaseItem):
                 combined_index_data['description'] = description
 
         date = self._get_text_or_none('.//item/dc:date')
-        if date:
-            combined_index_data['date'] = datetime.strptime(self._get_text_or_none('.//dc:date'),
-                                                            '%Y-%m-%dT%H:%M:%SZ')
-        combined_index_data['date_granularity'] = 14
+        
+	if date:
+	    #Trying to specify how accurate our date is
+            length = len(date)
+	    if length == 4:
+		granularity = 4	     
+
+	    else:
+	        match = re.search('\d{4}-\d{1,2}-\d{1,2}', date)
+	        if match:
+	            granularity = 8
+		
+	        else:
+		    match = re.search('\d{4}-\d{1,2}', date)
+		    
+		    if match:
+			granularity = 6			
+
+		    else:
+		        match = re.search('\d{4}\D{1,5}\d{4}', date)
+			
+		        if match:
+		            granularity = 2
+		        else:
+			    granularity = 4
+	
+	    #Try if date string can be parsed, if not extract the first occuring year and extract it from the string
+            #This is to work around the occurence of: 1891|1924, 1818-1990, 1990 circa (and others)
+	    try:
+	       parsed_date = parser.parse(date)
+	
+	    except:
+	       date = re.search('\d{4}', date).group(0)
+	       parsed_date = parser.parse(date)
+
+            combined_index_data['date'] = parsed_date
+	    combined_index_data['date_granularity'] = granularity
 
         creators = self.original_item.findall('.//dc:creator',
             namespaces=self.original_item.nsmap)
@@ -91,8 +125,8 @@ class ArchiefEemlandItem(BaseItem):
                     'width': int(resolution.group('width')),
                     'height': int(resolution.group('height'))
                 })
-
-        return combined_index_data
+        
+	return combined_index_data
 
     def get_index_data(self):
         return {}
