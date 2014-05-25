@@ -47,8 +47,8 @@ class OaiExtractor(BaseExtractor):
             req_params = {'verb': 'ListIdentifiers'}
             if resumption_token:
                 req_params['resumptionToken'] = resumption_token
-            else:
-                req_params['metadataPrefix'] = self.metadata_prefix
+
+            req_params['metadataPrefix'] = self.metadata_prefix
 
             resp = self.oai_call(req_params)
 
