@@ -4,7 +4,7 @@ Open Cultuur Data API install notes
 Using Vagrant
 =============
 
-Using `Vagrant <http://www.vagrantup.com/>`_ is by far the easiest way to quickly spin up a development environment and get started with contributing to the Open Cultuur Data API.
+Using `Vagrant <http://www.vagrantup.com/>`_ is by far the easiest way to spin up a development environment and get started with contributing to the Open Cultuur Data API.
 
 1. Clone the OCD git repository::
 
@@ -18,6 +18,8 @@ Using `Vagrant <http://www.vagrantup.com/>`_ is by far the easiest way to quickl
 3. Start the Vagrant box and SSH into it::
 
    $ vagrant up && vagrant ssh
+
+Vagrant will automatically sync your project directory (the directory with the Vagrantfile) between the host and guest machine. In the guest, the project directory can be found under ``/vagrant``. For more information, see the Vagrant documentation on `Synced Folders <http://docs.vagrantup.com/v2/synced-folders/index.html>`_.
 
 Manual setup
 ============
