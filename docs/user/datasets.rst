@@ -106,3 +106,31 @@ Combined index
 Rijksmuseum index
 ^^^^^^^^^^^^^^^^^
 
+
+
+Open Archieven
+--------------
+
+This dataset contains genealogical data from open archives, as aggregated by `Open Archives <http://www.openarch.nl/>`_. The index contains records from independant researchers as well as archives, like `Erfgoed Leiden en omstreken <http://www.opencultuurdata.nl/wiki/regionaal-archief-leiden-genealogische-data/>`_, `Gemeente Ede <http://www.opencultuurdata.nl/wiki/gemeente-ede-bevolking-gemeente-ede-1647-1913/>`_, `Gemeentearchief Tholen <http://www.opencultuurdata.nl/wiki/gemeente-tholen-genealogische-data-bevolkingsregisters-1803-1940-metadata-en-scans/> `_. Content is harvested by using the `OAI-PMH feed <http://www.openarch.nl/api/docs/oai-pmh/>`_. The OCD implementation uses the 'oai_a2a' (Archive 2 All) data format. 
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``EventType`` and ``PersonName``     | Only names of 'main' persons in event  |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``InstitutionName``, ``SourceType``, | Names of all related persons           |
+|                        | `` SourcePlace`` and ``PersonName``  |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``EventDate``                        | ``date_granularity`` varies between 8  |
+|                        |                                      | and 10                                 |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``SourceAvailableScans``             | Thumbnails of records are (in general) |
+|                        |                                      | hosted by the orinal archive           |
++------------------------+--------------------------------------+----------------------------------------+
+
+
+Open Archieven
+^^^^^^^^^^^^^^
