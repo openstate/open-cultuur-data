@@ -1,4 +1,4 @@
-from ocd_backend.tranformers import BaseTransformer
+from ocd_backend.transformers import BaseTransformer
 from ocd_backend.utils.misc import parse_oai_response
 
 class OpenbeeldenTransformer(BaseTransformer):
