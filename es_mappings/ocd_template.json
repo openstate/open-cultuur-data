@@ -88,17 +88,15 @@
                 },
                 "all_text": {
                     "type": "string",
-                    "analyzer": "text_nl",
+                    "analyzer": "text_nl"
                 },
                 "title": {
                     "type": "string",
-                    "analyzer": "text_nl",
-                    "index_options": "offsets"
+                    "analyzer": "text_nl"
                 },
                 "description": {
                     "type": "string",
-                    "analyzer": "text_nl",
-                    "index_options": "offsets"
+                    "analyzer": "text_nl"
                 },
                 "date": {
                     "type": "date",
@@ -124,6 +122,10 @@
                     "index_name": "media_url",
                     "properties": {
                         "url": {
+                            "type": "string",
+                            "index": "no"
+                        },
+                        "original_url": {
                             "type": "string",
                             "index": "no"
                         },

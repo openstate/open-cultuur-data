@@ -85,7 +85,7 @@ class NationaalArchiefBeeldbankItem(BaseItem):
                 resolution = self.R_IMG_RES.match(url)
 
                 combined_index_data['media_urls'].append({
-                    'url': url,
+                    'original_url': url,
                     'content_type': 'image/jpeg',
                     'width': int(resolution.group('width')),
                     'height': int(resolution.group('height'))

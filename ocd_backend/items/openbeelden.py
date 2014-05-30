@@ -19,7 +19,8 @@ class OpenbeeldenItem(BaseItem):
         'ts': 'video/MP2T',
         'mpeg': 'video/mpeg',
         'mpg': 'video/mpeg',
-        'png': 'image/png'
+        'png': 'image/png',
+        'jpg': 'image/jpeg'
     }
 
     def _get_text_or_none(self, xpath_expression):
@@ -72,8 +73,8 @@ class OpenbeeldenItem(BaseItem):
 
             for medium in mediums:
                 combined_index_data['media_urls'].append({
-                    'url': medium.text,
-                    'content_type': self.media_mime_types[medium.text.split('.')[-1]]
+                    'original_url': medium.text,
+                    'content_type': self.media_mime_types[medium.text.split('.')[-1]].lower()
                 })
 
         return combined_index_data

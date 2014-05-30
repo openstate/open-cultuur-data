@@ -1,6 +1,6 @@
 .. _dev_tech_overview:
 
-Technical Overview
+Technical overview
 ==================
 
 .. todo::
