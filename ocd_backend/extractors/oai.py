@@ -1,11 +1,9 @@
-import requests
-
-from ocd_backend.extractors import BaseExtractor
+from ocd_backend.extractors import BaseExtractor, HttpRequestMixin
 from ocd_backend.extractors import log
 from ocd_backend.utils.misc import parse_oai_response
 
 
-class OaiExtractor(BaseExtractor):
+class OaiExtractor(BaseExtractor, HttpRequestMixin):
     metadata_prefix = 'oai_dc'
     namespaces = {'oai': 'http://www.openarchives.org/OAI/2.0/'}
 
@@ -25,9 +23,8 @@ class OaiExtractor(BaseExtractor):
         :type params: dict
         :param params: a dictonary sent as arguments in the query string
         """
-
         log.debug('Getting %s (params: %s)' % (self.oai_base_url, params))
-        r = requests.get(self.oai_base_url, params=params)
+        r = self.http_session.get(self.oai_base_url, params=params)
         r.raise_for_status()
 
         return r.content
@@ -42,7 +39,6 @@ class OaiExtractor(BaseExtractor):
         :returns: a generator that yields a tuple for each record,
             a tuple consists of the content-type and the content as a string.
         """
-
         resumption_token = None
         while True:
             req_params = {'verb': 'ListIdentifiers'}
@@ -80,8 +76,7 @@ class OaiExtractor(BaseExtractor):
 
 class OpenBeeldenOaiExtractor(OaiExtractor):
     def get_all_records(self):
-        """
-        Retrieves all available OAI records. This method has to be
+        """Retrieves all available OAI records. This method has to be
         specifically overwritten for OpenBeelden, as they encode the
         metadataPrefix in their resumption token, rather than having a
         separate HTTP GET parameter.
