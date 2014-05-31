@@ -1,6 +1,7 @@
+from lxml import etree
+
 from ocd_backend.extractors import BaseExtractor, HttpRequestMixin
 from ocd_backend.extractors import log
-from ocd_backend.utils.misc import parse_oai_response
 
 
 class OaiExtractor(BaseExtractor, HttpRequestMixin):
@@ -29,6 +30,25 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
 
         return r.content
 
+    def parse_oai_response(self, content):
+        """Parses an OAI XML response and returns an XML tree.
+
+        The input source is expected to be in UTF-8. To get around
+        well-formedness errors (which occur in many responses), bad
+        characters are ignored.
+
+        :param content: the OAI XML response as a string.
+        :type content: string
+        :rtype: lxml.etree._Element
+        """
+        content = unicode(content, 'UTF-8', 'replace')
+        # get rid of character code 12 (form feed)
+        content = content.replace(chr(12), '?')
+
+        parser = etree.XMLParser(recover=True, encoding='utf-8')
+
+        return etree.fromstring(content.encode('utf-8'), parser=parser)
+
     def get_all_records(self):
         """Retrieves all available OAI records.
 
@@ -49,7 +69,7 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
 
             resp = self.oai_call(req_params)
 
-            tree = parse_oai_response(resp)
+            tree = self.parse_oai_response(resp)
             record_ids = tree.xpath('//oai:header/oai:identifier/text()',
                                     namespaces=self.namespaces)
             for record_id in record_ids:
@@ -92,7 +112,7 @@ class OpenBeeldenOaiExtractor(OaiExtractor):
 
             resp = self.oai_call(req_params)
 
-            tree = parse_oai_response(resp)
+            tree = self.parse_oai_response(resp)
             record_ids = tree.xpath('//oai:header/oai:identifier/text()',
                                     namespaces=self.namespaces)
 

@@ -34,7 +34,7 @@ class BaseExtractor(object):
 
 class HttpRequestMixin(object):
     """A mixin that can be used by extractors that use HTTP as a method
-    to fetch data from a remote source. A presistent
+    to fetch data from a remote source. A persistent
     :class:`requests.Session` is used to take advantage of
     HTTP Keep-Alive.
     """
