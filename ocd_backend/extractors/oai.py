@@ -61,24 +61,19 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
         """
         resumption_token = None
         while True:
-            req_params = {'verb': 'ListIdentifiers'}
+            req_params = {'verb': 'ListRecords'}
             if resumption_token:
                 req_params['resumptionToken'] = resumption_token
 
             req_params['metadataPrefix'] = self.metadata_prefix
 
             resp = self.oai_call(req_params)
-
             tree = self.parse_oai_response(resp)
-            record_ids = tree.xpath('//oai:header/oai:identifier/text()',
-                                    namespaces=self.namespaces)
-            for record_id in record_ids:
-                record = self.oai_call({
-                    'verb': 'GetRecord',
-                    'identifier': record_id,
-                    'metadataPrefix': self.metadata_prefix
-                })
-                yield 'application/xml', record
+
+            records = tree.xpath('.//oai:ListRecords/oai:record',
+                                 namespaces=self.namespaces)
+            for record in records:
+                yield 'application/xml', etree.tostring(record)
 
             resumption_token = tree.find('.//oai:resumptionToken',
                                          namespaces=self.namespaces).text
@@ -103,7 +98,7 @@ class OpenBeeldenOaiExtractor(OaiExtractor):
         """
         resumption_token = None
         while True:
-            req_params = {'verb': 'ListIdentifiers'}
+            req_params = {'verb': 'ListRecords'}
             if resumption_token:
                 req_params['resumptionToken'] = resumption_token
             # This fixes the culprit
@@ -111,18 +106,12 @@ class OpenBeeldenOaiExtractor(OaiExtractor):
                 req_params['metadataPrefix'] = self.metadata_prefix
 
             resp = self.oai_call(req_params)
-
             tree = self.parse_oai_response(resp)
-            record_ids = tree.xpath('//oai:header/oai:identifier/text()',
-                                    namespaces=self.namespaces)
 
-            for record_id in record_ids:
-                record = self.oai_call({
-                    'verb': 'GetRecord',
-                    'identifier': record_id,
-                    'metadataPrefix': self.metadata_prefix
-                })
-                yield 'application/xml', record
+            records = tree.xpath('.//oai:ListRecords/oai:record',
+                                 namespaces=self.namespaces)
+            for record in records:
+                yield 'application/xml', etree.tostring(record)
 
             resumption_token = tree.find('.//oai:resumptionToken',
                                          namespaces=self.namespaces).text
