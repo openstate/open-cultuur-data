@@ -4,6 +4,7 @@ from ocd_backend.extractors import BaseExtractor
 from ocd_backend.extractors import log
 from ocd_backend.utils.misc import parse_oai_response
 
+
 class OaiExtractor(BaseExtractor):
     metadata_prefix = 'oai_dc'
     namespaces = {'oai': 'http://www.openarchives.org/OAI/2.0/'}
@@ -75,3 +76,44 @@ class OaiExtractor(BaseExtractor):
     def run(self):
         for record in self.get_all_records():
             yield record
+
+
+class OpenBeeldenOaiExtractor(OaiExtractor):
+    def get_all_records(self):
+        """
+        Retrieves all available OAI records. This method has to be
+        specifically overwritten for OpenBeelden, as they encode the
+        metadataPrefix in their resumption token, rather than having a
+        separate HTTP GET parameter.
+        """
+        resumption_token = None
+        while True:
+            req_params = {'verb': 'ListIdentifiers'}
+            if resumption_token:
+                req_params['resumptionToken'] = resumption_token
+            # This fixes the culprit
+            else:
+                req_params['metadataPrefix'] = self.metadata_prefix
+
+            resp = self.oai_call(req_params)
+
+            tree = parse_oai_response(resp)
+            record_ids = tree.xpath('//oai:header/oai:identifier/text()',
+                                    namespaces=self.namespaces)
+
+            for record_id in record_ids:
+                record = self.oai_call({
+                    'verb': 'GetRecord',
+                    'identifier': record_id,
+                    'metadataPrefix': self.metadata_prefix
+                })
+                yield 'application/xml', record
+
+            resumption_token = tree.find('.//oai:resumptionToken',
+                                         namespaces=self.namespaces).text
+
+            # According to the OAI spec, we reached the last page of the
+            # list if the 'resumptionToken' element is empty
+            if not resumption_token:
+                log.debug('resumptionToken empty, done fetching list')
+                break
