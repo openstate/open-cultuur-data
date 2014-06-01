@@ -1,12 +1,25 @@
 from ocd_backend.items import BaseItem
 import datetime
-from ocd_backend.utils.misc import try_convert
-
+from ocd_backend.utils.misc import try_convert, parse_date, parse_date_span
 
 class CentraalMuseumUtrechtItem(BaseItem):
 
     # itemclass for centraal museum utrecht
     # author :  Gijs Koot - gijs.koot@tno.nl
+
+    # Granularities
+    regexen = {
+        r'\?$' : (0, lambda _ : None),
+        r'(\d\d)[\?]+$' : (2, lambda (y,) : datetime.datetime(int(y+'00'), 1, 1)),
+        r'(\d\d\d)\?$' : (3, lambda (y,) : datetime.datetime(int(y+'0'), 1, 1)),
+        r'(\d\d\d\d) ?- ?\d\d\d\d$' : (3, lambda (y,) : datetime.datetime(int(y), 1, 1)),
+        r'(\d\d\d0)[\?() ]+$' : (3, lambda (y,) : datetime.datetime(int(y), 1, 1)),
+        # 'yyyy?' will still have a date granularity of 4
+        r'(\d\d\d\d)[\?() ]+$' : (4, lambda (y,) : datetime.datetime(int(y), 1, 1)),
+        r'(\d+)$' : (4, lambda (y,) : datetime.datetime(int(y), 1, 1)),
+        r'(\d\d\d\d)-(\d\d)$' : (6, lambda (y,m) : datetime.datetime(int(y), int(m), 1)),
+        r'(\d\d\d\d)-(\d\d)-(\d\d)$' : (8, lambda (y,m,d) : datetime.datetime(int(y), int(m), int(d))),
+    }
 
     def get_original_object_id(self):
         return unicode(self.original_item.find('object_number').text)
@@ -30,30 +43,23 @@ class CentraalMuseumUtrechtItem(BaseItem):
         return u'No Rights Reserved / Public Domain'
 
     def _get_date_and_granularity(self):
+        if self.original_item.find('production.date.start') is not None:
+            pds_text = self.original_item.find('production.date.start').text
+            pde_text = self.original_item.find('production.date.end').text
+            
+            return parse_date_span(self.regexen, pds_text, pde_text)
+        else:
+            return None, None
 
-        # returns rule based date and granularity based on internal fields
-
-        # TODO: day-dates, absence
-
-        # if there is no production.date.start, we crash
-        pds = int(self.original_item.find('production.date.start').text) 
-        gran = 2 # default granularity is two
-        if self.original_item.find('production.date.end'):
-            pde = int(self.original_item.find('production.date.end').text)
-            if pde - pds < 50 : gran = 3
-            if pde - pds < 5 : gran = 4
-
-        return datetime.datetime(pds, 1, 1), gran
 
     def get_combined_index_data(self):
 
-        date, gran = self._get_date_and_granularity()
-        index_date = dict()
-        index_data = {
-            'title' : unicode(self.original_item.find('title').text),
-            'date' : date,
-            'date_granularity' : gran,
-        }
+        index_data = {}
+        if self.original_item.find('title'):
+            index_data['title'] = unicode(self.original_item.find('title').text)
+
+        index_data['gran'], index_data['date'] = self._get_date_and_granularity()        
+
 
         # index_data['all_text'] = self.get_all_text()
         if self.original_item.find('notes'):
@@ -85,7 +91,7 @@ class CentraalMuseumUtrechtItem(BaseItem):
         index_data['measurements'] = [
             {
                 'type' : t,
-                'value' : try_convert(float, v), 
+                'value' : try_convert(float, v.replace(',','.')), 
                 'unit' : u
             }
             for (t,v,u) in dim if t and v and v not in ['?','...','....']]
@@ -97,9 +103,9 @@ class CentraalMuseumUtrechtItem(BaseItem):
             index_data['acquisition']['method'] = unicode(method.text)
         date = self.original_item.find('acquisition.date')
         if date and date.text and date.text not in ['?', '??', '?? +', 'onbekend', 'onbekend +']:
-            # TODO: parse date & granularity
-            index_data['acquisition']['date'] = unicode(date.text)
-            index_data['acquisition']['date_granularity'] = None
+            gran, date = parse_date(date.text)
+            index_data['acquisition']['date'] = date
+            index_data['acquisition']['date_granularity'] = gran
 
         # collections
         index_data['collections'] = [unicode(c.text) for c in self.original_item.iter('collection') if c.text]
@@ -109,7 +115,12 @@ class CentraalMuseumUtrechtItem(BaseItem):
         # creator.qualifier is never defined
         roles = [[c.text for c in self.original_item.iter(f) if c.text] for f in fields]
         if all(roles):
-            index_data['creator_roles'] = dict(zip(*roles))
+            index_data['creator_roles'] = [
+                {
+                    'creator' : r[0],
+                    'role' : r[1]
+                }
+                for r in zip(*roles)]
 
         # materials
         materials = [c.text for c in self.original_item.iter('material') if c.text]

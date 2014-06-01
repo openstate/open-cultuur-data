@@ -1,5 +1,5 @@
 import json
-
+import re
 from lxml import etree
 
 
@@ -72,3 +72,39 @@ def try_convert(conv, value):
         return conv(value)
     except ValueError:
         return value
+
+def parse_date(regexen, date_str):
+    """
+        Parse a messy string into a granular date
+
+        `regexen` is of the form { regex : (granularity, groups -> datetime) }
+    """
+    if date_str:
+        for reg, (gran, dater) in regexen.items():
+            m = re.match(reg, date_str)
+            if m:
+                return gran, dater(m.groups())
+    return None, None
+
+def parse_date_span(regexen, date1_str, date2_str):
+    """
+        Parse a start & end date into a (less) granular date
+
+        `regexen` is of the form { regex : (granularity, groups -> datetime) }
+    """
+    date1_gran, date1 = parse_date(regexen, date1_str)
+    date2_gran, date2 = parse_date(regexen, date2_str)
+
+    if date2:
+        # TODO: integrate both granularities
+        if (date1_gran, date1) == (date2_gran, date2):
+            return date1_gran, date1
+        if (date2 - date1).days < 5*365:
+            return 4, date1
+        if (date2 - date1).days < 50*365:
+            return 3, date1
+        if (date2 - date1).days >= 50*365:
+            return 2, date1
+    else:
+        return date1_gran, date1
+
