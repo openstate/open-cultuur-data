@@ -30,11 +30,6 @@ class CentraalMuseumUtrechtItem(BaseItem):
         return self.source_definition['file_url']
 
     def get_collection(self):
-
-        # there are multiple collections in this case. returning a join by dashes of the collections
-        # would be return unicode(' - '.join([cl.text for cl in self.original_item.iter('collection')]))
-
-        # but
         return u'Centraal Museum Utrecht'
 
     def get_rights(self):
@@ -104,7 +99,7 @@ class CentraalMuseumUtrechtItem(BaseItem):
         if not method == None and method.text:
             method = method.text
         if not date == None and date.text:
-            date = date.text.replace("+","").strip()
+            date = date.text.replace("+","").strip() # the meaning of '+' is unknown
             if date not in ['?', '??', 'onbekend']:
                 g,d = parse_date(self.regexen, date)
         index_data['acquisition'] = {
@@ -113,7 +108,7 @@ class CentraalMuseumUtrechtItem(BaseItem):
             'date_granularity' : g
         }
 
-        # creators
+        # creator roles
         fields = ['creator', 'creator.role']
         # creator.qualifier is never defined
         roles = [[c.text for c in self.original_item.iter(f) if c.text] for f in fields]
