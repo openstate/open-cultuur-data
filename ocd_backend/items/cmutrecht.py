@@ -6,6 +6,7 @@ class CentraalMuseumUtrechtItem(BaseItem):
 
     # itemclass for centraal museum utrecht
     # author :  Gijs Koot - gijs.koot@tno.nl
+    # author :  Benno Kruit - bennokr@gmail.com
 
     # Granularities
     regexen = {
