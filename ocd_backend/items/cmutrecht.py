@@ -54,12 +54,28 @@ class CentraalMuseumUtrechtItem(BaseItem):
         # author is optional
         index_data['authors'] = [unicode(c.text) for c in self.original_item.iter('creator')]
 
+        # get jpeg images from static host
+        img_url = 'http://cmu.adlibhosting.com/wwwopacximages/wwwopac.ashx?command=getcontent&server=images&value=%s&width=500&height=500'
+        files = [c.text for c in self.original_item.iter('reproduction.identifier_URL') if c.text]
+        index_data['media_urls'] = [
+                {
+                    'original_url': img_url % fname,
+                    'content_type': 'image/jpeg'
+                }
+            for fname in files if fname[-3:].lower() == 'jpg']
 
         return index_data
 
     def get_index_data(self):
+        index_data = {}
 
-        return {}
+        # measurements
+        fields = ['type', 'value', 'unit']
+        dim = zip(*[[c.text for c in self.original_item.iter('dimension.'+f)] for f in fields])
+        dim = filter(lambda (t,v,_): t and v and v not in ['?','...','....'] , dim)
+        index_data['measurements'] = dim
+
+        return index_data
 
     def get_all_text(self):
 
