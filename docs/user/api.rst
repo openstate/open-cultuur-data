@@ -340,6 +340,7 @@ Searching within a single collection
    :statuscode 400: Bad Request. An accompanying error message will explain why the request was invalid.
    :statuscode 404: The requested source does not exist.
 
+.. _rest_get:
 
 Retrieving a single object
 --------------------------

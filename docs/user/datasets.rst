@@ -8,6 +8,7 @@ Fotobank Nationaal Archief
 
 This dataset contains historical photographs from the `National Archive <http://www.gahetna.nl/collectie/afbeeldingen/fotocollectie>`_. The `archive's OpenSearch API <http://www.gahetna.nl/over-ons/aa-data>`_ is used to harvest the content that the National Archive has made available under an open license.
 
+.. _datasets_combinedindex:
 
 Combined index
 ^^^^^^^^^^^^^^
@@ -64,7 +65,7 @@ Combined index
 +------------------------+--------------------------------------+----------------------------------------+
 | ``media_urls``         | ``oi:medium`` and ``oi:extent``      | Each ``media_url`` entry contains an   |
 |                        |                                      | object for each ``oi:medium`` node.    |
-|                        |                                      | The value of ``oi:extent`` is stored   | 
+|                        |                                      | The value of ``oi:extent`` is stored   |
 |                        |                                      | under ``duration`` and represented as  |
 |                        |                                      | seconds.                               |
 +------------------------+--------------------------------------+----------------------------------------+
@@ -99,10 +100,9 @@ Combined index
 +------------------------+--------------------------------------+----------------------------------------+
 | ``media_urls``         | ``webImage``                         | ``media_urls`` contains a array entry  |
 |                        |                                      | width an object that contains details  |
-|                        |                                      | from ``webImage`` (``url``, ``width``, | 
+|                        |                                      | from ``webImage`` (``url``, ``width``, |
 |                        |                                      | ``height`` and ``content_type``).      |
 +------------------------+--------------------------------------+----------------------------------------+
 
 Rijksmuseum index
 ^^^^^^^^^^^^^^^^^
-
