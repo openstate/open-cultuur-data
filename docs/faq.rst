@@ -5,6 +5,8 @@ Frequently Asked Questions
 
 This part of the documentation answers common questions about the Open Cultuur Data API.
 
+.. _date_granularity:
+
 What does ``date_granularity`` mean?
 ------------------------------------
 Dates are fickle things. A date is a particular point in time, and can be represented in `very many ways <http://xkcd.com/1179/>`_. In addition, dates have gradations in precision. For example, ``Jan. 1970`` is not as precise as ``1 January 1970 00:00:00`` is.
