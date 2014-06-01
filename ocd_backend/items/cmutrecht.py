@@ -25,9 +25,9 @@ class CentraalMuseumUtrechtItem(BaseItem):
         return unicode(self.original_item.find('object_number').text)
 
     def get_original_object_urls(self):
-
         # there is no original object url, it is retrieved from an xml
-        return {}
+        # so we return the collective file url
+        return self.source_definition['file_url']
 
     def get_collection(self):
 
