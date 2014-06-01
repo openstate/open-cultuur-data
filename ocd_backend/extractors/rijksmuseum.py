@@ -1,13 +1,12 @@
 from math import ceil
 import json
 
-import requests
-
-from ocd_backend.extractors import BaseExtractor
+from ocd_backend.extractors import BaseExtractor, HttpRequestMixin
 from ocd_backend.extractors import log
 from ocd_backend.exceptions import NotFound
 
-class RijksmuseumExtractor(BaseExtractor):
+
+class RijksmuseumExtractor(BaseExtractor, HttpRequestMixin):
     api_base_url = 'https://www.rijksmuseum.nl/api/nl/'
     items_per_page = 100 # The number of items to request in a single API call
 
@@ -17,7 +16,7 @@ class RijksmuseumExtractor(BaseExtractor):
         url = '%s%s' % (self.api_base_url, url)
 
         log.debug('Getting %s (params: %s)' % (url, params))
-        r = requests.get(url, params=params)
+        r = self.http_session.get(url, params=params)
         r.raise_for_status()
 
         return r.json()

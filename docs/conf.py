@@ -81,7 +81,7 @@ pygments_style = 'sphinx'
 
 
 extlinks = {
-    'rest_api_v0': ('http://api.opencultuurdata.nl/v0/%s', None)
+    'rest_api_v0': ('http://api.opencultuurdata.nl/%s', None)
 }
 
 # -- Options for HTML output ----------------------------------------------

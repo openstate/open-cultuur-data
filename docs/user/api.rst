@@ -14,7 +14,7 @@ The API accepts requests with JSON content and returns JSON data in all of its r
 
 All API URLs referenced in this documentation start with the following base part:
 
-    :rest_api_v0:`None`
+    :rest_api_v0:`v0`
 
 All API endpoints are designed according to the idea that there is an operation within a *context*: methods on the "root" context are executed across all datasets; :ref:`/search <rest_search>` executes a search across all collections, whereas :ref:`/openbeelden/search <rest_source_search>` executes a search on the OpenBeelden collection.
 
@@ -340,6 +340,7 @@ Searching within a single collection
    :statuscode 400: Bad Request. An accompanying error message will explain why the request was invalid.
    :statuscode 404: The requested source does not exist.
 
+.. _rest_get:
 
 Retrieving a single object
 --------------------------

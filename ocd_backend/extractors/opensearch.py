@@ -2,13 +2,12 @@ from copy import deepcopy
 from time import sleep
 
 from lxml import etree
-import requests
 
-from ocd_backend.extractors import BaseExtractor
+from ocd_backend.extractors import BaseExtractor, HttpRequestMixin
 from ocd_backend.extractors import log
 
 
-class OpensearchExtractor(BaseExtractor):
+class OpensearchExtractor(BaseExtractor, HttpRequestMixin):
     per_page_count = 100
 
     def __init__(self, *args, **kwargs):
@@ -32,7 +31,7 @@ class OpensearchExtractor(BaseExtractor):
 
         log.debug('Getting %s (params: %s)' % (self.url, params))
 
-        r = requests.get(self.url, params=params)
+        r = self.http_session.get(self.url, params=params)
 
         # In case a server error is returned (for example, a gateway
         # time-out), we retry the same request for a number of times
@@ -46,7 +45,7 @@ class OpensearchExtractor(BaseExtractor):
             log.warning('Sleeping %s second(s) before retrying...' % sleep_s)
             sleep(sleep_s)
 
-            r = requests.get(self.url, params=params)
+            r = self.http_session.get(self.url, params=params)
 
             retried += 1
 

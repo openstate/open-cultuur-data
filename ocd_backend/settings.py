@@ -46,6 +46,10 @@ DEFAULT_INDEX_PREFIX = 'ocd'
 RESOLVER_BASE_URL = 'http://localhost:5000/v0/resolve'
 RESOLVER_URL_INDEX = 'ocd_resolver'
 
+
+# The User-Agent that is used when retrieving data from external sources
+USER_AGENT = 'OpenCultuurData/0.1 (+http://www.opencultuurdata.nl/)'
+
 # Allow any settings to be defined in local_settings.py which should be
 # ignored in your version control system allowing for settings to be
 # defined per machine.

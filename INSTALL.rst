@@ -1,10 +1,31 @@
-Open Cultuur Data API backend install notes
--------------------------------------------
+Open Cultuur Data API install notes
+###################################
 
-This is a quick install guide written for Lex to get him started with running the Open Cultuur Data (OCD) backend. More comprehensive documentation still needs to be written and added to OCD's documentation (currently located at http://dump.dispectu.com/ocd/).
+Using Vagrant
+=============
+
+Using `Vagrant <http://www.vagrantup.com/>`_ is by far the easiest way to spin up a development environment and get started with contributing to the Open Cultuur Data API.
+
+1. Clone the OCD git repository::
+
+   $ git clone https://github.com/openstate/open-cultuur-data.git
+   $ cd open-cultuur-data/
+
+2. Select and link the correct ``Vagrantfile`` (depending on the Vagrant provider you use)::
+
+   $ ln -s Vagrantfile.virtualbox Vagrantfile
+
+3. Start the Vagrant box and SSH into it::
+
+   $ vagrant up && vagrant ssh
+
+Vagrant will automatically sync your project directory (the directory with the Vagrantfile) between the host and guest machine. In the guest, the project directory can be found under ``/vagrant``. For more information, see the Vagrant documentation on `Synced Folders <http://docs.vagrantup.com/v2/synced-folders/index.html>`_.
+
+Manual setup
+============
 
 Pre-requisites
-==============
+--------------
 
 - Redis
 - Elasticsearch >= 1.1
@@ -15,7 +36,7 @@ Pre-requisites
 - virtualenv (optional)
 
 Installation
-============
+------------
 
 1. Install redis::
 
@@ -70,4 +91,3 @@ Running an OCD extractor
 4. Simultaneously start a worker processes::
 
    $ celery --app=ocd_backend:celery_app worker --loglevel=info --concurrency=2
-
