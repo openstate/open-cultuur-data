@@ -66,3 +66,9 @@ def parse_oai_response(content):
     parser = etree.XMLParser(recover=True, encoding='utf-8')
 
     return etree.fromstring(content.encode('utf-8'), parser=parser)
+
+def try_convert(conv, value):
+    try:
+        return conv(value)
+    except ValueError:
+        return value

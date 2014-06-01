@@ -1,5 +1,7 @@
 from ocd_backend.items import BaseItem
 import datetime
+from ocd_backend.utils.misc import try_convert
+
 
 class CentraalMuseumUtrechtItem(BaseItem):
 
@@ -30,7 +32,11 @@ class CentraalMuseumUtrechtItem(BaseItem):
     def _get_date_and_granularity(self):
 
         # returns rule based date and granularity based on internal fields
-        pds = int(self.original_item.find('production.date.start').text) # if there is no production.date.start, we crash
+
+        # TODO: day-dates, absence
+
+        # if there is no production.date.start, we crash
+        pds = int(self.original_item.find('production.date.start').text) 
         gran = 2 # default granularity is two
         if self.original_item.find('production.date.end'):
             pde = int(self.original_item.find('production.date.end').text)
@@ -49,7 +55,11 @@ class CentraalMuseumUtrechtItem(BaseItem):
             'date_granularity' : gran,
         }
 
-        index_data['all_text'] = self.get_all_text()
+        # index_data['all_text'] = self.get_all_text()
+        if self.original_item.find('notes'):
+            index_data['description'] = unicode(self.original_item.find('notes').text)
+        if self.original_item.find('label.text') and self.original_item.find('label.text').text:
+            index_data['description'] = unicode(self.original_item.find('label.text').text)
 
         # author is optional
         index_data['authors'] = [unicode(c.text) for c in self.original_item.iter('creator')]
@@ -72,14 +82,55 @@ class CentraalMuseumUtrechtItem(BaseItem):
         # measurements
         fields = ['type', 'value', 'unit']
         dim = zip(*[[c.text for c in self.original_item.iter('dimension.'+f)] for f in fields])
-        dim = filter(lambda (t,v,_): t and v and v not in ['?','...','....'] , dim)
-        index_data['measurements'] = dim
+        index_data['measurements'] = [
+            {
+                'type' : t,
+                'value' : try_convert(float, v), 
+                'unit' : u
+            }
+            for (t,v,u) in dim if t and v and v not in ['?','...','....']]
+
+        # acquisition
+        index_data['acquisition'] = {}
+        method = self.original_item.find('acquisition.method')
+        if method and method.text:
+            index_data['acquisition']['method'] = unicode(method.text)
+        date = self.original_item.find('acquisition.date')
+        if date and date.text and date.text not in ['?', '??', '?? +', 'onbekend', 'onbekend +']:
+            # TODO: parse date & granularity
+            index_data['acquisition']['date'] = unicode(date.text)
+            index_data['acquisition']['date_granularity'] = None
+
+        # collections
+        index_data['collections'] = [unicode(c.text) for c in self.original_item.iter('collection') if c.text]
+
+        # creators
+        fields = ['creator', 'creator.role']
+        # creator.qualifier is never defined
+        roles = [[c.text for c in self.original_item.iter(f) if c.text] for f in fields]
+        if all(roles):
+            index_data['creator_roles'] = dict(zip(*roles))
+
+        # materials
+        materials = [c.text for c in self.original_item.iter('material') if c.text]
+        if materials:
+            index_data['materials'] = materials
+
+        # tags
+        tags = [c.text for c in self.original_item.iter('object_name') if c.text]
+        if tags:
+            index_data['tags'] = tags
+
+        # technique
+        technique = [c.text for c in self.original_item.iter('techniek.vrije.tekst') if c.text]
+        if technique:
+            index_data['technique'] = technique
 
         return index_data
 
     def get_all_text(self):
 
         # all text consists of a simple space concatenation of the fields
-        fields = 'title', 'creator', 'notes'
+        fields = 'title', 'creator', 'notes', 'collection'
         text = ' '.join([self.original_item.find(f).text for f in fields if not self.original_item.find(f) is None])
         return unicode(text)

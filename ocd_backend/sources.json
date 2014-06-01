@@ -31,6 +31,6 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.cmutrecht.CentraalMuseumUtrechtItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
-        "file_url": "https://gist.githubusercontent.com/bennokr/5114e2c86dea2460e2f2/raw/4fe48aae6f3e071f0a5343929a6b6e36cd304ff3/cmu.xml"
+        "file_url": "https://gist.githubusercontent.com/bennokr/8cdc528fde1d2a3358d5/raw/308f84452611a77671081e9c7df1bc8139ec3bbd/cmu.xml"
     }
 ]

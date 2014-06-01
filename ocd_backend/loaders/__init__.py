@@ -52,6 +52,7 @@ class ElasticsearchLoader(BaseLoader):
     """
 
     def load_item(self, object_id, combined_index_doc, doc):
+        print doc
         log.info('Indexing documents...')
         elasticsearch.index(index=settings.COMBINED_INDEX, doc_type='item',
                             id=object_id, body=combined_index_doc)
