@@ -9,16 +9,16 @@ class CentraalMuseumUtrechtItem(BaseItem):
 
     # Granularities
     regexen = {
-        r'\?$' : (0, lambda _ : None),
-        r'(\d\d)[\?]+$' : (2, lambda (y,) : datetime.datetime(int(y+'00'), 1, 1)),
-        r'(\d\d\d)\?$' : (3, lambda (y,) : datetime.datetime(int(y+'0'), 1, 1)),
-        r'(\d\d\d\d) ?- ?\d\d\d\d$' : (3, lambda (y,) : datetime.datetime(int(y), 1, 1)),
-        r'(\d\d\d0)[\?() ]+$' : (3, lambda (y,) : datetime.datetime(int(y), 1, 1)),
+        '\?$' : (0, lambda _ : None),
+        '(\d\d)[\?]+$' : (2, lambda (y,) : datetime.datetime(int(y+'00'), 1, 1)),
+        '(\d\d\d)\?$' : (3, lambda (y,) : datetime.datetime(int(y+'0'), 1, 1)),
+        '(\d\d\d\d) ?- ?\d\d\d\d$' : (3, lambda (y,) : datetime.datetime(int(y), 1, 1)),
+        '(\d\d\d0)[\?() ]+$' : (3, lambda (y,) : datetime.datetime(int(y), 1, 1)),
         # 'yyyy?' will still have a date granularity of 4
-        r'(\d\d\d\d)[\?() ]+$' : (4, lambda (y,) : datetime.datetime(int(y), 1, 1)),
-        r'(\d+)$' : (4, lambda (y,) : datetime.datetime(int(y), 1, 1)),
-        r'(\d\d\d\d)-(\d\d)$' : (6, lambda (y,m) : datetime.datetime(int(y), int(m), 1)),
-        r'(\d\d\d\d)-(\d\d)-(\d\d)$' : (8, lambda (y,m,d) : datetime.datetime(int(y), int(m), int(d))),
+        '(\d\d\d\d)[\?() ]+$' : (4, lambda (y,) : datetime.datetime(int(y), 1, 1)),
+        '(\d+)$' : (4, lambda (y,) : datetime.datetime(int(y), 1, 1)),
+        '(\d\d\d\d)-(\d+)$' : (6, lambda (y,m) : datetime.datetime(int(y), int(m), 1)),
+        '(\d\d\d\d)-(\d+)-(\d+)$' : (8, lambda (y,m,d) : datetime.datetime(int(y), int(m), int(d))),
     }
 
     def get_original_object_id(self):
@@ -55,16 +55,17 @@ class CentraalMuseumUtrechtItem(BaseItem):
     def get_combined_index_data(self):
 
         index_data = {}
-        if self.original_item.find('title'):
+        if self.original_item.find('title') != None:
             index_data['title'] = unicode(self.original_item.find('title').text)
 
-        index_data['gran'], index_data['date'] = self._get_date_and_granularity()        
+        gran, date = self._get_date_and_granularity()
+        if gran and date:
+            index_data['date_granularity'] = gran
+            index_data['date'] = date
 
 
         # index_data['all_text'] = self.get_all_text()
-        if self.original_item.find('notes'):
-            index_data['description'] = unicode(self.original_item.find('notes').text)
-        if self.original_item.find('label.text') and self.original_item.find('label.text').text:
+        if self.original_item.find('label.text') != None:
             index_data['description'] = unicode(self.original_item.find('label.text').text)
 
         # author is optional
@@ -91,24 +92,26 @@ class CentraalMuseumUtrechtItem(BaseItem):
         index_data['measurements'] = [
             {
                 'type' : t,
-                'value' : try_convert(float, v.replace(',','.')), 
+                'value' : v.replace(',','.'), 
                 'unit' : u
             }
             for (t,v,u) in dim if t and v and v not in ['?','...','....']]
 
         # acquisition
-        index_data['acquisition'] = {}
-        method = self.original_item.find('acquisition.method')
-        if method and method.text:
-            index_data['acquisition']['method'] = unicode(method.text)
         date = self.original_item.find('acquisition.date')
-        if date and date.text and date.text not in ['?', '??', '?? +', 'onbekend', 'onbekend +']:
-            gran, date = parse_date(date.text)
-            index_data['acquisition']['date'] = date
-            index_data['acquisition']['date_granularity'] = gran
-
-        # collections
-        index_data['collections'] = [unicode(c.text) for c in self.original_item.iter('collection') if c.text]
+        method = self.original_item.find('acquisition.method')
+        g,d = 0, None
+        if not method == None and method.text:
+            method = method.text
+        if not date == None and date.text:
+            date = date.text.replace("+","").strip()
+            if date not in ['?', '??', 'onbekend']:
+                g,d = parse_date(self.regexen, date)
+        index_data['acquisition'] = {
+            'method' : method, 
+            'date' : d, 
+            'date_granularity' : g
+        }
 
         # creators
         fields = ['creator', 'creator.role']
@@ -122,26 +125,24 @@ class CentraalMuseumUtrechtItem(BaseItem):
                 }
                 for r in zip(*roles)]
 
-        # materials
-        materials = [c.text for c in self.original_item.iter('material') if c.text]
-        if materials:
-            index_data['materials'] = materials
-
-        # tags
-        tags = [c.text for c in self.original_item.iter('object_name') if c.text]
-        if tags:
-            index_data['tags'] = tags
-
-        # technique
-        technique = [c.text for c in self.original_item.iter('techniek.vrije.tekst') if c.text]
-        if technique:
-            index_data['technique'] = technique
+        # listed attributes
+        attrs = {
+            'collections' : 'collections',
+            'material' : 'materials',
+            'object_name' : 'tags',
+            'techniek.vrije.tekst' : 'technique',
+            'notes' : 'notes',
+        }
+        for attr, index_name in attrs.items():
+            val = [unicode(c.text) for c in self.original_item.iter(attr) if c.text]
+            if val:
+                index_data[index_name] = val
 
         return index_data
 
     def get_all_text(self):
 
         # all text consists of a simple space concatenation of the fields
-        fields = 'title', 'creator', 'notes', 'collection'
-        text = ' '.join([self.original_item.find(f).text for f in fields if not self.original_item.find(f) is None])
+        fields = 'title', 'creator', 'notes', 'collection', 'object_name', 'techniek.vrije.tekst', 'material'
+        text = ' '.join([unicode(c.text) for f in fields for c in self.original_item.iter(f) if c.text])
         return unicode(text)

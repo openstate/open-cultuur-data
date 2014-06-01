@@ -83,8 +83,11 @@ def parse_date(regexen, date_str):
         for reg, (gran, dater) in regexen.items():
             m = re.match(reg, date_str)
             if m:
-                return gran, dater(m.groups())
-    return None, None
+                try:
+                    return gran, dater(m.groups())
+                except ValueError:
+                    return 0, None
+    return 0, None
 
 def parse_date_span(regexen, date1_str, date2_str):
     """
