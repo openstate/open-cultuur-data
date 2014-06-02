@@ -77,10 +77,10 @@ def parse_date(regexen, date_str):
     """
         Parse a messy string into a granular date
 
-        `regexen` is of the form { regex : (granularity, groups -> datetime) }
+        `regexen` is of the form [ (regex, (granularity, groups -> datetime)) ]
     """
     if date_str:
-        for reg, (gran, dater) in regexen.items():
+        for reg, (gran, dater) in regexen:
             m = re.match(reg, date_str)
             if m:
                 try:
@@ -93,7 +93,7 @@ def parse_date_span(regexen, date1_str, date2_str):
     """
         Parse a start & end date into a (less) granular date
 
-        `regexen` is of the form { regex : (granularity, groups -> datetime) }
+        `regexen` is of the form [ (regex, (granularity, groups -> datetime)) ]
     """
     date1_gran, date1 = parse_date(regexen, date1_str)
     date2_gran, date2 = parse_date(regexen, date2_str)

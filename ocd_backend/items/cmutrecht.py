@@ -9,18 +9,18 @@ class CentraalMuseumUtrechtItem(BaseItem):
     # author :  Benno Kruit - bennokr@gmail.com
 
     # Granularities
-    regexen = {
-        '\?$' : (0, lambda _ : None),
-        '(\d\d)[\?]+$' : (2, lambda (y,) : datetime.datetime(int(y+'00'), 1, 1)),
-        '(\d\d\d)\?$' : (3, lambda (y,) : datetime.datetime(int(y+'0'), 1, 1)),
-        '(\d\d\d\d) ?- ?\d\d\d\d$' : (3, lambda (y,) : datetime.datetime(int(y), 1, 1)),
-        '(\d\d\d0)[\?() ]+$' : (3, lambda (y,) : datetime.datetime(int(y), 1, 1)),
+    regexen = [
+        ('\?$', (0, lambda _ : None) ),
+        ('(\d\d)[\?]+$', (2, lambda (y,) : datetime.datetime(int(y+'00'), 1, 1)) ),
+        ('(\d\d\d)\?$', (3, lambda (y,) : datetime.datetime(int(y+'0'), 1, 1)) ),
+        ('(\d\d\d\d) ?- ?\d\d\d\d$', (3, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
+        ('(\d\d\d0)[\?() ]+$', (3, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
         # 'yyyy?' will still have a date granularity of 4
-        '(\d\d\d\d)[\?() ]+$' : (4, lambda (y,) : datetime.datetime(int(y), 1, 1)),
-        '(\d+)$' : (4, lambda (y,) : datetime.datetime(int(y), 1, 1)),
-        '(\d\d\d\d)-(\d+)$' : (6, lambda (y,m) : datetime.datetime(int(y), int(m), 1)),
-        '(\d\d\d\d)-(\d+)-(\d+)$' : (8, lambda (y,m,d) : datetime.datetime(int(y), int(m), int(d))),
-    }
+        ('(\d\d\d\d)[\?() ]+$', (4, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
+        ('(\d+)$', (4, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
+        ('(\d\d\d\d)-(\d+)$', (6, lambda (y,m) : datetime.datetime(int(y), int(m), 1)) ),
+        ('(\d\d\d\d)-(\d+)-(\d+)$', (8, lambda (y,m,d) : datetime.datetime(int(y), int(m), int(d))) ),
+    ]
 
     def get_original_object_id(self):
         return unicode(self.original_item.find('object_number').text)
