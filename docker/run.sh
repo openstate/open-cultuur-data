@@ -1,78 +1,68 @@
 #!/bin/bash
 # prerequisites
-# Test installation 
+# Test installation
 
-sudo docker rm -f c-es c-redis c-ocd-celery c-ocd-api
+###Shared vars
+PY_HOSTPATH=$(pwd)/..
+# next: this could be changed to /data but then update start_celery.sh though
+PY_LOCALPATH=/mnt/data
+C_OCD_ES=c-ocd-es
+C_OCD_REDIS=c-ocd-redis
+C_OCD_CELERY=c-ocd-celery
+C_OCD_API=c-ocd-api
+RLINK="--link $C_OCD_REDIS:redis"
+ELINK="--link $C_OCD_ES:es"
 
-#Run Elastic Search as a single daemon, persistance by file mount on host
-IMAGE=i-es
-CONTAINER=c-es
-HOSTPATH=$(pwd)/../../data/elasticsearch
-LOCALPATH=/var/lib/elasticsearch
-mkdir -p $HOSTPATH
-sudo docker run --name $CONTAINER -v $HOSTPATH:$LOCALPATH:rw \
- -t -i -d $IMAGE
-ESIP=$(docker inspect $CONTAINER | grep IPAddress | cut -d '"' -f 4)
+##### CLEAN OUT 
+sudo docker rm -f $C_OCD_ES $C_OCD_REDIS $C_OCD_CELERY $C_OCD_API
 
-#Run Redis, inpersistant
-IMAGE=i-redis
-CONTAINER=c-redis
-sudo docker run --name $CONTAINER -t -i -d $IMAGE
-REDISIP=$(docker inspect $CONTAINER | grep IPAddress | cut -d '"' -f 4)
+##### RUN 1 ES INSTANCE
+I_ES=i-es
+ES_HOSTPATH=$(pwd)/../../data/elasticsearch
+ES_LOCALPATH=/var/lib/elasticsearch
 
-#Run Celery OCD Worker
-IMAGE=i-ocd-python
-CONTAINER=c-ocd-celery
-HOSTPATH=$(pwd)/..
-LOCALPATH=/mnt/data
-LINK="--link c-redis:redis"
-LINK2="--link c-es:es"
-RUNCMD="/bin/sh /start-celery.sh"
+mkdir -p $ES_HOSTPATH
+sudo docker run --name $C_OCD_ES -v $ES_HOSTPATH:$ES_LOCALPATH:rw \
+ -t -i -d $I_ES
+C_OCD_ES_IP=$(docker inspect $C_OCD_ES | grep IPAddress | cut -d '"' -f 4)
 
-STR="CELERY_CONFIG = {\n   'BROKER_URL': 'redis://$REDISIP:6379/0', \n   'CELERY_RESULT_BACKEND': 'redis://$REDISIP:6379/0' \n}\nELASTICSEARCH_HOST = '$ESIP'\n"
-#ELASTICSEARCH_PORT = 9200 \n "
-echo $STR > $HOSTPATH/ocd_backend/local_settings.py
+#####Run Redis, inpersistant
+I_REDIS=i-redis
 
-sudo docker run $LINK $LINK2 --name $CONTAINER \
--v $HOSTPATH:$LOCALPATH:rw  -t -i -d $IMAGE $RUNCMD
+sudo docker run --name $C_OCD_REDIS -t -i -d $I_REDIS
+REDISIP=$(docker inspect $C_OCD_REDIS | grep IPAddress | cut -d '"' -f 4)
 
-sleep 30
+#####Run Celery OCD Worker
+I_OCD_PYTHON=i-ocd-python
+CEL_RUNCMD="/bin/sh /start-celery.sh"
+
+echo "CELERY_CONFIG = {\n   'BROKER_URL': 'redis://$REDISIP:6379/0', \n   'CELERY_RESULT_BACKEND': 'redis://$REDISIP:6379/0' \n}\nELASTICSEARCH_HOST = '$ESIP'\n" > $PY_HOSTPATH/ocd_backend/local_settings.py
+sudo docker run $RLINK $ELINK --name $C_OCD_CELERY \
+-v $PY_HOSTPATH:$PY_LOCALPATH:rw -t -i -d $I_OCD_PYTHON $CEL_RUNCMD
+
+##### PUT TEMPLATE IN ES
+###sleep 30
 #implement ES ready monitor
-#curl es:9200/somthin and parse it
-#error: "Read-only file system" setting key "vm.max_map_count"
-# "started"
-# install template on Elastic Search
-CONTAINER=tmp
-sudo docker run $LINK $LINK2  --name $CONTAINER \
--v $HOSTPATH:$LOCALPATH:rw  \
--t -i $IMAGE /bin/sh -c "cd /mnt/data && ./manage.py elasticsearch put_template"
-sudo docker rm $CONTAINER
+# docker logs c-ocd-es watch "started"
+sudo docker run $RLINK $ELINK -v $PY_HOSTPATH:$PY_LOCALPATH:rw  \
+-t -i $I_OCD_PYTHON /bin/sh -c "cd /mnt/data && ./manage.py elasticsearch put_template"
+###sudo docker rm $TMP
 
-# INSERT API STUFF
-ES=c-es
-IMAGE=i-ocd-api
-CONTAINER=c-ocd-api
-HOSTPATH=$(pwd)/..
-LOCALPATH=/mnt/data
-LINK2="--link c-es:es"
-EXPOSE="-p 80:80"
-DAEMON=-d
+##### INSERT API STUFF
+I_OCD_API=i-ocd-api
 
-echo $ESIP
-# Script that updates local_settings.py in the ocd_frontend directory
-echo "ELASTICSEARCH_HOST = '$ESIP' \n " > $HOSTPATH/ocd_frontend/local_settings.py
-docker run $EXPOSE $LINK2 -v $HOSTPATH:$LOCALPATH  --name $CONTAINER -t -i $DAEMON $IMAGE
-APIIP=$(docker inspect $CONTAINER | grep IPAddress | cut -d '"' -f 4)
-echo $APIIP
+echo "ELASTICSEARCH_HOST = '$ESIP' \n " > $PY_HOSTPATH/ocd_frontend/local_settings.py
+docker run $EXPOSE $ELINK -v $PY_HOSTPATH:$PY_LOCALPATH  --name $C_OCD_API -t -i -d $DAEMON $I_OCD_API
+APIIP=$(docker inspect $C_OCD_API | grep IPAddress | cut -d '"' -f 4)
+
+
+##### Time to demo
 sleep 5
 curl -XPOST http://$APIIP/v0/search  -d '{"query": "fiets"}'
-curl -XPOST http://localhost/v0/search  -d '{"query": "fiets"}'
-
-
-
 
 echo
 echo All Daemon containers started
-echo Do stuff to run the API
-echo Start harvesting data with XXX
 echo sudo sh docker/run-ocd-cmd.sh
+echo to expose your API, expose it to port 80 or use a reverse proxy
+echo "It's now available at $APIIP ."
+echo 

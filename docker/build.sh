@@ -3,21 +3,23 @@
 # docker.io
 # git
 
+I_ES=i-es
+I_REDIS=i-redis
+I_OCD_PYTHON=i-ocd-python
+I_OCD_API=i-ocd-api
+
+
 #Build Elastic Search
-IMAGE=i-es
-sudo docker build -t $IMAGE github.com/ajslaghu/docker-elasticsearch
+sudo docker build -t $I_ES github.com/ajslaghu/docker-elasticsearch
 
 #Build Redis
-IMAGE=i-redis
-sudo docker build -t $IMAGE github.com/dockerfile/redis
+sudo docker build -t $I_REDIS github.com/dockerfile/redis
 
 #Build OCD Python, for celery (transformers) and cmd (extractors)
-IMAGE=i-ocd-python
-sudo docker build -t $IMAGE ocd-python/.
+sudo docker build -t $I_OCD_PYTHON ocd-python/.
 
 #Build Nginx / Python webApp for the API
-IMAGE=i-ocd-api
-sudo docker build -t $IMAGE ocd-api/.
+sudo docker build -t $I_OCD_API ocd-api/.
 
 echo
 echo Installation finished
@@ -25,4 +27,4 @@ echo To Do stuff to run the API
 echo Start the stack with
 echo "sh run.sh"
 echo and continue with Loading data with:
-echo 'sh run-ocd-cmd.sh' 
+echo 'sh run-ocd-cmd.sh'
