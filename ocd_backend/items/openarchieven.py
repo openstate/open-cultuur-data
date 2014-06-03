@@ -115,10 +115,10 @@ class OpenArchievenItem(BaseItem):
                      combined_index_data['date_granularity'] = 8
                   else:    # geen dag
                      combined_index_data['date'] = datetime.strptime(eventDateMonth+"-"+eventDateYear, '%m-%Y')
-                     combined_index_data['date_granularity'] = 9
+                     combined_index_data['date_granularity'] = 6
                else:    # geen maand/dag
                   combined_index_data['date'] = datetime.strptime(eventDateYear, '%Y')
-                  combined_index_data['date_granularity'] = 10
+                  combined_index_data['date_granularity'] = 4
 
         # omdat dit meta-data van naar archieven overgebrachte overheidsdocumenten zijn is er geen auteur
 
