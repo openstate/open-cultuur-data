@@ -134,3 +134,35 @@ Combined index
 
 Open Archieven
 ^^^^^^^^^^^^^^
+
+Beeldbank Erfgoed Leiden en omstreken
+-------------------------------------
+
+This dataset contains historical images from the `Erfgoed Leiden en omstreken <http://www.archiefleiden.nl/home/collecties/beeldmateriaal/zoeken-in-beeldmateriaal>`_. The `archive's OpenSearch API <http://www.opencultuurdata.nl/wiki/regionaal-archief-leiden-beeldbank/>`_ is used to harvest the content 
+that the archive has made available under an open license.
+
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``title``                            |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``description``                      | Only included if it differs from the   |
+|                        |                                      | title.                                 |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``Datum_afbeelding`` or              |                                        |
+|                        | ``dcterms:created`` or ``dc:date``   |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``dc:creator``                       | Author is not included if '[onbekend]'.|
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``ese:isShownBy``                    | Each ``media_url`` entry contains an   |
+|                        |                                      | object for each ``ese:isShownBy`` node.|
+|                        |                                      | The resolution of the images is        |
+|                        |                                      | from the image URL.                    |
++------------------------+--------------------------------------+----------------------------------------+
+
+Beeldbank Erfgoed Leiden en omstreken
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
