@@ -27,7 +27,8 @@ class BaseItem(object):
     meta_fields = {
         'processing_started': datetime,
         'processing_finished': datetime,
-        'source': unicode,
+        'source_id': unicode,
+        'collection': unicode,
         'rights': unicode,
         'original_object_id': unicode,
         'original_object_urls': dict,
@@ -63,7 +64,8 @@ class BaseItem(object):
         if not processing_started:
             self.meta['processing_started'] = datetime.now()
 
-        self.meta['source'] = unicode(self.source_definition['id'])
+        self.meta['source_id'] = unicode(self.source_definition['id'])
+        self.meta['collection'] = self.get_collection()
         self.meta['rights'] = self.get_rights()
         self.meta['original_object_id'] = self.get_original_object_id()
         self.meta['original_object_urls'] = self.get_original_object_urls()
@@ -158,6 +160,16 @@ class BaseItem(object):
         :class:`.BaseItem`.
 
         :rtype: dict.
+        """
+        raise NotImplementedError
+
+    def get_collection(self):
+        """Retrieves the name of the collection the item belongs to.
+
+        This method should be implmented by the class that inherits from
+        :class:`.BaseItem`.
+
+        :rtype: unicode.
         """
         raise NotImplementedError
 

@@ -1,7 +1,5 @@
 import json
 
-from lxml import etree
-
 
 def load_sources_config(filename):
     """Loads a JSON file containing the configuration of the available
@@ -10,6 +8,9 @@ def load_sources_config(filename):
     :param filename: the filename of the JSON file.
     :type filename: str.
     """
+    if type(filename) == file:
+        # Already an open file
+        return json.load(filename)
     try:
         with open(filename) as json_file:
             return json.load(json_file)
@@ -43,23 +44,3 @@ def load_object(path):
         raise NameError, "Module '%s' doesn't define any object named '%s'" % (module, name)
 
     return obj
-
-
-def parse_oai_response(content):
-    """Parses an OAI XML response and returns an XML tree.
-
-    The input source is expected to be in UTF-8. To get around
-    well-formedness errors (which occur in many responses), bad characters
-    are ignored.
-
-    :param content: the OAI XML response as a string.
-    :type content: string
-    :rtype: lxml.etree._Element
-    """
-    content = unicode(content, 'UTF-8', 'replace')
-    # get rid of character code 12 (form feed)
-    content = content.replace(chr(12), '?')
-
-    parser = etree.XMLParser(recover=True, encoding='utf-8')
-
-    return etree.fromstring(content.encode('utf-8'), parser=parser)

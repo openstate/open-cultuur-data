@@ -9,7 +9,7 @@
     },
     {
         "id": "openbeelden",
-        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "extractor": "ocd_backend.extractors.oai.OpenBeeldenOaiExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.openbeelden.OpenbeeldenItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
@@ -24,6 +24,15 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "oai_base_url": "http://ahm.adlibsoft.com/oaix/oai.ashx",
         "oai_metadata_prefix": "oai_dc"
+    },
+    {
+        "id": "nationaal_archief_beeldbank",
+        "extractor": "ocd_backend.extractors.opensearch.OpensearchExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.nabeeldbank.NationaalArchiefBeeldbankItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "opensearch_url": "http://www.gahetna.nl/beeldbank-api/opensearch/",
+        "opensearch_query": "\"*:*\""
     }
 
 ]

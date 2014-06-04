@@ -8,7 +8,7 @@ from werkzeug.serving import run_simple
 
 from ocd_backend.es import elasticsearch as es
 from ocd_backend.pipeline import setup_pipeline
-from ocd_backend.settings import SOURCES_CONFIG_FILE
+from ocd_backend.settings import SOURCES_CONFIG_FILE, DEFAULT_INDEX_PREFIX
 from ocd_backend.utils.misc import load_sources_config
 from ocd_frontend.wsgi import application
 
@@ -51,29 +51,28 @@ def es_put_mapping(index_name, mapping_file):
     es.indices.put_mapping(index=index_name, body=mapping)
 
 
-@elasticsearch.command('put_all_mappings')
+@elasticsearch.command('create_indexes')
 @click.argument('mapping_dir', type=click.Path(exists=True, resolve_path=True))
-def put_all_mappings(mapping_dir):
-    """Put all mappings in a specifc directory.
+def create_indexes(mapping_dir):
+    """Create all indexes for which a mapping- and settingsfile is avialble.
 
     It is assumed that mappings in the specified directory follow the
     following nameing convention: "ocd_mapping_{SOURCE_NAME}.json".
     For example: "ocd_mapping_rijksmuseum.json".
     """
-    click.echo('Putting ES mappings in %s' % (mapping_dir))
+    click.echo('Creating indexes for ES mappings in %s' % (mapping_dir))
 
     for mapping_file_path in glob('%s/ocd_mapping_*.json' % mapping_dir):
         # Extract the index name from the filename
-        index_name = mapping_file_path.split('.')[0].split('_')[-1]
+        index_name = '%s_%s' % (DEFAULT_INDEX_PREFIX, mapping_file_path.split('.')[0].split('_')[-1])
 
-        click.echo('Putting ES mapping %s for index %s'
-                   % (mapping_file_path, index_name))
+        click.echo('Creating ES index %s' % index_name)
 
         mapping_file = open(mapping_file_path, 'rb')
         mapping = json.load(mapping_file)
         mapping_file.close()
 
-        es.indices.put_mapping(index=index_name, body=mapping)
+        es.indices.create(index=index_name, body=mapping)
 
 
 @cli.group()
@@ -92,6 +91,7 @@ def extract_list_sources(sources_config):
     click.echo('Available sources:')
     for source in sources:
         click.echo(' - %s' % source['id'])
+
 
 @extract.command('start')
 @click.option('--sources_config', default=None, type=click.File('rb'))

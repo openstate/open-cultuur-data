@@ -1,7 +1,9 @@
 from datetime import datetime
 
+from elasticsearch import ConflictError
 from celery import Task
 
+from ocd_backend import settings
 from ocd_backend.es import elasticsearch
 from ocd_backend.log import get_source_logger
 
@@ -44,11 +46,30 @@ class ElasticsearchLoader(BaseLoader):
     Each item is added to two indexes: a 'combined' index that contains
     items from different sources, and an index that only contains items
     of the same source as the item.
+
+    Each URL found in ``media_urls`` is added as a document to the
+    ``RESOLVER_URL_INDEX`` (if it doesn't already exist).
     """
 
     def load_item(self, object_id, combined_index_doc, doc):
         log.info('Indexing documents...')
-        elasticsearch.index(index='ocd_combined_index', doc_type='item',
+        elasticsearch.index(index=settings.COMBINED_INDEX, doc_type='item',
                             id=object_id, body=combined_index_doc)
-        elasticsearch.index(index='ocd_%s' % self.source_definition['id'],
+        elasticsearch.index(index='%s_%s' % (settings.DEFAULT_INDEX_PREFIX, self.source_definition['id']),
                             doc_type='item', id=object_id, body=doc)
+
+        # For each media_urls.url, add a resolver document to the
+        # RESOLVER_URL_INDEX
+        if 'media_urls' in doc:
+            for media_url in doc['media_urls']:
+                url_hash = media_url['url'].split('/')[-1]
+                url_doc = {
+                    'original_url': media_url['original_url']
+                }
+
+                try:
+                    elasticsearch.create(index=settings.RESOLVER_URL_INDEX,
+                                         doc_type='url', id=url_hash,
+                                         body=url_doc)
+                except ConflictError:
+                    log.debug('Resolver document %s already exists' % url_hash)

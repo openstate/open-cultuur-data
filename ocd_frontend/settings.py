@@ -11,6 +11,9 @@ MAX_SEARCH_SIZE = 100
 # The name of the index containing documents from all sources
 COMBINED_INDEX = 'ocd_combined_index'
 
+# The default prefix used for all ocd data
+DEFAULT_INDEX_PREFIX = 'ocd'
+
 # The fields which can be used for sorting results via the REST API
 SORTABLE_FIELDS = (
     'meta.source', 'meta.processing_started', 'meta.processing_finished',
@@ -32,10 +35,15 @@ AVAILABLE_FACETS = {
             'size': 10
         }
     },
-    'source': {
+    'source_id': {
         'terms': {
-            'field': 'meta.source',
+            'field': 'meta.source_id',
             'size': 10
+        }
+    },
+    'collection': {
+        'terms': {
+            'field': 'meta.collection'
         }
     },
     'author': {
@@ -67,3 +75,13 @@ AVAILABLE_FACETS = {
 # The allowed date intervals for an ES data_histogram that can be
 # requested via the REST API
 ALLOWED_DATE_INTERVALS = ('day', 'week', 'month', 'quarter', 'year')
+
+RESOLVER_URL_INDEX = 'ocd_resolver'
+
+# Allow any settings to be defined in local_settings.py which should be
+# ignored in your version control system allowing for settings to be
+# defined per machine.
+try:
+    from local_settings import *
+except ImportError:
+    pass

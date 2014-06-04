@@ -31,7 +31,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Open Cultuur Data API'
-copyright = u'2014, Justin van Wees'
+copyright = u'2014, Bart de Goede and Justin van Wees; documentation is released under Creative Commons Attribution 4.0'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -81,7 +81,7 @@ pygments_style = 'sphinx'
 
 
 extlinks = {
-    'rest_api_v0': ('http://api.opencultuurdata.nl/v0/%s', None)
+    'rest_api_v0': ('http://api.opencultuurdata.nl/%s', None)
 }
 
 # -- Options for HTML output ----------------------------------------------
