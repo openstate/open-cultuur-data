@@ -9,7 +9,7 @@
     },
     {
         "id": "openbeelden",
-        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "extractor": "ocd_backend.extractors.oai.OpenBeeldenOaiExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.openbeelden.OpenbeeldenItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",

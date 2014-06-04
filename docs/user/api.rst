@@ -283,7 +283,7 @@ Searching within multiple collections
 
    **Filters**
 
-   Results can be filtered on one ore more properties. Each key of the ``filters`` object represents a filter, the values should be objects. When filtering on multiple fields only documents that match all filters are included in the result set. The names of the filters match those of the facets.The names of the filters match those of the facets.
+   Results can be filtered on one or more properties. Each key of the ``filters`` object represents a filter, the values should be objects. When filtering on multiple fields only documents that match all filters are included in the result set. The names of the filters match those of the facets.
 
    For example, to retrieve documents that have media associated with them of the type ``image/jpeg`` **or** ``image/png`` **and** a  ``Rembrandt Harmensz. van Rijn`` as one of the authors:
 
@@ -309,7 +309,7 @@ Searching within multiple collections
          }
       }
 
-   :jsonparameter query: on or more keywords.
+   :jsonparameter query: one or more keywords.
    :jsonparameter filters: an object with field and values to filter on (optional).
    :jsonparameter facets: an object with fields for which to return facets (optional).
    :jsonparameter sort: the field the search results are sorted on. By default, results are sorted by relevancy to the query.
@@ -330,7 +330,7 @@ Searching within a single collection
 
    See specifications of the :ref:`search method <rest_search>` for the request and response format.
 
-   :jsonparameter query: on or more keywords.
+   :jsonparameter query: one or more keywords.
    :jsonparameter filters: an object with field and values to filter on (optional).
    :jsonparameter facets: an object with fields for which to return facets (optional).
    :jsonparameter sort: the field the search results are sorted on. By default, results are sorted by relevancy to the query.
@@ -340,6 +340,7 @@ Searching within a single collection
    :statuscode 400: Bad Request. An accompanying error message will explain why the request was invalid.
    :statuscode 404: The requested source does not exist.
 
+.. _rest_get:
 
 Retrieving a single object
 --------------------------

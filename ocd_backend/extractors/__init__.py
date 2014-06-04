@@ -1,3 +1,6 @@
+import requests
+
+from ocd_backend.settings import USER_AGENT
 from ocd_backend.log import get_source_logger
 
 log = get_source_logger('extractor')
@@ -27,3 +30,24 @@ class BaseExtractor(object):
           (as a string)
         """
         raise NotImplementedError
+
+
+class HttpRequestMixin(object):
+    """A mixin that can be used by extractors that use HTTP as a method
+    to fetch data from a remote source. A persistent
+    :class:`requests.Session` is used to take advantage of
+    HTTP Keep-Alive.
+    """
+
+    @property
+    def http_session(self):
+        """Returns a :class:`requests.Session` object. A new session is
+        created if it doesn't already exist."""
+        http_session = getattr(self, '_http_session', None)
+        if not http_session:
+            session = requests.Session()
+            session.headers['User-Agent'] = USER_AGENT
+
+            self._http_session = session
+
+        return self._http_session
