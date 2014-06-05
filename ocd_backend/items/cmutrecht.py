@@ -28,7 +28,9 @@ class CentraalMuseumUtrechtItem(BaseItem):
     def get_original_object_urls(self):
         # there is no original object url, it is retrieved from an xml
         # so we return the collective file url
-        return self.source_definition['file_url']
+        return {
+            'xml': self.source_definition['file_url']
+        }
 
     def get_collection(self):
         return u'Centraal Museum Utrecht'
@@ -42,7 +44,7 @@ class CentraalMuseumUtrechtItem(BaseItem):
         if self.original_item.find('production.date.start') is not None:
             pds_text = self.original_item.find('production.date.start').text
             pde_text = self.original_item.find('production.date.end').text
-            
+
             return parse_date_span(self.regexen, pds_text, pde_text)
         else:
             return None, None
@@ -88,7 +90,7 @@ class CentraalMuseumUtrechtItem(BaseItem):
         index_data['measurements'] = [
             {
                 'type' : t,
-                'value' : v.replace(',','.'), 
+                'value' : v.replace(',','.'),
                 'unit' : u
             }
             for (t,v,u) in dim if t and v and v not in ['?','...','....']]
@@ -104,8 +106,8 @@ class CentraalMuseumUtrechtItem(BaseItem):
             if date not in ['?', '??', 'onbekend']:
                 g,d = parse_date(self.regexen, date)
         index_data['acquisition'] = {
-            'method' : method, 
-            'date' : d, 
+            'method' : method,
+            'date' : d,
             'date_granularity' : g
         }
 
