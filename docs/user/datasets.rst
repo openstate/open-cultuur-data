@@ -106,3 +106,61 @@ Combined index
 
 Rijksmuseum index
 ^^^^^^^^^^^^^^^^^
+
+
+Centraal Museum Utrecht
+-----------
+
+This dataset contains items from the collection of the `Centraal Museum Utrecht <https://www.centraalmuseum.nl/>`_.
+Content is harvested from a static copy of an xml file downloaded from the linked file `here <http://www.opencultuurdata.nl/wiki/centraal-museum/>`_.
+
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``title``                            |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``label.text``                       | normally missing                       |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | reconstructed from                   | ``production.date.start`` is taken     |
+|                        | ``production.date.start`` and        | with a granularity reconstructed from  |
+|                        | ``production.date.end``              | the string, and compared to            |
+|                        |                                      | ``production.date.end`` with its       |
+|                        |                                      | granularity to possibly decrease the   |
+|                        |                                      | final ``date_granularity``             |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``creator``                          |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``reproduction.identifier_URL``      | relative url added to absolute         |
+|                        |                                      | template                               |
++------------------------+--------------------------------------+----------------------------------------+
+
+Centraal Museum Utrecht index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
++------------------------+--------------------------------------+----------------------------------------+
+| Index field            | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``measurements``       |  ``dimension.type``,                 | the order in the xml document          |
+|                        |  ``dimension.value``,                | determines grouping, because we        |
+|                        |  ``dimension.unit``                  | 'transpose the matrix'                 |
++------------------------+--------------------------------------+----------------------------------------+
+| ``acquisition``        |  ``acquisition.date``                | ``date_granularity`` is reconstructed  |
+|                        |  ``acquisition.method``              |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``creator_roles``      |  ``creator``, ``creator.role``       | also 'transposed'                      |
++------------------------+--------------------------------------+----------------------------------------+
+| ``collections``        |  ``collections``                     |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``materials``          |  ``material``                        |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``tags``               |  ``object_name``                     |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``technique``          |  ``techniek.vrije.tekst``            |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``notes``              |  ``notes``                           |                                        |
++------------------------+--------------------------------------+----------------------------------------+
