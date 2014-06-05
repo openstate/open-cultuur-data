@@ -43,9 +43,11 @@ class CentraalMuseumUtrechtItem(BaseItem):
     def _get_date_and_granularity(self):
         if self.original_item.find('production.date.start') is not None:
             pds_text = self.original_item.find('production.date.start').text
-            pde_text = self.original_item.find('production.date.end').text
+            #pde_text = self.original_item.find('production.date.end').text
 
-            return parse_date_span(self.regexen, pds_text, pde_text)
+            #return parse_date_span(self.regexen, pds_text, pde_text)
+            # always take the production start date. period does not matter.
+            return parse_date(self.regexen, pds_text)
         else:
             return None, None
 
