@@ -1,17 +1,15 @@
 from lxml import etree
 
-import requests
-
-from ocd_backend.extractors import BaseExtractor
+from ocd_backend.extractors import BaseExtractor, HttpRequestMixin
 from ocd_backend.utils.misc import parse_oai_response
 
-class CentraalMuseumUtrechtExtractor(BaseExtractor):
+class CentraalMuseumUtrechtExtractor(BaseExtractor, HttpRequestMixin):
 
     def call(self):
         """
         Downloads one static XML file
         """
-        r = requests.get(self.source_definition['file_url'])
+        r = self.http_session.get(self.source_definition['file_url'])
         r.raise_for_status()
         return r.content
 
