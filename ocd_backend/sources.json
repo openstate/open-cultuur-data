@@ -32,5 +32,23 @@
         "item": "ocd_backend.items.cmutrecht.CentraalMuseumUtrechtItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "file_url": "https://gist.githubusercontent.com/bennokr/8cdc528fde1d2a3358d5/raw/308f84452611a77671081e9c7df1bc8139ec3bbd/cmu.xml"
+    },
+    {
+        "id": "openarchieven",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.openarchieven.OpenArchievenItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "oai_base_url": "http://api.openarch.nl/oai-pmh/",
+        "oai_metadata_prefix": "oai_a2a"
+    },
+    {
+        "id": "erfgoed_leiden_beeldbank",
+        "extractor": "ocd_backend.extractors.opensearch.OpensearchExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.elobeeldbank.ErfgoedLeidenBeeldbankItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "opensearch_url": "http://www.archiefleiden.nl/api/opensearch/",
+        "opensearch_query": "\"*:*\""
     }
 ]
