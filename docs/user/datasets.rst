@@ -108,12 +108,19 @@ Rijksmuseum index
 ^^^^^^^^^^^^^^^^^
 
 
+<<<<<<< HEAD
 Centraal Museum Utrecht
 -----------
 
 This dataset contains items from the collection of the `Centraal Museum Utrecht <https://www.centraalmuseum.nl/>`_.
 Content is harvested from a static copy of an xml file downloaded from the linked file `here <http://www.opencultuurdata.nl/wiki/centraal-museum/>`_.
 
+=======
+
+Open Archieven
+--------------
+
+This dataset contains genealogical data from open archives, as aggregated by `Open Archives <http://www.openarch.nl/>`_. The index contains records from independant researchers as well as archives, like `Erfgoed Leiden en omstreken <http://www.opencultuurdata.nl/wiki/regionaal-archief-leiden-genealogische-data/>`_, `Gemeente Ede <http://www.opencultuurdata.nl/wiki/gemeente-ede-bevolking-gemeente-ede-1647-1913/>`_, `Gemeentearchief Tholen <http://www.opencultuurdata.nl/wiki/gemeente-tholen-genealogische-data-bevolkingsregisters-1803-1940-metadata-en-scans/> `_. Content is harvested by using the `OAI-PMH feed <http://www.openarch.nl/api/docs/oai-pmh/>`_. The OCD implementation uses the 'oai_a2a' (Archive 2 All) data format.
 
 Combined index
 ^^^^^^^^^^^^^^
@@ -164,3 +171,50 @@ Centraal Museum Utrecht index
 +------------------------+--------------------------------------+----------------------------------------+
 | ``notes``              |  ``notes``                           |                                        |
 +------------------------+--------------------------------------+----------------------------------------+
+| ``title``              | ``EventType`` and ``PersonName``     | Only names of 'main' persons in event  |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``InstitutionName``, ``SourceType``, | Names of all related persons           |
+|                        | `` SourcePlace`` and ``PersonName``  |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``EventDate``                        | ``date_granularity`` varies between 8  |
+|                        |                                      | and 10                                 |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``SourceAvailableScans``             | Thumbnails of records are (in general) |
+|                        |                                      | hosted by the orinal archive           |
++------------------------+--------------------------------------+----------------------------------------+
+
+
+Open Archieven
+^^^^^^^^^^^^^^
+
+Beeldbank Erfgoed Leiden en omstreken
+-------------------------------------
+
+This dataset contains historical images from the `Erfgoed Leiden en omstreken <http://www.archiefleiden.nl/home/collecties/beeldmateriaal/zoeken-in-beeldmateriaal>`_. The `archive's OpenSearch API <http://www.opencultuurdata.nl/wiki/regionaal-archief-leiden-beeldbank/>`_ is used to harvest the content
+that the archive has made available under an open license.
+
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``title``                            |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``description``                      | Only included if it differs from the   |
+|                        |                                      | title.                                 |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``Datum_afbeelding`` or              |                                        |
+|                        | ``dcterms:created`` or ``dc:date``   |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``dc:creator``                       | Author is not included if '[onbekend]'.|
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``ese:isShownBy``                    | Each ``media_url`` entry contains an   |
+|                        |                                      | object for each ``ese:isShownBy`` node.|
+|                        |                                      | The resolution of the images is        |
+|                        |                                      | from the image URL.                    |
++------------------------+--------------------------------------+----------------------------------------+
+
+Beeldbank Erfgoed Leiden en omstreken
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
