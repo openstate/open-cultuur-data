@@ -130,8 +130,9 @@ class CentraalMuseumUtrechtItem(BaseItem):
         return index_data
 
     def get_all_text(self):
-
         # all text consists of a simple space concatenation of the fields
-        fields = 'title', 'creator', 'notes', 'collection', 'object_name', 'techniek.vrije.tekst', 'material'
+        fields = ['title', 'creator', 'notes', 'collection', 'object_name',
+                  'techniek.vrije.tekst', 'material']
+
         text = ' '.join([unicode(c.text) for f in fields for c in self.original_item.iter(f) if c.text])
         return unicode(text)
