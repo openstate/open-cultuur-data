@@ -1,7 +1,6 @@
 from lxml import etree
 
 from ocd_backend.extractors import BaseExtractor, HttpRequestMixin
-from ocd_backend.utils.misc import parse_oai_response
 
 class CentraalMuseumUtrechtExtractor(BaseExtractor, HttpRequestMixin):
     def call(self):
@@ -12,7 +11,7 @@ class CentraalMuseumUtrechtExtractor(BaseExtractor, HttpRequestMixin):
 
     def get_all_records(self):
         """Loops through one XML file, yields all records"""
-        tree = parse_oai_response(self.call())
+        tree = etree.fromstring(self.call())
         for record in tree.xpath('//adlibXML/recordList/record'):
             yield 'application/xml', etree.tostring(record)
 
