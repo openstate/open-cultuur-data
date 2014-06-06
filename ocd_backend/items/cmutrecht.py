@@ -3,11 +3,6 @@ import datetime
 from ocd_backend.utils.misc import try_convert, parse_date, parse_date_span
 
 class CentraalMuseumUtrechtItem(BaseItem):
-
-    # itemclass for centraal museum utrecht
-    # author :  Gijs Koot - gijs.koot@tno.nl
-    # author :  Benno Kruit - bennokr@gmail.com
-
     # Granularities
     regexen = [
         ('\?$', (0, lambda _ : None) ),
@@ -26,17 +21,15 @@ class CentraalMuseumUtrechtItem(BaseItem):
         return unicode(self.original_item.find('object_number').text)
 
     def get_original_object_urls(self):
-        # there is no original object url, it is retrieved from an xml
-        # so we return the collective file url
+        priref = unicode(self.original_item.find('priref').text)
         return {
-            'xml': self.source_definition['file_url']
+            'html': 'http://centraalmuseum.nl/ontdekken/object/%s' % priref,
         }
 
     def get_collection(self):
         return u'Centraal Museum Utrecht'
 
     def get_rights(self):
-
         # rights are defined for the whole collection.
         return u'No Rights Reserved / Public Domain'
 
@@ -51,9 +44,7 @@ class CentraalMuseumUtrechtItem(BaseItem):
         else:
             return None, None
 
-
     def get_combined_index_data(self):
-
         index_data = {}
         if self.original_item.find('title') != None:
             index_data['title'] = unicode(self.original_item.find('title').text)

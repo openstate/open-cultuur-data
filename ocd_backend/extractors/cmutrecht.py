@@ -4,19 +4,14 @@ from ocd_backend.extractors import BaseExtractor, HttpRequestMixin
 from ocd_backend.utils.misc import parse_oai_response
 
 class CentraalMuseumUtrechtExtractor(BaseExtractor, HttpRequestMixin):
-
     def call(self):
-        """
-        Downloads one static XML file
-        """
+        """Downloads one static XML file"""
         r = self.http_session.get(self.source_definition['file_url'])
         r.raise_for_status()
         return r.content
 
     def get_all_records(self):
-        """
-        Loops through one XML file, yields all records
-        """
+        """Loops through one XML file, yields all records"""
         tree = parse_oai_response(self.call())
         for record in tree.xpath('//adlibXML/recordList/record'):
             yield 'application/xml', etree.tostring(record)
