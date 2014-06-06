@@ -54,8 +54,6 @@ class CentraalMuseumUtrechtItem(BaseItem):
             index_data['date_granularity'] = gran
             index_data['date'] = date
 
-
-        # index_data['all_text'] = self.get_all_text()
         if self.original_item.find('label.text') != None:
             index_data['description'] = unicode(self.original_item.find('label.text').text)
 
@@ -63,7 +61,7 @@ class CentraalMuseumUtrechtItem(BaseItem):
         index_data['authors'] = [unicode(c.text) for c in self.original_item.iter('creator')]
 
         # get jpeg images from static host
-        img_url = 'http://cmu.adlibhosting.com/wwwopacximages/wwwopac.ashx?command=getcontent&server=images&value=%s&width=500&height=500'
+        img_url = 'http://cmu.adlibhosting.com/wwwopacximages/wwwopac.ashx?command=getcontent&server=images&value=%s'
         files = [c.text for c in self.original_item.iter('reproduction.identifier_URL') if c.text]
         index_data['media_urls'] = [
                 {
