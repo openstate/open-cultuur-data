@@ -24,5 +24,31 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "opensearch_url": "http://www.gahetna.nl/beeldbank-api/opensearch/",
         "opensearch_query": "\"*:*\""
+    },
+    {
+        "id": "centraal_museum_utrecht",
+        "extractor": "ocd_backend.extractors.cmutrecht.CentraalMuseumUtrechtExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.cmutrecht.CentraalMuseumUtrechtItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "file_url": "http://static.opencultuurdata.nl/centraal_museum_utrecht/cmu.xml"
+    },
+    {
+        "id": "openarchieven",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.openarchieven.OpenArchievenItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "oai_base_url": "http://api.openarch.nl/oai-pmh/",
+        "oai_metadata_prefix": "oai_a2a"
+    },
+    {
+        "id": "erfgoed_leiden_beeldbank",
+        "extractor": "ocd_backend.extractors.opensearch.OpensearchExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.elobeeldbank.ErfgoedLeidenBeeldbankItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "opensearch_url": "http://www.archiefleiden.nl/api/opensearch/",
+        "opensearch_query": "\"*:*\""
     }
 ]
