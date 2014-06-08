@@ -1,7 +1,7 @@
 from werkzeug.wsgi import DispatcherMiddleware
 
-from ocd_frontend import rest, quicksearch
+from ocd_frontend import rest
 
-application = DispatcherMiddleware(quicksearch.create_app(), {
+application = DispatcherMiddleware(rest.create_app(), {
     '/v0': rest.create_app()
 })
