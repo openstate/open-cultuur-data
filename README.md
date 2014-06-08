@@ -42,6 +42,7 @@ Authors:
 Contributors:
 
 * [DutchCoders](http://dutchcoders.io/)
+* [Benno Kruit](https://github.com/bennokr)
 
 ## Copyright and license
 
