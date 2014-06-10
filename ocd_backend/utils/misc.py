@@ -1,4 +1,5 @@
 import json
+import re
 
 
 def load_sources_config(filename):
@@ -44,3 +45,48 @@ def load_object(path):
         raise NameError, "Module '%s' doesn't define any object named '%s'" % (module, name)
 
     return obj
+
+
+def try_convert(conv, value):
+    try:
+        return conv(value)
+    except ValueError:
+        return value
+
+def parse_date(regexen, date_str):
+    """
+        Parse a messy string into a granular date
+
+        `regexen` is of the form [ (regex, (granularity, groups -> datetime)) ]
+    """
+    if date_str:
+        for reg, (gran, dater) in regexen:
+            m = re.match(reg, date_str)
+            if m:
+                try:
+                    return gran, dater(m.groups())
+                except ValueError:
+                    return 0, None
+    return 0, None
+
+def parse_date_span(regexen, date1_str, date2_str):
+    """
+        Parse a start & end date into a (less) granular date
+
+        `regexen` is of the form [ (regex, (granularity, groups -> datetime)) ]
+    """
+    date1_gran, date1 = parse_date(regexen, date1_str)
+    date2_gran, date2 = parse_date(regexen, date2_str)
+
+    if date2:
+        # TODO: integrate both granularities
+        if (date1_gran, date1) == (date2_gran, date2):
+            return date1_gran, date1
+        if (date2 - date1).days < 5*365:
+            return 4, date1
+        if (date2 - date1).days < 50*365:
+            return 3, date1
+        if (date2 - date1).days >= 50*365:
+            return 2, date1
+    else:
+        return date1_gran, date1
