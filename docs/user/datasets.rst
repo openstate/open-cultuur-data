@@ -106,3 +106,37 @@ Combined index
 
 Rijksmuseum index
 ^^^^^^^^^^^^^^^^^
+
+Amsterdam Museum
+----------------
+
+This dataset contains audio, video and images from `Amsterdam Museum <http://www.amsterdammuseum.nl/>`_. Content is harvested by using the `OAI-PMH feed <http://ahm.adlibsoft.com/oaix/oai.ashx>`_. The OCD implementation uses the 'oai_dc' (OAI Dublic Core) data format.
+
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``dc:title``                         |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``dc:abstract``                      |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``dc:date``                          | It is assumed that the year, month and |
+|                        |                                      | day is known for all dates.            |
+|                        |                                      | Therefor, ``date_granularity`` is      |
+|                        |                                      | always 8 when a date is present.       |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``dc:creator``               |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``oi:medium`` and ``oi:extent``      | Each ``media_url`` entry contains an   |
+|                        |                                      | object for each ``oi:medium`` node.    |
+|                        |                                      | The value of ``oi:extent`` is stored   |
+|                        |                                      | under ``duration`` and represented as  |
+|                        |                                      | seconds.                               |
++------------------------+--------------------------------------+----------------------------------------+
+
+
+Amsterdam Museum index
+^^^^^^^^^^^^^^^^^^
