@@ -2,7 +2,7 @@ from lxml import etree
 
 from ocd_backend.extractors import BaseExtractor, HttpRequestMixin
 
-class CentraalMuseumUtrechtExtractor(BaseExtractor, HttpRequestMixin):
+class StaticAdlibXMLExtractor(BaseExtractor, HttpRequestMixin):
     def call(self):
         """Downloads one static XML file"""
         r = self.http_session.get(self.source_definition['file_url'])
