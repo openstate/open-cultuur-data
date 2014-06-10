@@ -40,6 +40,9 @@ class AmsterdamMuseumItem(BaseItem):
             'xml': 'http://ahm.adlibsoft.com/oaix/oai.ashx?verb=GetRecord&identifier=%s&metadataPrefix=oai_dc' % original_id
         }
 
+    def get_collection(self):
+        return u'Amsterdam Museum'
+
     def get_rights(self):
         return u'Creative Commons 0'
 
@@ -62,14 +65,15 @@ class AmsterdamMuseumItem(BaseItem):
         if authors:
             combined_index_data['authors'] = [authors]
 
-        mediums = ['jpg'] # always jpg
+        mediums = self.original_item.findall('.//oai:image',
+                                              namespaces=self.namespaces) # always jpg
 
         if mediums is not None:
             combined_index_data['media_urls'] = []
 
             for medium in mediums:
                 combined_index_data['media_urls'].append({
-                    'url': medium.text,
+                    'original_url': medium.text,
                     'content_type': self.media_mime_types[medium.text.split('.')[-1]]
                 })
 

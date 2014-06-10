@@ -20,7 +20,7 @@
         "id": "amsterdammuseum",
         "extractor": "ocd_backend.extractors.oai.OaiExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
-        "item": "ocd_backend.items.amsterdammusem.AmsterdamMuseumItem",
+        "item": "ocd_backend.items.amsterdammuseum.AmsterdamMuseumItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "oai_base_url": "http://ahm.adlibsoft.com/oaix/oai.ashx",
         "oai_metadata_prefix": "oai_dc"
