@@ -154,7 +154,7 @@ Combined index
 | ``title``              | ``EventType`` and ``PersonName``     | Only names of 'main' persons in event  |
 +------------------------+--------------------------------------+----------------------------------------+
 | ``description``        | ``InstitutionName``, ``SourceType``, | Names of all related persons           |
-|                        | `` SourcePlace`` and ``PersonName``  |                                        |
+|                        | ``SourcePlace`` and ``PersonName``   |                                        |
 +------------------------+--------------------------------------+----------------------------------------+
 | ``date``               | ``EventDate``                        | ``date_granularity`` varies between 8  |
 |                        |                                      | and 10                                 |
