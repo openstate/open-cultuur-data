@@ -235,36 +235,3 @@ Rijksmuseum index
 ^^^^^^^^^^^^^^^^^
 
 
-
-Universiteitsbibliotheek Utrecht – Maps
----------------------------------------
-
-This dataset contains images of historical maps of the provinces Holland and Utrecht from the `Universiteitsbibliotheek Utrecht <http://bc.library.uu.nl/nl/node/206/>`_. Content is harvested by using the `OAI-PMH feed <http://www.openbeelden.nl/api.nl>`_. The OCD implementation uses the 'oai_dc' (OAI Dublin Core) data format.
-
-
-Combined index
-^^^^^^^^^^^^^^
-
-+------------------------+--------------------------------------+----------------------------------------+
-| Combined index field   | Source field(s)                      | Comment                                |
-+========================+======================================+========================================+
-| ``title``              | ``dc:title``                         |                                        |
-+------------------------+--------------------------------------+----------------------------------------+
-| ``description``        | ``dc:description``                   |                                        |
-+------------------------+--------------------------------------+----------------------------------------+
-| ``date``               | ``dc:date``                          | All maps only have information on the  |
-|                        |                                      | year of publication.                   |
-|                        |                                      | The ``date_granularity`` is always 4.  |
-+------------------------+--------------------------------------+----------------------------------------+
-| ``authors``            | ``dc:creator``                       |                                        |
-+------------------------+--------------------------------------+----------------------------------------+
-| ``media_urls``         | ``dc:format`` and ``imgLocation``    | Each image has to be individually      |
-|                        |                                      | retrieved through a separate request   |
-|                        |                                      | to get the imgLocation. As also        |
-|                        |                                      | discussed in the wiki. ``dc:format``   |
-|                        |                                      | gived the mime-type of the image.      |
-+------------------------+--------------------------------------+----------------------------------------+
-
-
-Universiteitsbibliotheek Utrecht Maps index
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
