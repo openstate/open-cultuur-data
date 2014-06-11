@@ -2,11 +2,12 @@ from datetime import datetime
 
 from ocd_backend.items import BaseItem
 
-class AmsterdamMuseumItem(BaseItem):
+class ByvanckBItem(BaseItem):
     namespaces = {
         'oai': 'http://www.openarchives.org/OAI/2.0/',
         'dc': 'http://purl.org/dc/elements/1.1/',
         'oai_dc': 'http://www.openarchives.org/OAI/2.0/oai_dc/',
+        'dcx': 'http://krait.kb.nl/coop/tel/handbook/telterms.html',
         'xml': 'http://www.w3.org/XML/1998/namespace'
     }
 
@@ -36,15 +37,14 @@ class AmsterdamMuseumItem(BaseItem):
     def get_original_object_urls(self):
         original_id = self.get_original_object_id()
         return {
-            'html': 'http://collectie.amsterdammuseum.nl/dispatcher.aspx?action=search&database=ChoiceCollect&search=priref=%s' % original_id.split(':')[-1],
-            'xml': 'http://ahm.adlibsoft.com/oaix/oai.ashx?verb=GetRecord&identifier=%s&metadataPrefix=oai_dc' % original_id
+            'xml': 'http://services.kb.nl/mdo/oai?verb=GetRecord&identifier=%s&metadataPrefix=dcx' % original_id
         }
 
     def get_collection(self):
-        return u'Amsterdam Museum'
+        return u'Koninklijke Bibliotheek - ByvanckB'
 
     def get_rights(self):
-        return u'Creative Commons 0'
+        return u'Eurpoeana Usage Guide for public domain works'
 
     def get_combined_index_data(self):
         combined_index_data = {}
@@ -58,14 +58,17 @@ class AmsterdamMuseumItem(BaseItem):
 
         date = self._get_text_or_none('.//dc:date')
         if date:
-            combined_index_data['date'] = datetime.strptime(self._get_text_or_none('.//dc:date'),
-                                                            '%Y')
-        combined_index_data['date_granularity'] = 4
+            combined_index_data['date'] = datetime.strptime(
+                self._get_text_or_none('.//dc:date').replace(' (c.)', ''),
+                '%Y'
+            )
+            combined_index_data['date_granularity'] = 4
+
         authors = self._get_text_or_none('.//dc:creator')
         if authors:
             combined_index_data['authors'] = [authors]
 
-        mediums = self.original_item.findall('.//oai:image',
+        mediums = self.original_item.findall('.//dcx:illustration',
                                               namespaces=self.namespaces) # always jpg
 
         if mediums is not None:
@@ -74,7 +77,7 @@ class AmsterdamMuseumItem(BaseItem):
             for medium in mediums:
                 combined_index_data['media_urls'].append({
                     'original_url': medium.text,
-                    'content_type': self.media_mime_types[medium.text.split('.')[-1]]
+                    'content_type': self.media_mime_types['jpg']
                 })
 
         return combined_index_data

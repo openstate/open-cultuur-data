@@ -66,7 +66,7 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.byvanckb.ByvanckBItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
-        "oai_base_url": " http://services.kb.nl/mdo/oai",
+        "oai_base_url": "http://services.kb.nl/mdo/oai",
         "oai_metadata_prefix": "dcx"
     },
     {
