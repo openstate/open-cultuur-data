@@ -16,7 +16,7 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
         if 'oai_metadata_prefix' in self.source_definition:
             self.metadata_prefix = self.source_definition['oai_metadata_prefix']
 
-        # Allows selecting a specific 
+        # Allows selecting a specific set (or collection)
         if 'oai_set' in self.source_definition:
             self.oai_set = self.source_definition['oai_set']
 
@@ -34,7 +34,7 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
         if self.oai_set:
             params['set'] = self.oai_set
 
-        # Remove set and metadataPrefix
+        # Remove set and metadataPrefix, when a resumptionToken is present
         if 'resumptionToken' in params:
             if 'set' in params:
                 del params['set']
@@ -104,37 +104,3 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
     def run(self):
         for record in self.get_all_records():
             yield record
-
-
-class OpenBeeldenOaiExtractor(OaiExtractor):
-    def get_all_records(self):
-        """Retrieves all available OAI records. This method has to be
-        specifically overwritten for OpenBeelden, as they encode the
-        metadataPrefix in their resumption token, rather than having a
-        separate HTTP GET parameter.
-        """
-        resumption_token = None
-        while True:
-            req_params = {'verb': 'ListRecords'}
-            if resumption_token:
-                req_params['resumptionToken'] = resumption_token
-            # This fixes the culprit
-            else:
-                req_params['metadataPrefix'] = self.metadata_prefix
-
-            resp = self.oai_call(req_params)
-            tree = self.parse_oai_response(resp)
-
-            records = tree.xpath('.//oai:ListRecords/oai:record',
-                                 namespaces=self.namespaces)
-            for record in records:
-                yield 'application/xml', etree.tostring(record)
-
-            resumption_token = tree.find('.//oai:resumptionToken',
-                                         namespaces=self.namespaces).text
-
-            # According to the OAI spec, we reached the last page of the
-            # list if the 'resumptionToken' element is empty
-            if not resumption_token:
-                log.debug('resumptionToken empty, done fetching list')
-                break
