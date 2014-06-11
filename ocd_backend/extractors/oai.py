@@ -6,6 +6,7 @@ from ocd_backend.extractors import log
 
 class OaiExtractor(BaseExtractor, HttpRequestMixin):
     metadata_prefix = 'oai_dc'
+    oai_set = ''
     namespaces = {'oai': 'http://www.openarchives.org/OAI/2.0/'}
 
     def __init__(self, *args, **kwargs):
@@ -14,6 +15,10 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
         # Allows overriding of the metadata prefix via the source settings
         if 'oai_metadata_prefix' in self.source_definition:
             self.metadata_prefix = self.source_definition['oai_metadata_prefix']
+
+        # Allows selecting a specific 
+        if 'oai_set' in self.source_definition:
+            self.oai_set = self.source_definition['oai_set']
 
         self.oai_base_url = self.source_definition['oai_base_url']
 
@@ -24,6 +29,18 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
         :type params: dict
         :param params: a dictonary sent as arguments in the query string
         """
+
+        # Add the set variable to the parameters (if available)
+        if self.oai_set:
+            params['set'] = self.oai_set
+
+        # Remove set and metadataPrefix
+        if 'resumptionToken' in params:
+            if 'set' in params:
+                del params['set']
+            if 'metadataPrefix' in params:
+                del params['metadataPrefix']
+
         log.debug('Getting %s (params: %s)' % (self.oai_base_url, params))
         r = self.http_session.get(self.oai_base_url, params=params)
         r.raise_for_status()
