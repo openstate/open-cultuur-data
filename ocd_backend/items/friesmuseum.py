@@ -89,7 +89,7 @@ class FriesMuseumItem(BaseItem):
                 'date_granularity' : g,
                 'method' : m
             }
-            for (ds,m) in aq if ds or m for d,g in [parse_date(self.regexen, ds)]]
+            for (ds,m) in aq if ds or m for g,d in [parse_date(self.regexen, ds)]]
         index_data['acquisition'] = aq[0] if aq else None # singleton
 
         # listed attributes
@@ -108,7 +108,7 @@ class FriesMuseumItem(BaseItem):
         return index_data
 
     def get_all_text(self):
-        all text consists of a simple space concatenation of the fields
+        # all text consists of a simple space concatenation of the fields
         fields = ['title', 'creator', 'production.place', 'collection', 'object_name',
                   'technique', 'material']
 

@@ -64,7 +64,7 @@
         "id": "fries_museum",
         "extractor": "ocd_backend.extractors.staticadlibxml.StaticAdlibXMLExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
-        "item": "ocd_backend.items.cmutrecht.FriesMuseumItem",
+        "item": "ocd_backend.items.friesmuseum.FriesMuseumItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "file_url": "https://gist.githubusercontent.com/bennokr/e3858e80fd963cb04290/raw/b69cbe65297c55c95a2790f2772ea0cb05980db4/fm.xml"
     }
