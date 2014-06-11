@@ -9,7 +9,7 @@
     },
     {
         "id": "openbeelden",
-        "extractor": "ocd_backend.extractors.oai.OpenBeeldenOaiExtractor",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.openbeelden.OpenbeeldenItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
@@ -68,5 +68,15 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "oai_base_url": " http://services.kb.nl/mdo/oai",
         "oai_metadata_prefix": "dcx"
+    },
+    {
+        "id": "uukaarten",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.uukaarten.UUKaartenItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "oai_base_url": "http://dspace.library.uu.nl/oai/request",
+        "oai_metadata_prefix": "oai_dc",
+        "oai_set": "col_1874_213366"
     }
 ]

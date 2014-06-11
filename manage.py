@@ -74,6 +74,10 @@ def create_indexes(mapping_dir):
 
         es.indices.create(index=index_name, body=mapping)
 
+@elasticsearch.command('clear_indexes')
+def clear_indexes():
+    """Clear all indexes."""
+    es.indices.delete(index='_all')
 
 @cli.group()
 def extract():
