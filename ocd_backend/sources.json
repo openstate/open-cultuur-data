@@ -146,5 +146,14 @@
             "herkomst":40,
             "licentie":85
         }
+    },
+        "id": "kb_watermarks",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.kb.WatermarksItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "oai_base_url": "http://services.kb.nl/mdo/oai",
+        "oai_metadata_prefix": "dcx",
+        "oai_set": "WILC"
     }
 ]
