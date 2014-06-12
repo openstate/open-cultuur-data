@@ -44,7 +44,7 @@ class ByvanckBItem(BaseItem):
         return u'Koninklijke Bibliotheek - ByvanckB'
 
     def get_rights(self):
-        return u'Eurpoeana Usage Guide for public domain works'
+        return u'Public Domain Mark'
 
     def get_combined_index_data(self):
         combined_index_data = {}
@@ -72,7 +72,7 @@ class ByvanckBItem(BaseItem):
         if authors:
             combined_index_data['authors'] = [authors]
 
-        mediums = self.original_item.findall('.//dcx:illustration',
+        mediums = self.original_item.xpath('.//dcx:illustration | .//dcx:thumbnail',
                                               namespaces=self.namespaces) # always jpg
 
         if mediums is not None:
