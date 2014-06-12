@@ -292,3 +292,31 @@ Combined index
 
 Universiteitsbibliotheek Utrecht Maps index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Rijkscultureel Erfgoed
+----------------------
+
+This dataset contains images from `Rijksdienst voor het Cultureel Erfgoed <http://beeldbank.cultureelerfgoed.nl/>`_.
+Content is harvested by using the `OAI-PMH feed <http://cultureelerfgoed.adlibsoft.com/oaiapi/oai.ashx>`_.
+The OCD implementation uses the 'oai_dc' (OAI Dublic Core) data format.
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``dc:title``                         |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``dc:description``                      |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``dc:date``                          | It is either year and month, or just   |
+|                        |                                      | year.                                  |
+|                        |                                      | Therefore, ``date_granularity`` is     |
+|                        |                                      | either 6 or 4 when a date is present.  |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``dc:creator``               |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``dc:image                   ``      | Each ``media_url`` entry contains one  |
+|                        |                                      | or more dc:image nodes                 |
++------------------------+--------------------------------------+----------------------------------------+
+
+Rijkscultureel Erfgoed
+^^^^^^^^^^^^^^^^^^^^^^
