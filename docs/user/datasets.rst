@@ -292,3 +292,31 @@ Combined index
 
 Universiteitsbibliotheek Utrecht Maps index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Royal Library - ByvanckB
+------------------------
+
+This dataset contains images from the Royal Linrary's `ByvanckB set <http://manuscripts.kb.nl/>`_.
+Content is harvested by using the `OAI-PMH feed <http://services.kb.nl/mdo/oai>`_.
+The OCD implementation uses the 'dcx' data format.
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``dc:title``                         |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``dc:abstract``                      |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``dc:date``                          | Mostly only year information. the (c.) |
+|                        |                                      | is stripped, then parsed.              |
+|                        |                                      | Therefor, ``date_granularity`` is      |
+|                        |                                      | always 4 when it was properly parsed   |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``dc:creator``                       |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``dcx:illustration`` and             | Objects can have an illustration, as   |
+|                        | ``dcx:thumbnail``                    | well as a thumbnail.                   |
++------------------------+--------------------------------------+----------------------------------------+
+
+Royal Library - ByvanckB index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
