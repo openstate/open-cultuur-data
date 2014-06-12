@@ -58,11 +58,15 @@ class ByvanckBItem(BaseItem):
 
         date = self._get_text_or_none('.//dc:date')
         if date:
-            combined_index_data['date'] = datetime.strptime(
-                self._get_text_or_none('.//dc:date').replace(' (c.)', ''),
-                '%Y'
-            )
-            combined_index_data['date_granularity'] = 4
+            try:
+                combined_index_data['date'] = datetime.strptime(
+                    self._get_text_or_none('.//dc:date').replace(' (c.)', '').strip(),
+                    '%Y'
+                    )
+                combined_index_data['date_granularity'] = 4
+            except ValueError, e:
+                combined_index_data['date'] = None
+                combined_index_data['date_granularity'] = 0
 
         authors = self._get_text_or_none('.//dc:creator')
         if authors:

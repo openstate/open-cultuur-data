@@ -90,6 +90,13 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
             records = tree.xpath('.//oai:ListRecords/oai:record',
                                  namespaces=self.namespaces)
             for record in records:
+                # check if the record was deleted
+                header = record.find('.//oai:header',
+                                     namespaces=self.namespaces)
+                if header is not None and 'status' in header.attrib and header.attrib[u'status'] == u'deleted':
+                    log.debug('header specifies that the record is deleted, skipping.')
+                    continue
+
                 yield 'application/xml', etree.tostring(record)
 
             resumption_token = tree.find('.//oai:resumptionToken',
