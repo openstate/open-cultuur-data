@@ -86,7 +86,7 @@
         "id": "textielmuseum",
         "extractor": "ocd_backend.extractors.adlib.AdlibExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
-        "item": "ocd_backend.items.zoutkamp.TextielMuseumItem",
+        "item": "ocd_backend.items.textielmuseum.TextielMuseumItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "adlib_base_url": "http://37.17.215.121:85/opendata/wwwopac.ashx",
         "adlib_database": "collect",
