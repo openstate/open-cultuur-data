@@ -53,16 +53,15 @@ class FriesMuseumItem(BaseItem):
         # author is optional
         index_data['authors'] = [unicode(c.text) for c in self.original_item.iter('creator')]
 
-        # # get jpeg images from static host
-        # # isn't working...
-        # img_url = 'http://fries-museum.delving.org/services/image?id=http://collectie.friesmuseum.nl/images/FM/%s&size=FULL_DOC'
-        # files = [c.text for c in self.original_item.iter('reproduction.identifier_URL') if c.text]
-        # index_data['media_urls'] = [
-        #         {
-        #             'original_url': img_url % fname,
-        #             'content_type': 'image/jpeg'
-        #         }
-        #     for fname in files if fname[-3:].lower() == 'jpg']
+        # get jpeg images from static host
+        img_url = 'http://fries-museum.delving.org/services/image?id=http://collectie.friesmuseum.nl/images/FM/%s&size=FULL_DOC'
+        files = [c.text for c in self.original_item.iter('reproduction.reference') if c.text]
+        index_data['media_urls'] = [
+                {
+                    'original_url': img_url % fname,
+                    'content_type': 'image/jpeg'
+                }
+            for fname in files if fname[-3:].lower() == 'jpg']
 
         return index_data
 
@@ -104,6 +103,9 @@ class FriesMuseumItem(BaseItem):
             val = [unicode(c.text) for c in self.original_item.iter(attr) if c.text]
             if val:
                 index_data[index_name] = val
+
+        if 'production_place' in index_data: # singleton
+            index_data['production_place'] = index_data['production_place'][0]
 
         return index_data
 
