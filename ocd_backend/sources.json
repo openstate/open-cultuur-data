@@ -66,6 +66,6 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.friesmuseum.FriesMuseumItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
-        "file_url": "https://gist.githubusercontent.com/bennokr/e3858e80fd963cb04290/raw/b69cbe65297c55c95a2790f2772ea0cb05980db4/fm.xml"
+        "file_url": "http://static.opencultuurdata.nl/fries_museum/20120616_Textiel_Hack_FM.xml"
     }
 ]

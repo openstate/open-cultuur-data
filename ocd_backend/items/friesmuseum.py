@@ -54,14 +54,14 @@ class FriesMuseumItem(BaseItem):
         index_data['authors'] = [unicode(c.text) for c in self.original_item.iter('creator')]
 
         # get jpeg images from static host
-        img_url = 'http://fries-museum.delving.org/services/image?id=http://collectie.friesmuseum.nl/images/FM/%s&size=FULL_DOC'
+        img_url = 'http://static.opencultuurdata.nl/fries_museum/%s.jpg'
         files = [c.text for c in self.original_item.iter('reproduction.reference') if c.text]
         index_data['media_urls'] = [
                 {
                     'original_url': img_url % fname,
                     'content_type': 'image/jpeg'
                 }
-            for fname in files if fname[-3:].lower() == 'jpg']
+            for fname in files]
 
         return index_data
 
@@ -93,7 +93,7 @@ class FriesMuseumItem(BaseItem):
 
         # listed attributes
         attrs = {
-            'collection' : 'collection',
+            'collection' : 'collections',
             'material': 'materials',
             'production.place': 'production_place',
             'technique': 'technique',
