@@ -35,7 +35,6 @@ class AdlibExtractor(BaseExtractor, HttpRequestMixin):
             'startfrom': 0
         }
         default_params.update(params)
-        print default_params
 
         log.debug('Getting %s (params: %s)' % (search_url, default_params))
         r = self.http_session.get(
