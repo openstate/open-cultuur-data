@@ -43,8 +43,8 @@ class CommonsExtractor(BaseExtractor, HttpRequestMixin):
             'image': image_file,
             'thumbwidth': 150,
             'thumbheight': 150,
-            'versions': None,
-            'meta': None
+            'versions': '',
+            'meta': ''
         }
 
         log.debug('Getting %s (params: %s)' % (commons_api_base_url, params))

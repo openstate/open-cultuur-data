@@ -74,7 +74,7 @@
         "id": "tropenmuseum",
         "extractor": "ocd_backend.extractors.wikimedia.CommonsExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
-        "item": "ocd_backend.items.wikimedia.CommonsItem",
+        "item": "ocd_backend.items.tropenmuseum.CommonsItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "wikimedia_base_url": "http://commons.wikimedia.org/w/api.php",
         "wikimedia_title": "Category:WikiAfrica_Tropenmuseum"
