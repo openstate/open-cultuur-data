@@ -296,7 +296,7 @@ Universiteitsbibliotheek Utrecht Maps index
 Royal Library - ByvanckB
 ------------------------
 
-This dataset contains images from the Royal Linrary's `ByvanckB set <http://manuscripts.kb.nl/>`_.
+This dataset contains images from the Royal Library's `ByvanckB set <http://manuscripts.kb.nl/>`_.
 Content is harvested by using the `OAI-PMH feed <http://services.kb.nl/mdo/oai>`_.
 The OCD implementation uses the 'dcx' data format.
 
