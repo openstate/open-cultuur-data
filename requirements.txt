@@ -1,6 +1,6 @@
 celery[redis]==3.1.10
 elasticsearch==1.0.0
-click==0.7
+click==2.1
 Flask==0.10.1
 lxml==3.3.5
 requests==2.2.1

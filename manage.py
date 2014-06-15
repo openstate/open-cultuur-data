@@ -74,10 +74,21 @@ def create_indexes(mapping_dir):
 
         es.indices.create(index=index_name, body=mapping)
 
-@elasticsearch.command('clear_indexes')
-def clear_indexes():
-    """Clear all indexes."""
-    es.indices.delete(index='_all')
+
+@elasticsearch.command('delete_indexes')
+def delete_indexes():
+    """Delete all Open Cultuur Data indices."""
+    index_glob = '%s_*' % DEFAULT_INDEX_PREFIX
+    indices = es.indices.status(index=index_glob, human=True)
+
+    click.echo('Open Cultuur Data indices:')
+    for index, stats in indices['indices'].iteritems():
+        click.echo('- %s (%s docs, %s)' % (index, stats['docs']['num_docs'],
+                                           stats['index']['size']))
+    if click.confirm('Are you sure you want to delete the above indices?'):
+        es.indices.delete(index=index_glob)
+        es.indices.delete_template('ocd_template')
+
 
 @cli.group()
 def extract():
