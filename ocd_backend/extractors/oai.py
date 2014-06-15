@@ -29,7 +29,6 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
         :type params: dict
         :param params: a dictonary sent as arguments in the query string
         """
-
         # Add the set variable to the parameters (if available)
         if self.oai_set:
             params['set'] = self.oai_set
@@ -69,10 +68,6 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
     def get_all_records(self):
         """Retrieves all available OAI records.
 
-        Records are retrieved by first requesting identifiers via the
-        ``ListIdentifiers`` verb. For each identifier, the record is
-        requested by using the ``GetRecord`` verb.
-
         :returns: a generator that yields a tuple for each record,
             a tuple consists of the content-type and the content as a string.
         """
@@ -90,13 +85,26 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
             records = tree.xpath('.//oai:ListRecords/oai:record',
                                  namespaces=self.namespaces)
             for record in records:
+                # check if the record was deleted
+                header = record.find('oai:header[@status="deleted"]',
+                                     namespaces=self.namespaces)
+                if header is not None:
+                    log.debug('Header specifies that the record is deleted, skipping.')
+                    continue
+
                 yield 'application/xml', etree.tostring(record)
 
-            resumption_token = tree.find('.//oai:resumptionToken',
-                                         namespaces=self.namespaces).text
 
             # According to the OAI spec, we reached the last page of the
-            # list if the 'resumptionToken' element is empty
+            # list if the 'resumptionToken' element is empty. Some OAI
+            # implementations completely drop the 'resumptionToken'
+            # element on the last
+            try:
+                resumption_token = tree.find('.//oai:resumptionToken',
+                                             namespaces=self.namespaces).text
+            except AttributeError:
+                resumption_token = None
+
             if not resumption_token:
                 log.debug('resumptionToken empty, done fetching list')
                 break
