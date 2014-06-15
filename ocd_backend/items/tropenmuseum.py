@@ -35,7 +35,17 @@ class CommonsItem(BaseItem, HttpRequestMixin):
     def _get_image_link(self):
         original_id = self.get_original_object_id()
         if re.match('\d+\-\d+$', original_id):
-            return 'http://collectie.tropenmuseum.nl/ImagesHandler.ashx?image=%%5CG%%20schijf%%5CTMSMedia%%5Cimages%%5Cscreen%%5C%s.jpg&width=3078&height=2340' % original_id
+            try:
+                image_width = int(self._get_text_or_none('.//meta/item[@name="ImageWidth"]'))
+            except TypeError, e:
+                image_width = 3072
+            try:
+                image_height = int(self._get_text_or_none('.//meta/item[@name="ImageLength"]'))
+            except TypeError, e:
+                image_height = 2304
+            return 'http://collectie.tropenmuseum.nl/ImagesHandler.ashx?image=%%5CG%%20schijf%%5CTMSMedia%%5Cimages%%5Cscreen%%5C%s.jpg&width=%s&height=%s' % (
+                original_id, image_width, image_height
+            )
 
     def get_original_object_id(self):
         filename = self._get_text_or_none('.//file/name')
