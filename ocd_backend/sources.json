@@ -77,7 +77,7 @@
         "item": "ocd_backend.items.tropenmuseum.CommonsItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "wikimedia_base_url": "http://commons.wikimedia.org/w/api.php",
-        "wikimedia_title": "Category:WikiAfrica_Tropenmuseum"
+        "wikimedia_title": "Category:Images_from_the_Tropenmuseum"
     }
 
 ]

@@ -292,3 +292,27 @@ Combined index
 
 Universiteitsbibliotheek Utrecht Maps index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Tropenmuseum
+------------
+
+This dataset contains images from the `Tropenmusem <http://collectie.tropenmuseum.nl/Default.aspx>`_.
+The Wikimedia Commons API is used to get the dataset. If the description of the
+file ends in TMnr \d+ we link to the image at the Tropenmuseum. Otherwise,
+images and html links are ignored.
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``file/name``                        |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``file/date``                        |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``file/name``                        |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+
+Tropenmuseum
+^^^^^^^^^^^^

@@ -34,7 +34,7 @@ class CommonsItem(BaseItem, HttpRequestMixin):
 
     def _get_image_link(self):
         original_id = self.get_original_object_id()
-        if re.match('\d+\-\d+$', original_id):
+        if re.match('\d+\-?\d+?$', original_id):
             try:
                 image_width = int(self._get_text_or_none('.//meta/item[@name="ImageWidth"]'))
             except TypeError, e:
@@ -50,7 +50,7 @@ class CommonsItem(BaseItem, HttpRequestMixin):
     def get_original_object_id(self):
         filename = self._get_text_or_none('.//file/name')
         print filename
-        m = re.search('TMnr (\d+\-\d+)\.jpg$', filename)
+        m = re.search('TMnr (\d+\-?\d+?)\.jpg$', filename)
         if m:
             return m.group(1)
         else:
@@ -103,7 +103,7 @@ class CommonsItem(BaseItem, HttpRequestMixin):
         if image_url:
             combined_index_data['media_urls'] = [{
               'original_url': image_url,
-              'content_type': 'image/jpeg'
+              'content_type': 'image/jpg'
             }]
 
         return combined_index_data
