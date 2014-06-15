@@ -314,8 +314,7 @@ The OCD implementation uses the 'dcx' data format.
 +------------------------+--------------------------------------+----------------------------------------+
 | ``authors``            | ``dc:creator``                       |                                        |
 +------------------------+--------------------------------------+----------------------------------------+
-| ``media_urls``         | ``dcx:illustration`` and             | Objects can have an illustration, as   |
-|                        | ``dcx:thumbnail``                    | well as a thumbnail.                   |
+| ``media_urls``         | ``dcx:illustration``                 |                                        |
 +------------------------+--------------------------------------+----------------------------------------+
 
 Royal Library - ByvanckB index

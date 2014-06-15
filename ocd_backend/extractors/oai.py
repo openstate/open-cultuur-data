@@ -29,7 +29,6 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
         :type params: dict
         :param params: a dictonary sent as arguments in the query string
         """
-
         # Add the set variable to the parameters (if available)
         if self.oai_set:
             params['set'] = self.oai_set
@@ -69,10 +68,6 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
     def get_all_records(self):
         """Retrieves all available OAI records.
 
-        Records are retrieved by first requesting identifiers via the
-        ``ListIdentifiers`` verb. For each identifier, the record is
-        requested by using the ``GetRecord`` verb.
-
         :returns: a generator that yields a tuple for each record,
             a tuple consists of the content-type and the content as a string.
         """
@@ -91,9 +86,9 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
                                  namespaces=self.namespaces)
             for record in records:
                 # check if the record was deleted
-                header = record.find('.//oai:header',
+                header = record.find('oai:header[@status="deleted"]',
                                      namespaces=self.namespaces)
-                if header is not None and 'status' in header.attrib and header.attrib[u'status'] == u'deleted':
+                if header is not None:
                     log.debug('Header specifies that the record is deleted, skipping.')
                     continue
 

@@ -6,22 +6,8 @@ class ByvanckBItem(BaseItem):
     namespaces = {
         'oai': 'http://www.openarchives.org/OAI/2.0/',
         'dc': 'http://purl.org/dc/elements/1.1/',
-        'oai_dc': 'http://www.openarchives.org/OAI/2.0/oai_dc/',
         'dcx': 'http://krait.kb.nl/coop/tel/handbook/telterms.html',
-        'xml': 'http://www.w3.org/XML/1998/namespace'
-    }
-
-    media_mime_types = {
-        'webm': 'video/webm',
-        'ogv': 'video/ogg',
-        'ogg': 'audio/ogg',
-        'mp4': 'video/mp4',
-        'm3u8': 'application/x-mpegURL',
-        'ts': 'video/MP2T',
-        'mpeg': 'video/mpeg',
-        'mpg': 'video/mpeg',
-        'png': 'image/png',
-        'jpg': 'image/jpg',
+        'dcterms': 'http://purl.org/dc/terms/',
     }
 
     def _get_text_or_none(self, xpath_expression):
@@ -59,29 +45,24 @@ class ByvanckBItem(BaseItem):
         date = self._get_text_or_none('.//dc:date')
         if date:
             try:
-                combined_index_data['date'] = datetime.strptime(
-                    self._get_text_or_none('.//dc:date').replace(' (c.)', '').strip(),
-                    '%Y'
-                    )
+                combined_index_data['date'] = datetime.strptime(date.replace(' (c.)', '').strip(), '%Y')
                 combined_index_data['date_granularity'] = 4
-            except ValueError, e:
-                combined_index_data['date'] = None
-                combined_index_data['date_granularity'] = 0
+            except ValueError:
+                pass
 
         authors = self._get_text_or_none('.//dc:creator')
         if authors:
             combined_index_data['authors'] = [authors]
 
-        mediums = self.original_item.xpath('.//dcx:illustration | .//dcx:thumbnail',
-                                              namespaces=self.namespaces) # always jpg
-
-        if mediums is not None:
+        mediums = self.original_item.xpath('.//dcx:illustration',
+                                           namespaces=self.namespaces)
+        if mediums:
             combined_index_data['media_urls'] = []
 
             for medium in mediums:
                 combined_index_data['media_urls'].append({
                     'original_url': medium.text,
-                    'content_type': self.media_mime_types['jpg']
+                    'content_type': 'image/jpg'
                 })
 
         return combined_index_data
@@ -115,5 +96,8 @@ class ByvanckBItem(BaseItem):
 
         # Type
         text_items.append(self._get_text_or_none('.//dc:type'))
+
+        # Spatial
+        text_items.append(self._get_text_or_none('.//dcterms:spatial'))
 
         return u' '.join([ti for ti in text_items if ti is not None])
