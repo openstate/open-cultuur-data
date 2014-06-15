@@ -94,16 +94,22 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
                 header = record.find('.//oai:header',
                                      namespaces=self.namespaces)
                 if header is not None and 'status' in header.attrib and header.attrib[u'status'] == u'deleted':
-                    log.debug('header specifies that the record is deleted, skipping.')
+                    log.debug('Header specifies that the record is deleted, skipping.')
                     continue
 
                 yield 'application/xml', etree.tostring(record)
 
-            resumption_token = tree.find('.//oai:resumptionToken',
-                                         namespaces=self.namespaces).text
 
             # According to the OAI spec, we reached the last page of the
-            # list if the 'resumptionToken' element is empty
+            # list if the 'resumptionToken' element is empty. Some OAI
+            # implementations completely drop the 'resumptionToken'
+            # element on the last
+            try:
+                resumption_token = tree.find('.//oai:resumptionToken',
+                                             namespaces=self.namespaces).text
+            except AttributeError:
+                resumption_token = None
+
             if not resumption_token:
                 log.debug('resumptionToken empty, done fetching list')
                 break
