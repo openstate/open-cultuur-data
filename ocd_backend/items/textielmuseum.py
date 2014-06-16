@@ -69,6 +69,13 @@ class TextielMuseumItem(BaseItem, HttpRequestMixin):
         if authors:
             combined_index_data['authors'] = [authors]
 
+        date = self._get_text_or_none('.//production.date.start')
+        combined_index_data['date'] = None
+        combined_index_data['date_granularity'] = 0
+        if date:
+            combined_index_data['date'] = datetime.strptime(date, '%Y')
+            combined_index_data['date_granularity'] = 4
+
         mediums = None
         id_url = self._get_text_or_none('.//reproduction.identifier_URL')
         if id_url:
