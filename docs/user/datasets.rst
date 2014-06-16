@@ -319,3 +319,50 @@ The OCD implementation uses the 'dcx' data format.
 
 Royal Library - ByvanckB index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Staten Generaal Digitaal
+------------------------
+
+This dataset contains scanned pages of the proceedings of the House, Senate and the Unified Assembly.
+, also available at `Staten Generaal Digitaal <http://www.statengeneraaldigitaal.nl/>`_.
+Content is harvested by using the `OAI-PMH feed <http://services.kb.nl/mdo/oai>`_.
+The OCD implementation uses the 'dcx' and 'didl' data format.
+
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``dc:title``                         |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``dc:description``                   |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``dc:date``                          | All maps only have information on the  |
+|                        |                                      | year of publication.                   |
+|                        |                                      | The ``date_granularity`` is always 4.  |
++------------------------+--------------------------------------+----------------------------------------+
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``didl:Resource[@mimeType="image/jpg"]/@ref``    | Each image has to be individually      |
+|                        |                                      | retrieved through a separate request   |
+|                        |                                      | to get the imgLocation. As also        |
+|                        |                                      | discussed in the wiki. ``dc:format``   |
+|                        |                                      | gived the mime-type of the image.      |
++------------------------+--------------------------------------+----------------------------------------+
+
+
+Staten Generaal Digitaal index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``startpage``          | ``dcx:startpage``                    |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``endpage``            | ``dcx:endpage``                      |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``type``               | ``dc:type``                          |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``temporal``           | ``dcterms:temporal``                 |                                        |
++------------------------+--------------------------------------+----------------------------------------+

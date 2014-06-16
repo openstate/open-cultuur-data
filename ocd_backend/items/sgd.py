@@ -102,22 +102,28 @@ class SGDItem(BaseItem, HttpRequestMixin):
             except ValueError:
                 pass
 
-        #mediums = self.original_item.xpath('.//dcx:illustration',
-        # namespaces=self.namespaces)
-        mediums = None
-        if mediums:
+        mediums = self.didl_xml.xpath(
+            './/didl:Resource[@mimeType="image/jpg"]/@ref',
+            namespaces=self.namespaces
+        )
+        if len(mediums) > 0:
             combined_index_data['media_urls'] = []
 
             for medium in mediums:
                 combined_index_data['media_urls'].append({
-                    'original_url': medium.text,
+                    'original_url': medium,
                     'content_type': 'image/jpg'
                 })
 
         return combined_index_data
 
     def get_index_data(self):
-        return {}
+        return {
+            'startpage': self._get_text_or_none('.//dcx:startpage'),
+            'endpage': self._get_text_or_none('.//dcx:endpage'),
+            'type': self._get_text_or_none('.//dc:type'),
+            'temporal': self._get_text_or_none('.//dcterms:temporal')
+        }
 
     def get_all_text(self):
         text_items = []
