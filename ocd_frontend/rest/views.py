@@ -170,7 +170,7 @@ def search():
                 'query': {
                     'simple_query_string': {
                         'query': search_req['query'],
-                        'default_operator': 'OR',
+                        'default_operator': 'AND',
                         'fields': [
                             'title^3',
                             'authors^2',
