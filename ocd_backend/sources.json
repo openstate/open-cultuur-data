@@ -88,9 +88,7 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "adlib_base_url": "http://mmr.adlibhosting.com/madigopacx/wwwopac.ashx",
         "adlib_database": "ChoiceMardig",
-        "adlib_xmltype": "unstructured",
-        "adlib_limit": 10,
-        "adlib_search": "museum=0011"
+        "adlib_query": "museum=0011"
     },
     {
         "id": "textielmuseum",
@@ -99,9 +97,6 @@
         "item": "ocd_backend.items.textielmuseum.TextielMuseumItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "adlib_base_url": "http://37.17.215.121:85/opendata/wwwopac.ashx",
-        "adlib_database": "collect",
-        "adlib_xmltype": "unstructured",
-        "adlib_limit": 10,
-        "adlib_search": "all"
+        "adlib_database": "collect"
     }
 ]

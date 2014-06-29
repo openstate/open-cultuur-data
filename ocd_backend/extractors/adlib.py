@@ -5,101 +5,75 @@ from ocd_backend.extractors import log
 
 
 class AdlibExtractor(BaseExtractor, HttpRequestMixin):
-    metadata_prefix = 'oai_dc'
-    oai_set = ''
-    namespaces = {'oai': 'http://www.openarchives.org/OAI/2.0/'}
+    adlib_query = 'all'
+    adlib_xmltype = 'unstructured'
+    per_page_limit = 50
 
     def __init__(self, *args, **kwargs):
         super(AdlibExtractor, self).__init__(*args, **kwargs)
 
-        for prop in ["base_url", "database", "xmltype", "limit", "search"]:
-            full_prop = "adlib_%s" % prop
-            if full_prop in self.source_definition:
-                setattr(self, full_prop, self.source_definition[full_prop])
+        # Allows overriding the executed query ('all' will return all
+        # available records)
+        if 'adlib_query' in self.source_definition:
+            self.adlib_query = self.source_definition['adlib_query']
+
+        # Allows overriding the XML output type that is requested
+        if 'adlib_xmltype' in self.source_definition:
+            self.adlib_xmltype = self.source_definition['adlib_xmltype']
+
+        # Allows overriding the max. number of items that is fetched in
+        # a single request
+        if 'adlib_per_page_limit' in self.source_definition:
+            self.per_page_limit = self.source_definition['adlib_per_page_limit']
+
+        self.adlib_base_url = self.source_definition['adlib_base_url']
+        self.adlib_database = self.source_definition['adlib_database']
 
     def adlib_search_call(self, params={}):
-        """Makes a call to the Adlib endpoint and returns the response as
-        a string.
+        """Makes a call to the Adlib endpoint and returns the response
+        as a string.
 
         :type params: dict
         :param params: a dictonary sent as arguments in the query string
+        :rtype: lxml.etree
         """
-
-        search_url = self.adlib_base_url
-
         default_params = {
             'database': self.adlib_database,
-            'search': self.adlib_search,
+            'search': self.adlib_query,
             'xmltype': self.adlib_xmltype,
-            'limit': self.adlib_limit,
+            'limit': self.per_page_limit,
             'startfrom': 0
         }
+
         default_params.update(params)
 
-        log.debug('Getting %s (params: %s)' % (search_url, default_params))
+        log.debug('Getting %s (params: %s)' % (self.adlib_base_url, default_params))
         r = self.http_session.get(
-            search_url,
+            self.adlib_base_url,
             params=default_params
         )
         r.raise_for_status()
 
-        return r.content
-
-    def parse_adlib_response(self, content):
-        """Parses an Adlib XML response and returns an XML tree.
-
-        The input source is expected to be in UTF-8. To get around
-        well-formedness errors (which occur in many responses), bad
-        characters are ignored.
-
-        :param content: the Adlib XML response as a string.
-        :type content: string
-        :rtype: lxml.etree._Element
-        """
-        content = unicode(content, 'UTF-8', 'replace')
-        # get rid of character code 12 (form feed)
-        content = content.replace(chr(12), '?')
-
-        parser = etree.XMLParser(recover=True, encoding='utf-8')
-
-        return etree.fromstring(content.encode('utf-8'), parser=parser)
+        return etree.fromstring(r.content)
 
     def get_all_records(self):
-        """Retrieves all available OAI records.
+        total_hits = 0
+        processed_items = 0
+        start_from = 1
 
-        Records are retrieved by first requesting identifiers via the
-        ``ListIdentifiers`` verb. For each identifier, the record is
-        requested by using the ``GetRecord`` verb.
-
-        :returns: a generator that yields a tuple for each record,
-            a tuple consists of the content-type and the content as a string.
-        """
-        resumption_token = 0
         while True:
-            req_params = {}
-            if resumption_token:
-                req_params['startfrom'] = resumption_token
+            tree = self.adlib_search_call(params={'startfrom': start_from})
 
-            resp = self.adlib_search_call(params=req_params)
-            tree = self.parse_adlib_response(resp)
+            if not total_hits:
+                total_hits = int(tree.find('.//diagnostic/hits').text)
 
-            records = tree.xpath('.//recordList//record',
-                                 namespaces=self.namespaces)
-            for record in records:
+            for record in tree.xpath('.//recordList//record'):
+                processed_items += 1
                 yield 'application/xml', etree.tostring(record)
 
-            try:
-                hits = int(tree.xpath('.//diagnostic/hits/text()')[0])
-            except IndexError, e:
-                hits = 0
-            except TypeError, e:
-                hits = 0
+            start_from += self.per_page_limit
 
-            log.debug('Got %s hits on the search from Adlib' % hits)
-
-            resumption_token += self.adlib_limit
-            if resumption_token >= hits:
-                log.debug('resumptionToken empty, done fetching list')
+            if processed_items == total_hits:
                 break
 
     def run(self):
