@@ -293,6 +293,56 @@ Combined index
 Universiteitsbibliotheek Utrecht Maps index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Visserijmuseum Zoutkamp
+-----------------------
+
+This dataset contains images  from the `Visserijmuseum Zoutkamp
+<http://www.visserijmuseum.com/>`_.
+Content is harvested by using the `Adlib API <http://api.adlibsoft.com/site/>`_.
+
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``title``                            |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``creator``                          |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``image``                            |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+
+
+Visserijmuseum Zoutkamp
+^^^^^^^^^^^^^^^^^^^^^^^
+
+TextielMuseum
+-------------
+
+This dataset contains images  from the `TextielMuseum
+<http://www.textielmuseum/>`_.
+Content is harvested by using the `Adlib API <http://api.adlibsoft.com/site/>`_.
+
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``title``                            |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``creator``                          |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``reproduction.identifier_url``      | The source field is part of the URL.   |
++------------------------+--------------------------------------+----------------------------------------+
+
+
+TextielMuseum
+^^^^^^^^^^^^^
+
 Royal Library - ByvanckB
 ------------------------
 
@@ -301,8 +351,6 @@ Content is harvested by using the `OAI-PMH feed <http://services.kb.nl/mdo/oai>`
 The OCD implementation uses the 'dcx' data format.
 
 +------------------------+--------------------------------------+----------------------------------------+
-| Combined index field   | Source field(s)                      | Comment                                |
-+========================+======================================+========================================+
 | ``title``              | ``dc:title``                         |                                        |
 +------------------------+--------------------------------------+----------------------------------------+
 | ``description``        | ``dc:abstract``                      |                                        |

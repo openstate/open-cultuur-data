@@ -79,5 +79,24 @@
         "oai_base_url": "http://dspace.library.uu.nl/oai/request",
         "oai_metadata_prefix": "oai_dc",
         "oai_set": "col_1874_213366"
+    },
+    {
+        "id": "zoutkamp",
+        "extractor": "ocd_backend.extractors.adlib.AdlibExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.zoutkamp.ZoutkampItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "adlib_base_url": "http://mmr.adlibhosting.com/madigopacx/wwwopac.ashx",
+        "adlib_database": "ChoiceMardig",
+        "adlib_query": "museum=0011"
+    },
+    {
+        "id": "textielmuseum",
+        "extractor": "ocd_backend.extractors.adlib.AdlibExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.textielmuseum.TextielMuseumItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "adlib_base_url": "http://37.17.215.121:85/opendata/wwwopac.ashx",
+        "adlib_database": "collect"
     }
 ]
