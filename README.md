@@ -47,4 +47,4 @@ Contributors:
 
 ## Copyright and license
 
-The OCD documentation is released under the  [Creative Commons Attribution 4.0 International license](http://creativecommons.org/licenses/by/4.0/).
+The Open Cultuur Data API is distributed under the [GNU Lesser General Public License v3](https://www.gnu.org/licenses/lgpl.html). The OCD documentation is released under the  [Creative Commons Attribution 4.0 International license](http://creativecommons.org/licenses/by/4.0/).
