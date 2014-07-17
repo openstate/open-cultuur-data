@@ -1,10 +1,12 @@
 import re
-from BeautifulSoup import BeautifulSoup
 from datetime import datetime
-from ocd_backend.extractors import HttpRequestMixin
+
+from BeautifulSoup import BeautifulSoup
+
 from ocd_backend.items import BaseItem
 
-class TropenMuseumItem(BaseItem, HttpRequestMixin):
+
+class TropenMuseumItem(BaseItem):
     media_mime_types = {
         'png': 'image/png',
         'jpg': 'image/jpg',
