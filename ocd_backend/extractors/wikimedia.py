@@ -4,119 +4,100 @@ from ocd_backend.extractors import BaseExtractor, HttpRequestMixin
 from ocd_backend.extractors import log
 
 
-class CommonsExtractor(BaseExtractor, HttpRequestMixin):
+class WikimediaCommonsExtractor(BaseExtractor, HttpRequestMixin):
+    """This extractor fetches metadata of 'File' pages in a particular
+    Wikimedia Commons category.
+
+    The Wikipedia API is used first to query for File pages in a specific
+    category. For each found page, the metadata is retrieved by using the
+    `Commons API <http://tools.wmflabs.org/magnus-toolserver/commonsapi.php>`_.
+    """
+
+    commons_api_url = 'http://tools.wmflabs.org/magnus-toolserver/commonsapi.php'
+
     def __init__(self, *args, **kwargs):
-        super(CommonsExtractor, self).__init__(*args, **kwargs)
+        super(WikimediaCommonsExtractor, self).__init__(*args, **kwargs)
 
         self.base_url = self.source_definition['wikimedia_base_url']
-        self.wikimedia_title = self.source_definition['wikimedia_title']
+        self.wikimedia_category = self.source_definition['wikimedia_category']
 
     def wikimedia_api_call(self, params={}):
-        """Makes a call to the OAI endpoint and returns the response as
-        a string.
+        """Calls the MediaWiki API and returns the response as a string.
 
         :type params: dict
         :param params: a dictonary sent as arguments in the query string
         """
-
-        log.debug('Getting %s (params: %s)' % (self.base_url, params))
-        r = self.http_session.get(self.base_url, params=params)
-        r.raise_for_status()
-
-        return r.content
-
-    def get_images_in_category(self, cat_name, other_params={}):
-        default_params = {
+        req_params = {
             'action': 'query',
             'list': 'categorymembers',
             'cmtype': 'file',
-            'cmtitle': cat_name,
+            'cmtitle': self.wikimedia_category,
+            'cmlimit': 250,
             'format': 'xml'
         }
-        default_params.update(other_params)
-        return self.wikimedia_api_call(params=default_params)
+        req_params.update(params)
 
-    def get_image_info(self, image_file):
-        commons_api_base_url = 'http://tools.wmflabs.org/magnus-toolserver/commonsapi.php'
-        # http://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=Sa-warthog.jpg&thumbwidth=150&thumbheight=150&versions&meta
-        params = {
-            'image': image_file,
-            'thumbwidth': 150,
-            'thumbheight': 150,
-            'versions': '',
-            'meta': ''
-        }
-
-        log.debug('Getting %s (params: %s)' % (commons_api_base_url, params))
-        r = self.http_session.get(commons_api_base_url, params=params)
+        log.debug('Getting %s (params: %s)' % (self.base_url, params))
+        r = self.http_session.get(self.base_url, params=req_params)
         r.raise_for_status()
 
         return r.content
 
+    def commons_api_call(self, image_name):
+        """Use the Wikimedia Commons API to retrieve media metadata from
+        Commons as XML. The response is returned as a string.
 
-
-    def parse_wikimedia_response(self, content):
-        """Parses an OAI XML response and returns an XML tree.
-
-        The input source is expected to be in UTF-8. To get around
-        well-formedness errors (which occur in many responses), bad
-        characters are ignored.
-
-        :param content: the OAI XML response as a string.
-        :type content: string
-        :rtype: lxml.etree._Element
+        :type image_name: str
+        :param image_name: the title of the Commons page containing the
+                           image (e.g. ``File:Studioportretten.jpg``)
         """
-        content = unicode(content, 'UTF-8', 'replace')
-        # get rid of character code 12 (form feed)
-        content = content.replace(chr(12), '?')
+        params = {
+            'image': image_name,
+            'forcehtml': '',
+        }
 
-        parser = etree.XMLParser(recover=True, encoding='utf-8')
+        log.debug('Getting %s (params: %s)' % (self.commons_api_url, params))
+        r = self.http_session.get(self.commons_api_url, params=params)
+        r.raise_for_status()
 
-        return etree.fromstring(content.encode('utf-8'), parser=parser)
-
-    def get_record(self, record):
-        image_file = record.attrib['title'].replace('File:', '')
-        content = self.get_image_info(image_file)
-        print content
-        return content
+        return r.content
 
     def get_all_records(self):
-        """Retrieves all available OAI records.
+        cmcontinue = None
 
-        Records are retrieved by first requesting identifiers via the
-        ``ListIdentifiers`` verb. For each identifier, the record is
-        requested by using the ``GetRecord`` verb.
-
-        :returns: a generator that yields a tuple for each record,
-            a tuple consists of the content-type and the content as a string.
-        """
-        resumption_token = None
         while True:
             req_params = {}
-            if resumption_token:
-                req_params['cmcontinue'] = resumption_token
+            if cmcontinue:
+                req_params['cmcontinue'] = cmcontinue
 
-            resp = self.get_images_in_category(self.wikimedia_title, req_params)
-            tree = self.parse_wikimedia_response(resp)
+            # Get the file pages in the specified Wiki category
+            file_pages = etree.fromstring(self.wikimedia_api_call(req_params))
 
-            records = tree.xpath(
-                './/cm'
-            )
+            # Request the metadata of each page
+            for file_page in file_pages.findall('.//cm'):
+                page_title = file_page.attrib['title']
 
-            for record in records:
-                yield 'application/xml', self.get_record(record)
+                page_meta = self.commons_api_call(page_title)
+                page_meta_tree = etree.fromstring(page_meta)
+
+                # Skip this page if the response contains errors (the Commons
+                # API doesn't return proper HTTP status codes)
+                page_meta_error = page_meta_tree.find('.//error')
+                if page_meta_error:
+                    log.warning('Skipping "%s" because of Commons API error: %s'
+                                % (page_title, page_meta_error.text))
+                    continue
+
+                yield 'application/xml', page_meta
 
             try:
-                resumption_token = tree.xpath('.//@cmcontinue')[0]
-            except IndexError, e:
-                resumption_token = None
-            except AttributeError, e:
-                resumption_token = None
+                cmcontinue = file_pages.xpath('.//query-continue/categorymembers/@cmcontinue')[0]
+            except IndexError:
+                cmcontinue = None
 
-            # According to the OAI spec, we reached the last page of the
-            # list if the 'resumptionToken' element is empty
-            if not resumption_token:
-                log.debug('resumptionToken empty, done fetching list')
+            # When cmcontinue is empty or None, we've reached the last page
+            if not cmcontinue:
+                log.debug('cmcontinue empty, done fetching category pages')
                 break
 
     def run(self):

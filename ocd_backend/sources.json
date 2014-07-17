@@ -72,12 +72,11 @@
     },
     {
         "id": "tropenmuseum",
-        "extractor": "ocd_backend.extractors.wikimedia.CommonsExtractor",
+        "extractor": "ocd_backend.extractors.wikimedia.WikimediaCommonsExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.tropenmuseum.CommonsItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "wikimedia_base_url": "http://commons.wikimedia.org/w/api.php",
-        "wikimedia_title": "Category:Images_from_the_Tropenmuseum"
+        "wikimedia_category": "Category:Images_from_the_Tropenmuseum"
     }
-
 ]
