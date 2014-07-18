@@ -251,7 +251,7 @@ This dataset contains audio, video and images from `Amsterdam Museum <http://www
 |                        |                                      | Therefor, ``date_granularity`` is      |
 |                        |                                      | always 8 when a date is present.       |
 +------------------------+--------------------------------------+----------------------------------------+
-| ``authors``            | ``dc:creator``               |                                        |
+| ``authors``            | ``dc:creator``                       |                                        |
 +------------------------+--------------------------------------+----------------------------------------+
 | ``media_urls``         | ``oi:medium`` and ``oi:extent``      | Each ``media_url`` entry contains an   |
 |                        |                                      | object for each ``oi:medium`` node.    |
