@@ -9,7 +9,7 @@ from ocd_backend.items import BaseItem
 class TropenMuseumItem(BaseItem):
     media_mime_types = {
         'png': 'image/png',
-        'jpg': 'image/jpg',
+        'jpg': 'image/jpeg',
         'tiff': 'image/tiff',
         'tif': 'image/tiff'
     }
