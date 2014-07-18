@@ -293,6 +293,7 @@ Combined index
 Universiteitsbibliotheek Utrecht Maps index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+
 Visserijmuseum Zoutkamp
 -----------------------
 
@@ -315,16 +316,15 @@ Combined index
 +------------------------+--------------------------------------+----------------------------------------+
 
 
-Visserijmuseum Zoutkamp
-^^^^^^^^^^^^^^^^^^^^^^^
+Visserijmuseum Zoutkamp index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 
 TextielMuseum
 -------------
 
-This dataset contains images  from the `TextielMuseum
-<http://www.textielmuseum/>`_.
+This dataset contains images  from the `TextielMuseum <http://www.textielmuseum/>`_.
 Content is harvested by using the `Adlib API <http://api.adlibsoft.com/site/>`_.
-
 
 Combined index
 ^^^^^^^^^^^^^^
@@ -340,8 +340,9 @@ Combined index
 +------------------------+--------------------------------------+----------------------------------------+
 
 
-TextielMuseum
-^^^^^^^^^^^^^
+TextielMuseum index
+^^^^^^^^^^^^^^^^^^^
+
 
 Royal Library - ByvanckB
 ------------------------
@@ -350,7 +351,12 @@ This dataset contains images from the Royal Library's `ByvanckB set <http://manu
 Content is harvested by using the `OAI-PMH feed <http://services.kb.nl/mdo/oai>`_.
 The OCD implementation uses the 'dcx' data format.
 
+Combined index
+^^^^^^^^^^^^^^
+
 +------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
 | ``title``              | ``dc:title``                         |                                        |
 +------------------------+--------------------------------------+----------------------------------------+
 | ``description``        | ``dc:abstract``                      |                                        |
@@ -366,4 +372,32 @@ The OCD implementation uses the 'dcx' data format.
 +------------------------+--------------------------------------+----------------------------------------+
 
 Royal Library - ByvanckB index
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Tropenmuseum
+------------
+
+This dataset contains images from the `Tropenmusem <http://collectie.tropenmuseum.nl/Default.aspx>`_.
+The Wikimedia Commons API is used to get the dataset.
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``file/name``                        |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``file/date``                        |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``description/language``             | Only the dexcription with ``lang="nl"``|
+|                        |                                      | is included. All HTML tags are removed.|
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``file/name``                        |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+
+Tropenmuseum index
+^^^^^^^^^^^^^^^^^^
+
+
