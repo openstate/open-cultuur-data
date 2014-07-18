@@ -89,7 +89,6 @@ class TropenMuseumItem(BaseItem):
             # Date is sometimes wrapped inside html...
             html_date = re.search(r'datetime=\"(.*)\"', date)
             if html_date:
-                print html_date.group(1)
                 date = html_date.group(1)
 
             date_formats = [
