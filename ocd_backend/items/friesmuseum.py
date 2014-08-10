@@ -1,15 +1,17 @@
-from ocd_backend.items import BaseItem
 import datetime
-from ocd_backend.utils.misc import try_convert, parse_date, parse_date_span
+
+from ocd_backend.items import BaseItem
+from ocd_backend.utils.misc import parse_date
+
 
 class FriesMuseumItem(BaseItem):
     # Granularities
     regexen = [
         # Dates are noise-free!
-        ('\?$', (0, lambda _ : None) ),
-        ('(\d\d\d0)[\?() ]+$', (3, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
-        ('(\d+)$', (4, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
-        ('(\d\d\d\d)-(\d+)$', (6, lambda (y,m) : datetime.datetime(int(y), int(m), 1)) ),
+        ('\?$', (0, lambda _ : None)),
+        ('(\d\d\d0)[\?() ]+$', (3, lambda (y,): datetime.datetime(int(y), 1, 1))),
+        ('(\d+)$', (4, lambda (y,): datetime.datetime(int(y), 1, 1))),
+        ('(\d\d\d\d)-(\d+)$', (6, lambda (y, m): datetime.datetime(int(y), int(m), 1))),
         ('(\d\d\d\d)-(\d+)-(\d+)$', (8, lambda (y,m,d) : datetime.datetime(int(y), int(m), int(d))) ),
     ]
 
@@ -39,7 +41,7 @@ class FriesMuseumItem(BaseItem):
 
     def get_combined_index_data(self):
         index_data = {}
-        if self.original_item.find('title') != None:
+        if self.original_item.find('title') is not None:
             index_data['title'] = unicode(self.original_item.find('title').text)
 
         gran, date = self._get_date_and_granularity()
@@ -47,7 +49,7 @@ class FriesMuseumItem(BaseItem):
             index_data['date_granularity'] = gran
             index_data['date'] = date
 
-        if self.original_item.find('label.text') != None:
+        if self.original_item.find('label.text') is not None:
             index_data['description'] = unicode(self.original_item.find('label.text').text)
 
         # author is optional
@@ -70,18 +72,20 @@ class FriesMuseumItem(BaseItem):
 
         # measurements
         fields = ['type', 'value', 'unit']
-        dim = zip(*[[c.text for c in self.original_item.iter('dimension.'+f)] for f in fields])
+        dim = zip(*[[c.text for c in self.original_item.iter('dimension.'+f)]
+                    for f in fields])
         index_data['measurements'] = [
             {
-                'type' : t,
-                'value' : v.replace(',','.'),
-                'unit' : u
+                'type': t,
+                'value': v.replace(',','.'),
+                'unit': u
             }
-            for (t,v,u) in dim if t and v and v not in ['?','...','....']]
+            for (t, v, u) in dim if t and v and v not in ['?', '...', '....']]
 
         # acquisition
         fields = ['date', 'method']
-        aq = zip(*[[c.text for c in self.original_item.iter('acquisition.'+f)] for f in fields])
+        aq = zip(*[[c.text for c in self.original_item.iter('acquisition.'+f)]
+                   for f in fields])
         aq = [
             {
                 'date' : d,
@@ -89,11 +93,11 @@ class FriesMuseumItem(BaseItem):
                 'method' : m
             }
             for (ds,m) in aq if ds or m for g,d in [parse_date(self.regexen, ds)]]
-        index_data['acquisition'] = aq[0] if aq else None # singleton
+        index_data['acquisition'] = aq[0] if aq else None  # singleton
 
         # listed attributes
         attrs = {
-            'collection' : 'collections',
+            'collection': 'collections',
             'material': 'materials',
             'production.place': 'production_place',
             'technique': 'technique',
@@ -111,8 +115,9 @@ class FriesMuseumItem(BaseItem):
 
     def get_all_text(self):
         # all text consists of a simple space concatenation of the fields
-        fields = ['title', 'creator', 'production.place', 'collection', 'object_name',
-                  'technique', 'material']
+        fields = ['title', 'creator', 'production.place', 'collection',
+                  'object_name', 'technique', 'material']
 
-        text = ' '.join([unicode(c.text) for f in fields for c in self.original_item.iter(f) if c.text])
+        text = ' '.join([unicode(c.text) for f in fields for c in
+                         self.original_item.iter(f) if c.text])
         return unicode(text)
