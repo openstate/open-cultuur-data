@@ -57,7 +57,7 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.elobeeldbank.ErfgoedLeidenBeeldbankItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
-        "opensearch_url": "http://www.archiefleiden.nl/api/opensearch/",
+        "opensearch_url": "https://www.erfgoedleiden.nl/api/opensearch/",
         "opensearch_query": "\"*:*\""
     },
     {
