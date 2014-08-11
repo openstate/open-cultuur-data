@@ -46,25 +46,23 @@ Content is harvested from a static XML file that was made available to Open Cult
 Combined index
 ^^^^^^^^^^^^^^
 
-+------------------------+--------------------------------------+----------------------------------------+
-| Combined index field   | Source field(s)                      | Comment                                |
-+========================+======================================+========================================+
-| ``title``              | ``title``                            |                                        |
-+------------------------+--------------------------------------+----------------------------------------+
-| ``description``        | ``label.text``                       | normally missing                       |
-+------------------------+--------------------------------------+----------------------------------------+
-| ``date``               | reconstructed from                   | ``production.date.start`` is taken     |
-|                        | ``production.date.start`` and        | with a granularity reconstructed from  |
-|                        | ``production.date.end``              | the string, and compared to            |
-|                        |                                      | ``production.date.end`` with its       |
-|                        |                                      | granularity to possibly decrease the   |
-|                        |                                      | final ``date_granularity``             |
-+------------------------+--------------------------------------+----------------------------------------+
-| ``authors``            | ``creator``                          |                                        |
-+------------------------+--------------------------------------+----------------------------------------+
-| ``media_urls``         | ``reproduction.identifier_URL``      | relative url added to absolute         |
-|                        |                                      | template                               |
-+------------------------+--------------------------------------+----------------------------------------+
++----------------------+---------------------------------+---------------------------------------+
+| Combined index field |         Source field(s)         |                Comment                |
++======================+=================================+=======================================+
+| ``title``            | ``title``                       |                                       |
++----------------------+---------------------------------+---------------------------------------+
+| ``description``      | ``label.text``                  | normally missing                      |
++----------------------+---------------------------------+---------------------------------------+
+| ``date``             | reconstructed from              | ``production.date.start`` is taken    |
+|                      | ``production.date.start``       | with a granularity reconstructed from |
+|                      |                                 | the string                            |
+|                      |                                 | ``production.date.end`` is ignored.   |
++----------------------+---------------------------------+---------------------------------------+
+| ``authors``          | ``creator``                     |                                       |
++----------------------+---------------------------------+---------------------------------------+
+| ``media_urls``       | ``reproduction.identifier_URL`` | relative url added to absolute        |
+|                      |                                 | template                              |
++----------------------+---------------------------------+---------------------------------------+
 
 Centraal Museum Utrecht index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -90,17 +88,6 @@ Centraal Museum Utrecht index
 | ``technique``          |  ``techniek.vrije.tekst``            |                                        |
 +------------------------+--------------------------------------+----------------------------------------+
 | ``notes``              |  ``notes``                           |                                        |
-+------------------------+--------------------------------------+----------------------------------------+
-| ``title``              | ``EventType`` and ``PersonName``     | Only names of 'main' persons in event  |
-+------------------------+--------------------------------------+----------------------------------------+
-| ``description``        | ``InstitutionName``, ``SourceType``, | Names of all related persons           |
-|                        | `` SourcePlace`` and ``PersonName``  |                                        |
-+------------------------+--------------------------------------+----------------------------------------+
-| ``date``               | ``EventDate``                        | ``date_granularity`` varies between 8  |
-|                        |                                      | and 10                                 |
-+------------------------+--------------------------------------+----------------------------------------+
-| ``media_urls``         | ``SourceAvailableScans``             | Thumbnails of records are (in general) |
-|                        |                                      | hosted by the orinal archive           |
 +------------------------+--------------------------------------+----------------------------------------+
 
 
@@ -138,6 +125,59 @@ Combined index
 
 Fotobank Nationaal Archief index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Fries Museum
+-----------------------
+
+This dataset contains items from the collection of the `Fries Museum <https://www.friesmuseum.nl/>`_. Currently, the data that is made available by the Fries Museum only covers their fashion collection.
+
+Content is harvested from a static XML file and image files that were made available to Open Cultuur Data. More information about the dataset and a link to the actual files can be found on `this wiki page <http://www.opencultuurdata.nl/wiki/fries-museum/>`_.
+
+
+Combined index
+^^^^^^^^^^^^^^
+
++----------------------+-----------------------------+---------------------------------------+
+| Combined index field |       Source field(s)       |                Comment                |
++======================+=============================+=======================================+
+| ``title``            | ``title``                   |                                       |
++----------------------+-----------------------------+---------------------------------------+
+| ``description``      | ``label.text``              | often missing                         |
++----------------------+-----------------------------+---------------------------------------+
+| ``date``             | reconstructed from          | ``production.date.start`` is taken    |
+|                      | ``production.date.start``   | with a granularity reconstructed from |
+|                      |                             | the string                            |
+|                      |                             | ``production.date.end`` is ignored.   |
++----------------------+-----------------------------+---------------------------------------+
+| ``authors``          | ``creator``                 |                                       |
++----------------------+-----------------------------+---------------------------------------+
+| ``media_urls``       | ``reproduction.identifier`` | identifier used for static image set  |
++----------------------+-----------------------------+---------------------------------------+
+
+Fries Museum index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++----------------------+--------------------------------------+----------------------------------------+
+|     Index field      |           Source field(s)            |                Comment                 |
++======================+======================================+========================================+
+| ``measurements``     | ``dimension.type``,                  | the order in the xml document          |
+|                      | ``dimension.value``,                 | determines grouping, because we        |
+|                      | ``dimension.unit``                   | 'transpose the matrix'                 |
++----------------------+--------------------------------------+----------------------------------------+
+| ``acquisition``      | ``acquisition.date``                 | ``date_granularity`` is reconstructed  |
+|                      | ``acquisition.method``               |                                        |
++----------------------+--------------------------------------+----------------------------------------+
+| ``production_place`` | ``production.place``                 |                                        |
++----------------------+--------------------------------------+----------------------------------------+
+| ``collections``      | ``collection``                       |                                        |
++----------------------+--------------------------------------+----------------------------------------+
+| ``materials``        | ``material``                         |                                        |
++----------------------+--------------------------------------+----------------------------------------+
+| ``tags``             | ``object_name``                      |                                        |
++----------------------+--------------------------------------+----------------------------------------+
+| ``technique``        | ``technique``                        |                                        |
++----------------------+--------------------------------------+----------------------------------------+
+
 
 
 Open Archieven
@@ -251,7 +291,7 @@ This dataset contains audio, video and images from `Amsterdam Museum <http://www
 |                        |                                      | Therefor, ``date_granularity`` is      |
 |                        |                                      | always 8 when a date is present.       |
 +------------------------+--------------------------------------+----------------------------------------+
-| ``authors``            | ``dc:creator``               |                                        |
+| ``authors``            | ``dc:creator``                       |                                        |
 +------------------------+--------------------------------------+----------------------------------------+
 | ``media_urls``         | ``oi:medium`` and ``oi:extent``      | Each ``media_url`` entry contains an   |
 |                        |                                      | object for each ``oi:medium`` node.    |
@@ -293,6 +333,7 @@ Combined index
 Universiteitsbibliotheek Utrecht Maps index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+
 Visserijmuseum Zoutkamp
 -----------------------
 
@@ -315,16 +356,15 @@ Combined index
 +------------------------+--------------------------------------+----------------------------------------+
 
 
-Visserijmuseum Zoutkamp
-^^^^^^^^^^^^^^^^^^^^^^^
+Visserijmuseum Zoutkamp index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 
 TextielMuseum
 -------------
 
-This dataset contains images  from the `TextielMuseum
-<http://www.textielmuseum/>`_.
+This dataset contains images  from the `TextielMuseum <http://www.textielmuseum/>`_.
 Content is harvested by using the `Adlib API <http://api.adlibsoft.com/site/>`_.
-
 
 Combined index
 ^^^^^^^^^^^^^^
@@ -340,8 +380,9 @@ Combined index
 +------------------------+--------------------------------------+----------------------------------------+
 
 
-TextielMuseum
-^^^^^^^^^^^^^
+TextielMuseum index
+^^^^^^^^^^^^^^^^^^^
+
 
 Royal Library - ByvanckB
 ------------------------
@@ -350,7 +391,12 @@ This dataset contains images from the Royal Library's `ByvanckB set <http://manu
 Content is harvested by using the `OAI-PMH feed <http://services.kb.nl/mdo/oai>`_.
 The OCD implementation uses the 'dcx' data format.
 
+Combined index
+^^^^^^^^^^^^^^
+
 +------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
 | ``title``              | ``dc:title``                         |                                        |
 +------------------------+--------------------------------------+----------------------------------------+
 | ``description``        | ``dc:abstract``                      |                                        |
@@ -366,4 +412,32 @@ The OCD implementation uses the 'dcx' data format.
 +------------------------+--------------------------------------+----------------------------------------+
 
 Royal Library - ByvanckB index
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Tropenmuseum
+------------
+
+This dataset contains images from the `Tropenmusem <http://collectie.tropenmuseum.nl/Default.aspx>`_.
+The Wikimedia Commons API is used to get the dataset.
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``file/name``                        |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``file/date``                        |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``description/language``             | Only the dexcription with ``lang="nl"``|
+|                        |                                      | is included. All HTML tags are removed.|
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``file/name``                        |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+
+Tropenmuseum index
+^^^^^^^^^^^^^^^^^^
+
+

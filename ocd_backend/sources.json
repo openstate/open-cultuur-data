@@ -98,5 +98,23 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "adlib_base_url": "http://37.17.215.121:85/opendata/wwwopac.ashx",
         "adlib_database": "collect"
+    },
+    {
+        "id": "tropenmuseum",
+        "extractor": "ocd_backend.extractors.wikimedia.WikimediaCommonsExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.tropenmuseum.TropenMuseumItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "wikimedia_base_url": "http://commons.wikimedia.org/w/api.php",
+        "wikimedia_category": "Category:Images_from_the_Tropenmuseum"
+    },
+    {
+        "id": "fries_museum",
+        "extractor": "ocd_backend.extractors.staticfile.StaticXmlExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.friesmuseum.FriesMuseumItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "file_url": "http://static.opencultuurdata.nl/fries_museum/20120616_Textiel_Hack_FM.xml",
+        "item_xpath": "//adlibXML/recordList/record"
     }
 ]

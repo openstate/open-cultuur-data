@@ -51,7 +51,7 @@ class ZoutkampItem(BaseItem):
             for medium in mediums:
                 combined_index_data['media_urls'].append({
                     'original_url': medium.text,
-                    'content_type': 'image/jpg'
+                    'content_type': 'image/jpeg'
                 })
 
         return combined_index_data
