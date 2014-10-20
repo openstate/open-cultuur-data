@@ -36,11 +36,12 @@
     },
     {
         "id": "centraal_museum_utrecht",
-        "extractor": "ocd_backend.extractors.cmutrecht.CentraalMuseumUtrechtExtractor",
+        "extractor": "ocd_backend.extractors.staticfile.StaticXmlExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.cmutrecht.CentraalMuseumUtrechtItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
-        "file_url": "http://static.opencultuurdata.nl/centraal_museum_utrecht/cmu.xml"
+        "file_url": "http://static.opencultuurdata.nl/centraal_museum_utrecht/cmu.xml",
+        "item_xpath": "//record"
     },
     {
         "id": "openarchieven",
