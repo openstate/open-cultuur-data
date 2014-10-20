@@ -33,12 +33,15 @@ We use [Sphinx](http://sphinx-doc.org/) to create OCD's documentation. The sourc
 
 Please read through our [contributing guidelines](https://github.com/openstate/open-cultuur-data/blob/master/docs/dev/getting_started.rst). Included are directions for opening issues, coding standards, and notes on development.
 
+<img src="https://travis-ci.org/openstate/open-cultuur-data.svg?branch=master" />
+
 ## Authors and contributors
 
 Authors:
 
 * Bart de Goede ([@bartdegoede](https://twitter.com/bartdegoede))
 * Justin van Wees ([@justin_v_w](https://twitter.com/justin_v_w))
+* Breyten Ernsting ([@breyten](https://twitter.com/breyten))
 
 Contributors:
 
