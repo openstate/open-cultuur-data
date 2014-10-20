@@ -39,3 +39,6 @@ docs/_build/
 
 # Vagrant box dir
 .vagrant
+
+# Coverage state file
+.coverage
