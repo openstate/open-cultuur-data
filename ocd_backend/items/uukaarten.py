@@ -91,9 +91,13 @@ class UUKaartenItem(BaseItem, HttpRequestMixin):
             combined_index_data['authors'] = authors
 
         image_url = self._get_image_link()
-        mime_type = self._get_text_or_none('.//oai:metadata/oai_dc:dc/dc:format')
-        if mime_type is None:
-            mime_type = ''
+
+        # The image format is reported in the metadata, but the image link always
+        # converts it to jpeg format. See ticket #56 and #57
+        # mime_type = self._get_text_or_none('.//oai:metadata/oai_dc:dc/dc:format')
+        # if mime_type is None:
+        mime_type = 'image/jpeg'
+
         combined_index_data['media_urls'] = [{
           'original_url': image_url,
           'content_type': mime_type
