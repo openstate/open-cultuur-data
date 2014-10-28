@@ -1,3 +1,8 @@
+local_settings.py
+local_sources.json
+
+Vagrantfile
+
 # OSX Finder files
 .DS_Store
 .AppleDouble
@@ -34,3 +39,9 @@ docs/_build/
 
 # Vagrant box dir
 .vagrant
+
+# Coverage state file
+.coverage
+
+# IDE/editor
+.idea

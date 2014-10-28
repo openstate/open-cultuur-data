@@ -11,6 +11,11 @@ Extracting items
 .. autoclass:: ocd_backend.extractors.BaseExtractor
    :inherited-members:
 
+.. autoclass:: ocd_backend.extractors.HttpRequestMixin
+   :inherited-members:
+
+.. autoclass:: ocd_backend.extractors.oai.OaiExtractor
+   :members: oai_call, get_all_records
 
 Transforming items
 ------------------
@@ -38,4 +43,3 @@ Loading items
    :members: run, load_item
 
 .. autoclass:: ocd_backend.loaders.ElasticsearchLoader
-   :members: es

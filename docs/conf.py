@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.abspath('../'))
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.todo',
+    'sphinx.ext.extlinks',
     'sphinxcontrib.httpdomain'
 ]
 
@@ -30,7 +31,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Open Cultuur Data API'
-copyright = u'2014, Justin van Wees'
+copyright = u'2014, Bart de Goede and Justin van Wees; documentation is released under Creative Commons Attribution 4.0'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -78,6 +79,10 @@ pygments_style = 'sphinx'
 # If true, keep warnings as "system message" paragraphs in the built documents.
 #keep_warnings = False
 
+
+extlinks = {
+    'rest_api_v0': ('http://api.opencultuurdata.nl/%s', None)
+}
 
 # -- Options for HTML output ----------------------------------------------
 import sphinx_rtd_theme

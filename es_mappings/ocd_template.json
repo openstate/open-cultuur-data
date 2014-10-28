@@ -53,90 +53,105 @@
                     }
                 }
             ],
-            "meta": {
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "type": "string",
-                        "index": "not_analyzed"
-                    },
-                    "original_object_id": {
-                        "type": "string",
-                        "index": "not_analyzed"
-                    },
-                    "rights": {
-                        "type": "string",
-                        "index": "not_analyzed"
-                    },
-                    "original_object_urls": {
-                        "type": "object"
-                    },
-                    "processing_started": {
-                        "type": "date",
-                        "format": "dateOptionalTime"
-                    },
-                    "processing_finished": {
-                        "type": "date",
-                        "format": "dateOptionalTime"
+            "properties": {
+                "meta": {
+                    "type": "object",
+                    "properties": {
+                        "source_id": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        },
+                        "collection": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        },
+                        "original_object_id": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        },
+                        "rights": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        },
+                        "original_object_urls": {
+                            "type": "object"
+                        },
+                        "processing_started": {
+                            "type": "date",
+                            "format": "dateOptionalTime"
+                        },
+                        "processing_finished": {
+                            "type": "date",
+                            "format": "dateOptionalTime"
+                        }
                     }
-                }
-            },
-            "all_text": {
-                "type": "string",
-                "analyzer": "text_nl",
-                "index_options": "offsets"
-            },
-            "title": {
-                "type": "string",
-                "analyzer": "text_nl",
-                "index_options": "offsets"
-            },
-            "description": {
-                "type": "string",
-                "analyzer": "text_nl",
-                "index_options": "offsets"
-            },
-            "date": {
-                "type": "date",
-                "format": "dateOptionalTime"
-            },
-            "date_granularity": {
-                "type": "short"
-            },
-            "authors": {
-                "type" : "string",
-                "index": "not_analyzed",
-                "index_name": "author"
-            },
-            "media_urls": {
-                "index_name": "media_url",
-                "properties": {
-                    "url": {
-                        "type": "string",
-                        "index": "no"
-                    },
-                    "width": {
-                        "type": "integer"
-                    },
-                    "height": {
-                        "type": "integer"
-                    },
-                    "content_type": {
-                        "type": "string",
-                        "index": "not_analyzed"
+                },
+                "all_text": {
+                    "type": "string",
+                    "analyzer": "text_nl"
+                },
+                "title": {
+                    "type": "string",
+                    "analyzer": "text_nl"
+                },
+                "description": {
+                    "type": "string",
+                    "analyzer": "text_nl"
+                },
+                "date": {
+                    "type": "date",
+                    "format": "dateOptionalTime"
+                },
+                "date_granularity": {
+                    "type": "short"
+                },
+                "authors": {
+                    "type": "multi_field",
+                    "fields": {
+                        "authors": {
+                            "type" : "string",
+                            "analyzer": "text_nl"
+                        },
+                        "untouched": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        }
                     }
-                }
-            },
-            "source_data": {
-                "type": "object",
-                "properties": {
-                    "data": {
-                        "type": "string",
-                        "index": "no"
-                    },
-                    "content_type": {
-                        "type": "string",
-                        "index": "not_analyzed"
+                },
+                "media_urls": {
+                    "index_name": "media_url",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "index": "no"
+                        },
+                        "original_url": {
+                            "type": "string",
+                            "index": "no"
+                        },
+                        "width": {
+                            "type": "integer"
+                        },
+                        "height": {
+                            "type": "integer"
+                        },
+                        "content_type": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        }
+                    }
+                },
+                "source_data": {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "string",
+                            "index": "no"
+                        },
+                        "content_type": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        }
                     }
                 }
             }

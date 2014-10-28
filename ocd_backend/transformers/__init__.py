@@ -1,10 +1,13 @@
 import json
+from hashlib import sha1
 
 from lxml import etree
 from celery import Task
 
+from ocd_backend import settings
 from ocd_backend.exceptions import NoDeserializerAvailable
 from ocd_backend.utils.misc import load_object
+
 
 class BaseTransformer(Task):
     def run(self, *args, **kwargs):
@@ -40,6 +43,14 @@ class BaseTransformer(Task):
             raise NoDeserializerAvailable('Item with content_type %s'
                                           % raw_item_content_type)
 
+    def add_resolveable_media_urls(self, item):
+        """For each item in ``media_urls``, add a ``url`` variant that
+        can be resolved by the OCD REST API."""
+        if 'media_urls' in item.combined_index_data:
+            for media_url in item.combined_index_data['media_urls']:
+                hashed_url = sha1(media_url['original_url']).hexdigest()
+                media_url['url'] = '%s/%s' % (settings.RESOLVER_BASE_URL, hashed_url)
+
     def transform_item(self, raw_item_content_type, raw_item, item):
         """Transforms a single item.
 
@@ -59,5 +70,7 @@ class BaseTransformer(Task):
         """
         item = self.item_class(self.source_definition, raw_item_content_type,
                                raw_item, item)
+
+        self.add_resolveable_media_urls(item)
 
         return item.get_object_id(), item.get_combined_index_doc(), item.get_index_doc()
