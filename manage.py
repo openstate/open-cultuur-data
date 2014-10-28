@@ -1,17 +1,29 @@
 #!/usr/bin/env python
 
+from datetime import datetime
 import json
 from glob import glob
+import gzip
+import os
 
 import click
+from elasticsearch import helpers as es_helpers
 from werkzeug.serving import run_simple
 
 from ocd_backend.es import elasticsearch as es
 from ocd_backend.pipeline import setup_pipeline
-from ocd_backend.settings import SOURCES_CONFIG_FILE, DEFAULT_INDEX_PREFIX
+from ocd_backend.settings import (SOURCES_CONFIG_FILE, DEFAULT_INDEX_PREFIX,
+                                  BACKUP_DIR)
 from ocd_backend.utils.misc import load_sources_config
 from ocd_frontend.wsgi import application
 
+
+def _create_path(path):
+    if not os.path.isdir(path):
+        click.secho('Creating path "%s"' % path, fg='green')
+        os.mkdir(path)
+
+    return path
 
 @click.group()
 @click.version_option()
@@ -54,10 +66,10 @@ def es_put_mapping(index_name, mapping_file):
 @elasticsearch.command('create_indexes')
 @click.argument('mapping_dir', type=click.Path(exists=True, resolve_path=True))
 def create_indexes(mapping_dir):
-    """Create all indexes for which a mapping- and settingsfile is avialble.
+    """Create all indexes for which a mapping- and settingsfile is available.
 
     It is assumed that mappings in the specified directory follow the
-    following nameing convention: "ocd_mapping_{SOURCE_NAME}.json".
+    following naming convention: "ocd_mapping_{SOURCE_NAME}.json".
     For example: "ocd_mapping_rijksmuseum.json".
     """
     click.echo('Creating indexes for ES mappings in %s' % (mapping_dir))
@@ -88,6 +100,23 @@ def delete_indexes():
     if click.confirm('Are you sure you want to delete the above indices?'):
         es.indices.delete(index=index_glob)
         es.indices.delete_template('ocd_template')
+
+
+@elasticsearch.command('available_indices')
+def available_indices():
+    """
+    List available indices
+    """
+    available = []
+    indices = es.cat.indices().strip().split('\n')
+    for index in indices:
+        index = index.split()
+        if u'resolver' not in index[1] and u'combined_index' not in index[1]:
+            click.secho('%s (%s docs, %s)' % (index[1], index[4], index[6]),
+                        fg='green')
+            available.append(index[1])
+
+    return available
 
 
 @cli.group()
@@ -144,6 +173,60 @@ def frontend():
 def frontend_runserver(host, port):
     run_simple(host, port, application, use_reloader=True, use_debugger=True)
 
+
+@cli.group()
+def backup():
+    """Backup and restore"""
+
+
+@backup.command('create')
+@click.option('--index', default=None)
+@click.pass_context
+def create_backup(ctx, index):
+    """
+    Create a backup of an index. If you don't provide an ``--index`` option,
+    you will be prompted with a list of available index names. Backups are
+    stored as a gzipped txt file in ``settings.BACKUP_DIR/<index_name>/<
+    timestamp>_<index-name>.backup.gz``, and a symlink ``latest.backup.gz`` is
+    created, pointing to the last created backup.
+
+    :param ctx: Click context, so we can issue other management commands
+    :param index: name of the index you want to create a backup for
+    """
+    if not index:
+        available_idxs = ctx.invoke(available_indices)
+        index = click.prompt('Name of index to backup')
+
+        if index not in available_idxs:
+            click.secho('"%s" is not an available index' % index, fg='red')
+            return
+
+    match_all = {'query': {'match_all': {}}}
+
+    total_docs = es.count(index=index).get('count')
+
+    path = _create_path(path=os.path.join(BACKUP_DIR, index))
+    backup_name = '%(timestamp)s_%(index_name)s.backup.gz' % {
+        'index_name': index,
+        'timestamp': datetime.now().strftime('%Y%m%d%H%M%S')
+    }
+    new_backup = os.path.join(path, backup_name)
+
+    with gzip.open(new_backup, 'wb') as g:
+        with click.progressbar(es_helpers.scan(es, query=match_all, scroll='1m',
+                                               index=index),
+                               length=total_docs) as documents:
+            for doc in documents:
+                g.write('%s\n' % json.dumps(doc))
+
+    click.secho('Created backup "%s"' % backup_name, fg='green')
+
+    latest = os.path.join(path, 'latest.backup.gz')
+    os.unlink(latest)
+    os.symlink(new_backup, latest)
+
+    click.secho('Created symlink "latest.backup.gz" to "%s"' % new_backup,
+                fg='green')
 
 if __name__ == '__main__':
     cli()
