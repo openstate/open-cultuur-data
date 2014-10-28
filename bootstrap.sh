@@ -11,7 +11,7 @@ wget -q https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticse
 sudo dpkg -i elasticsearch-1.2.1.deb > /dev/null
 sudo service elasticsearch start
 
-sudo apt-get install -y libxml2-dev libxslt1-dev python-dev python-setuptools python-virtualenv git > /dev/null
+sudo apt-get install -y libxml2-dev libxslt1-dev libssl-dev libffi-dev python-dev python-setuptools python-virtualenv git > /dev/null
 sudo easy_install -q pip
 virtualenv -q ocd
 
