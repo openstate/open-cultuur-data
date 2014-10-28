@@ -19,7 +19,7 @@ Using `Vagrant <http://www.vagrantup.com/>`_ is by far the easiest way to spin u
 
    $ vagrant up && vagrant ssh
 
-Vagrant will automatically sync your project directory (the directory with the Vagrantfile) between the host and guest machine. In the guest, the project directory can be found under ``/vagrant``. For more information, see the Vagrant documentation on `Synced Folders <http://docs.vagrantup.com/v2/synced-folders/index.html>`_.
+Vagrant will automatically sync your project directory (the directory with the Vagrantfile) between the host and guest machine. Also, it will run a bootstrap script that will take care of installing project dependencies. In the guest, the project directory can be found under ``/vagrant``. For more information, see the Vagrant documentation on `Synced Folders <http://docs.vagrantup.com/v2/synced-folders/index.html>`_.
 
 Manual setup
 ============
