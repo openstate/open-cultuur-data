@@ -4,10 +4,13 @@ import json
 from glob import glob
 
 import click
+from werkzeug.serving import run_simple
 
 from ocd_backend.es import elasticsearch as es
-from ocd_backend.settings import SOURCES_CONFIG_FILE
+from ocd_backend.pipeline import setup_pipeline
+from ocd_backend.settings import SOURCES_CONFIG_FILE, DEFAULT_INDEX_PREFIX
 from ocd_backend.utils.misc import load_sources_config
+from ocd_frontend.wsgi import application
 
 
 @click.group()
@@ -48,29 +51,43 @@ def es_put_mapping(index_name, mapping_file):
     es.indices.put_mapping(index=index_name, body=mapping)
 
 
-@elasticsearch.command('put_all_mappings')
+@elasticsearch.command('create_indexes')
 @click.argument('mapping_dir', type=click.Path(exists=True, resolve_path=True))
-def put_all_mappings(mapping_dir):
-    """Put all mappings in a specifc directory.
+def create_indexes(mapping_dir):
+    """Create all indexes for which a mapping- and settingsfile is avialble.
 
     It is assumed that mappings in the specified directory follow the
     following nameing convention: "ocd_mapping_{SOURCE_NAME}.json".
     For example: "ocd_mapping_rijksmuseum.json".
     """
-    click.echo('Putting ES mappings in %s' % (mapping_dir))
+    click.echo('Creating indexes for ES mappings in %s' % (mapping_dir))
 
     for mapping_file_path in glob('%s/ocd_mapping_*.json' % mapping_dir):
         # Extract the index name from the filename
-        index_name = mapping_file_path.split('.')[0].split('_')[-1]
+        index_name = '%s_%s' % (DEFAULT_INDEX_PREFIX, mapping_file_path.split('.')[0].split('_')[-1])
 
-        click.echo('Putting ES mapping %s for index %s'
-                   % (mapping_file_path, index_name))
+        click.echo('Creating ES index %s' % index_name)
 
         mapping_file = open(mapping_file_path, 'rb')
         mapping = json.load(mapping_file)
         mapping_file.close()
 
-        es.indices.put_mapping(index=index_name, body=mapping)
+        es.indices.create(index=index_name, body=mapping)
+
+
+@elasticsearch.command('delete_indexes')
+def delete_indexes():
+    """Delete all Open Cultuur Data indices."""
+    index_glob = '%s_*' % DEFAULT_INDEX_PREFIX
+    indices = es.indices.status(index=index_glob, human=True)
+
+    click.echo('Open Cultuur Data indices:')
+    for index, stats in indices['indices'].iteritems():
+        click.echo('- %s (%s docs, %s)' % (index, stats['docs']['num_docs'],
+                                           stats['index']['size']))
+    if click.confirm('Are you sure you want to delete the above indices?'):
+        es.indices.delete(index=index_glob)
+        es.indices.delete_template('ocd_template')
 
 
 @cli.group()
@@ -84,12 +101,48 @@ def extract_list_sources(sources_config):
     """Show a list of available sources."""
     if not sources_config:
         sources_config = SOURCES_CONFIG_FILE
-
     sources = load_sources_config(sources_config)
 
     click.echo('Available sources:')
     for source in sources:
         click.echo(' - %s' % source['id'])
+
+
+@extract.command('start')
+@click.option('--sources_config', default=None, type=click.File('rb'))
+@click.argument('source_id')
+def extract_start(source_id, sources_config):
+    """Start extraction for a specified source."""
+    if not sources_config:
+        sources_config = SOURCES_CONFIG_FILE
+    sources = load_sources_config(sources_config)
+
+    # Find the requested source defenition in the list of available sources
+    source = None
+    for candidate_source in sources:
+        if candidate_source['id'] == source_id:
+            source = candidate_source
+            continue
+
+    # Without a config we can't do anything, notify the user and exit
+    if not source:
+        click.echo('Error: unable to find source with id "%s" in sources '
+                   'config' % source_id)
+        return
+
+    setup_pipeline(source)
+
+
+@cli.group()
+def frontend():
+    """Front-end API"""
+
+
+@frontend.command('runserver')
+@click.argument('host', default='0.0.0.0')
+@click.argument('port', default=5000, type=int)
+def frontend_runserver(host, port):
+    run_simple(host, port, application, use_reloader=True, use_debugger=True)
 
 
 if __name__ == '__main__':

@@ -15,6 +15,9 @@ class RijksmuseumItem(BaseItem):
     def get_rights(self):
         return u'Creative Commons Zero'
 
+    def get_collection(self):
+        return u'Rijksmuseum'
+
     def get_combined_index_data(self):
         combined_index_data = {}
 
@@ -44,7 +47,7 @@ class RijksmuseumItem(BaseItem):
         if self.original_item['webImage']:
             combined_index_data['media_urls'] = [
                 {
-                    'url': self.original_item['webImage']['url'],
+                    'original_url': self.original_item['webImage']['url'],
                     'content_type': 'image/jpeg',
                     'width': self.original_item['webImage']['width'],
                     'height': self.original_item['webImage']['height']
