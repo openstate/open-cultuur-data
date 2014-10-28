@@ -69,8 +69,25 @@ class StaticXmlExtractor(StaticFileBaseExtractor):
 
         self.item_xpath = self.source_definition['item_xpath']
 
+        self.default_namespace = None
+        if 'default_namespace' in self.source_definition:
+            self.default_namespace = self.source_definition['default_namespace']
+            
+        
     def extract_items(self, static_content):
         tree = etree.fromstring(static_content)
 
-        for item in tree.xpath(self.item_xpath):
+        self.namespaces = None
+        if self.default_namespace is not None:
+            # the namespace map has a key None if there is a default namespace
+            # so the configuration has to specify the default key
+            # xpath uqeries do not allow an empty default namespace
+            self.namespaces = tree.nsmap
+            try:
+                self.namespaces[self.default_namespace] = self.namespaces[None]
+                del self.namespaces[None]
+            except KeyError as e:
+                pass
+
+        for item in tree.xpath(self.item_xpath, namespaces=self.namespaces):
             yield 'application/xml', etree.tostring(item)

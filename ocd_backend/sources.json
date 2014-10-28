@@ -117,5 +117,34 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "file_url": "http://static.opencultuurdata.nl/fries_museum/20120616_Textiel_Hack_FM.xml",
         "item_xpath": "//adlibXML/recordList/record"
+    },
+    {
+        "id": "museum_rotterdam",
+        "extractor": "ocd_backend.extractors.staticfile.StaticXmlExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.museum_rotterdam.MuseumRotterdamItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "file_url": "http://static.opencultuurdata.nl/museum_rotterdam/MuseumRotterdamCollectie19082014.xml",
+        "item_xpath": "//cb3:record",
+        "default_namespace": "cb3",
+        "cb3_mapping": {
+            "inventarisnummer":1,
+            "extensie":5,
+            "titel":48,
+            "objecttrefwoorden":2,
+            "materiaal":14,
+            "afmetingen":15,
+            "datering_beginjaar":18,
+            "datering_eindjaar":19,
+            "plaats_vervaardiging":20,
+            "technieken":21,
+            "vervaardiger":22,
+            "beschrijving":3,
+            "opschrift_merken":17,
+            "trefwoorden":51,
+            "associatie":23,
+            "herkomst":40,
+            "licentie":85
+        }
     }
 ]
