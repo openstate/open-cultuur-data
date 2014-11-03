@@ -16,7 +16,7 @@ from ocd_backend.es import elasticsearch as es
 from ocd_backend.pipeline import setup_pipeline
 from ocd_backend.settings import SOURCES_CONFIG_FILE, DEFAULT_INDEX_PREFIX
 from ocd_backend.utils.misc import load_sources_config
-from ocd_frontend.settings import BACKUP_DIR, API_URL
+from ocd_frontend.settings import BACKUP_DIR, API_URL, DUMP_URL
 from ocd_frontend.wsgi import application
 
 
@@ -27,10 +27,11 @@ def _create_path(path):
 
     return path
 
+
 def _checksum_file(target):
     """
     Compute sha1 checksum of a file. As some files could potentially be huge,
-    iterate in blocks of 32kb to keep memory overhead to a minimum
+    iterate in blocks of 32kb to keep memory overhead to a minimum.
 
     :param target: path to file to compute checksum on
     :return: SHA1 checksum of file
@@ -42,6 +43,76 @@ def _checksum_file(target):
         for chunk in iter(lambda: f.read(32768), b''):
             checksum.update(chunk)
     return checksum.hexdigest()
+
+
+def _download_backup(index, backup_name=None, target_dir=BACKUP_DIR):
+    """
+    Download a Gzipped dump of a OpenCultuurData collection to disk. Compares
+    the SHA1 checksum of the backup with the backup files already available
+    locally, and skips downloading if the file is already available.
+
+    :param index: name of the index to get a backup of
+    :param backup_name: Optionally provide a name to download a specific backup
+                        file. Defaults to downloading the latest backup.
+    :param target_dir: Directory to download the backup files to. A directory
+                       per index is created in the target directory, and per
+                       backup file a checksum and a dump file will be created.
+    :return: Path to downloaded backup
+    """
+    if not backup_name:
+        # Pick the latest backup file if no other is specified
+        backup_name = '{index}_latest'.format(index=index)
+
+    # Make sure the directory exists
+    _create_path(os.path.join(target_dir, index))
+
+    # First, get the SHA1 checksum of the file we intend to download
+    r = requests.get('{dump_url}/{index}/{backup_name}.sha1'.format(
+        dump_url=DUMP_URL, index=index, backup_name=backup_name))
+
+    checksum = r.content
+
+    # Compare checksums of already downloaded files with the checksum of the
+    # file we are trying to download
+    for c in glob('{}/*.sha1'.format(os.path.join(target_dir, index))):
+        # latest is a symlink
+        if 'latest' in c:
+            continue
+        with open(c, 'r') as f:
+            if checksum == f.read():
+                click.secho('This file is already downloaded ({})'.format(c),
+                            fg='yellow')
+                return
+
+    # Construct name of local file
+    filepath = os.path.join(target_dir, index, '{}_{}'.format(
+        backup_name.replace('_latest', ''),
+        datetime.now().strftime('%Y%m%d%H%s'))
+    )
+
+    # Get and write dump to disk (iteratively, as dumps could get rather big)
+    r = requests.get('{dump_url}/{index}/{backup_name}.gz'.format(
+        dump_url=DUMP_URL, index=index, backup_name=backup_name), stream=True)
+    with open('{}.gz'.format(filepath), 'wb') as f:
+        for chunk in r.iter_content(chunk_size=1024):
+            # Filter out keep-alive chunks
+            if chunk:
+                f.write(chunk)
+                f.flush()
+
+    # Compare checksum of new file with the one on the server in order to make
+    # sure everything went OK
+    checksum_new_file = _checksum_file('{}.gz'.format(filepath))
+    if checksum != checksum_new_file:
+        click.secho('Something went wrong during downloading (checksums are not'
+                    ' equal), removing file', fg='red')
+        os.remove('{}.gz'.format(filepath))
+        return
+
+    with open('{}.sha1'.format(filepath), 'w') as f:
+        f.write(checksum)
+
+    return '{}.gz'.format(filepath)
 
 
 @click.group()
@@ -297,18 +368,25 @@ def list_backups(api_url):
             click.secho('\t{backup}'.format(backup=backup), fg='green')
 
 
-# @backup.command('download')
-# @click.option('--api-url', default=API_URL)
-# @click.option('--destination', '-d', default=BACKUP_DIR)
-# @click.option('--collections', '-c', multiple=True)
-# @click.option('--all-collections', '-a', is_flag=True, expose_value=True)
-# @click.pass_context
-# def download(ctx, api_url, destination, collections, all_collections):
-#     if all_collections:
-#         url = '{api_url}/'
-#         try:
-#             r = requests.get()
-#
+@backup.command('download')
+@click.option('--api-url', default=API_URL)
+@click.option('--dump-url', default=DUMP_URL)
+@click.option('--destination', '-d', default=BACKUP_DIR)
+@click.option('--collections', '-c', multiple=True)
+@click.option('--all-collections', '-a', is_flag=True, expose_value=True)
+@click.pass_context
+def download(ctx, api_url, dump_url, destination, collections, all_collections):
+    if all_collections:
+        url = '{url}/backups'.format(url=api_url)
+        try:
+            r = requests.get(url)
+        except:
+            click.secho('Could not connect to API', fg='red')
+            return
+
+        for index in r.json().get('backups'):
+            _download_backup(index, target_dir='temp')
+
 
 if __name__ == '__main__':
     cli()
