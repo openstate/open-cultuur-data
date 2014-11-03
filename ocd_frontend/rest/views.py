@@ -1,3 +1,4 @@
+import glob
 from flask import (Blueprint, current_app, request, jsonify, redirect, url_for,)
 from elasticsearch import NotFoundError
 
@@ -369,3 +370,20 @@ def resolve(url_id):
         return '<html><body>There is no original url available. You may '\
                'have an outdated URL, or the resolve id is incorrect.</body>'\
                '</html>', 404
+
+
+@bp.route('/backups', methods=['GET'])
+def backups():
+    backup_list = glob.glob('%s/*/*.gz' % current_app.config.get('BACKUP_DIR'))
+    backups = {}
+    for backup in backup_list:
+        index_name, backup_file = backup.replace('%s/' % current_app.config
+                                                 .get('BACKUP_DIR'), '')\
+                                                 .split('/')
+        if index_name not in backups:
+            backups[index_name] = []
+        backups[index_name].append(backup_file)
+
+    return jsonify({
+        'backups': backups
+    })
