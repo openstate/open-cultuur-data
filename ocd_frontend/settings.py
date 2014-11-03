@@ -1,3 +1,5 @@
+import os.path
+
 DEBUG = True
 ELASTICSEARCH_HOST = '127.0.0.1'
 ELASTICSEARCH_PORT = 9200
@@ -77,6 +79,16 @@ AVAILABLE_FACETS = {
 ALLOWED_DATE_INTERVALS = ('day', 'week', 'month', 'quarter', 'year')
 
 RESOLVER_URL_INDEX = 'ocd_resolver'
+
+ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+BACKUP_DIR = os.path.join(os.path.dirname(ROOT_PATH), 'backups')
+
+# URL where of the API instance that should be used for management commands
+# Should include API version
+API_URL = 'http://api.opencultuurdata.nl/v0/'
+
+# URL where collection dumps are hosted
+DUMP_URL = 'http://dumps.opencultuurdata.nl/'
 
 # Allow any settings to be defined in local_settings.py which should be
 # ignored in your version control system allowing for settings to be

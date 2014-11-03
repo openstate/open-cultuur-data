@@ -4,7 +4,9 @@ from datetime import datetime
 import json
 from glob import glob
 import gzip
+from hashlib import sha1
 import os
+import requests
 
 import click
 from elasticsearch import helpers as es_helpers
@@ -12,18 +14,35 @@ from werkzeug.serving import run_simple
 
 from ocd_backend.es import elasticsearch as es
 from ocd_backend.pipeline import setup_pipeline
-from ocd_backend.settings import (SOURCES_CONFIG_FILE, DEFAULT_INDEX_PREFIX,
-                                  BACKUP_DIR)
+from ocd_backend.settings import SOURCES_CONFIG_FILE, DEFAULT_INDEX_PREFIX
 from ocd_backend.utils.misc import load_sources_config
+from ocd_frontend.settings import BACKUP_DIR, API_URL
 from ocd_frontend.wsgi import application
 
 
 def _create_path(path):
-    if not os.path.isdir(path):
+    if not os.path.exists(path):
         click.secho('Creating path "%s"' % path, fg='green')
-        os.mkdir(path)
+        os.makedirs(path)
 
     return path
+
+def _checksum_file(target):
+    """
+    Compute sha1 checksum of a file. As some files could potentially be huge,
+    iterate in blocks of 32kb to keep memory overhead to a minimum
+
+    :param target: path to file to compute checksum on
+    :return: SHA1 checksum of file
+    """
+    checksum = sha1()
+    # 'rb': don't convert input to text buffer
+    with open(target, 'rb') as f:
+        # Read in chunks; must be a multiple of 128 bytes
+        for chunk in iter(lambda: f.read(32768), b''):
+            checksum.update(chunk)
+    return checksum.hexdigest()
+
 
 @click.group()
 @click.version_option()
@@ -206,7 +225,7 @@ def create_backup(ctx, index):
     total_docs = es.count(index=index).get('count')
 
     path = _create_path(path=os.path.join(BACKUP_DIR, index))
-    backup_name = '%(timestamp)s_%(index_name)s.backup.gz' % {
+    backup_name = '%(index_name)s_%(timestamp)s.backup.gz' % {
         'index_name': index,
         'timestamp': datetime.now().strftime('%Y%m%d%H%M%S')
     }
@@ -219,14 +238,67 @@ def create_backup(ctx, index):
             for doc in documents:
                 g.write('%s\n' % json.dumps(doc))
 
-    click.secho('Created backup "%s"' % backup_name, fg='green')
+    click.secho('Generating checksum', fg='green')
+    checksum = _checksum_file(new_backup)
 
-    latest = os.path.join(path, 'latest.backup.gz')
-    os.unlink(latest)
+    with open(os.path.join(BACKUP_DIR, index, '%s.sha1' % backup_name.split('.')[0]), 'w') as f:
+        f.write(checksum)
+
+    click.secho('Created backup "%s" (checksum %s)' % (backup_name, checksum),
+                fg='green')
+
+
+    latest = os.path.join(path, '%s_latest.backup.gz' % index)
+    try:
+        os.unlink(latest)
+    except OSError:
+        click.secho('First time creating backup, skipping unlinking',
+                    fg='yellow')
     os.symlink(new_backup, latest)
 
     click.secho('Created symlink "latest.backup.gz" to "%s"' % new_backup,
                 fg='green')
+
+
+@backup.command('list')
+@click.option('--api-url', default=API_URL)
+def list_backups(api_url):
+    """
+    List available backups of API instance at ``api_address``.
+
+    :param api_address: URL of API location
+    """
+    url = '{url}/backups'.format(url=api_url)
+
+    try:
+        r = requests.get(url)
+    except:
+        click.secho('No OCD API instance with backups available at {url}'
+                    .format(url=url), fg='red')
+        return
+
+    if not r.ok:
+        click.secho('Request on {url} failed'.format(url=url), fg='red')
+
+    backups = r.json().get('backups', {})
+    for index in backups:
+        click.secho(index, fg='green')
+        for backup in sorted(backups.get(index, []), reverse=True):
+            click.secho('\t{backup}'.format(backup=backup), fg='green')
+
+
+# @backup.command('download')
+# @click.option('--api-url', default=API_URL)
+# @click.option('--destination', '-d', default=BACKUP_DIR)
+# @click.option('--collections', '-c', multiple=True)
+# @click.option('--all-collections', '-a', is_flag=True, expose_value=True)
+# @click.pass_context
+# def download(ctx, api_url, destination, collections, all_collections):
+#     if all_collections:
+#         url = '{api_url}/'
+#         try:
+#             r = requests.get()
+#
 
 if __name__ == '__main__':
     cli()
