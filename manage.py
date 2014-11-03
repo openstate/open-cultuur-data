@@ -206,7 +206,7 @@ def create_backup(ctx, index):
     Create a backup of an index. If you don't provide an ``--index`` option,
     you will be prompted with a list of available index names. Backups are
     stored as a gzipped txt file in ``settings.BACKUP_DIR/<index_name>/<
-    timestamp>_<index-name>.backup.gz``, and a symlink ``latest.backup.gz`` is
+    timestamp>_<index-name>.gz``, and a symlink ``<index-name>_latest.gz`` is
     created, pointing to the last created backup.
 
     :param ctx: Click context, so we can issue other management commands
@@ -225,7 +225,7 @@ def create_backup(ctx, index):
     total_docs = es.count(index=index).get('count')
 
     path = _create_path(path=os.path.join(BACKUP_DIR, index))
-    backup_name = '%(index_name)s_%(timestamp)s.backup.gz' % {
+    backup_name = '%(index_name)s_%(timestamp)s.gz' % {
         'index_name': index,
         'timestamp': datetime.now().strftime('%Y%m%d%H%M%S')
     }
@@ -240,23 +240,33 @@ def create_backup(ctx, index):
 
     click.secho('Generating checksum', fg='green')
     checksum = _checksum_file(new_backup)
+    checksum_path = os.path.join(BACKUP_DIR, index, '%s.sha1' % backup_name.split('.')[0])
 
-    with open(os.path.join(BACKUP_DIR, index, '%s.sha1' % backup_name.split('.')[0]), 'w') as f:
+    with open(checksum_path, 'w') as f:
         f.write(checksum)
 
     click.secho('Created backup "%s" (checksum %s)' % (backup_name, checksum),
                 fg='green')
 
 
-    latest = os.path.join(path, '%s_latest.backup.gz' % index)
+    latest = os.path.join(path, '%s_latest.gz' % index)
     try:
         os.unlink(latest)
     except OSError:
         click.secho('First time creating backup, skipping unlinking',
                     fg='yellow')
     os.symlink(new_backup, latest)
+    click.secho('Created symlink "%s_latest.gz" to "%s"' % (index, new_backup),
+                fg='green')
 
-    click.secho('Created symlink "latest.backup.gz" to "%s"' % new_backup,
+    latest_checksum = os.path.join(os.path.dirname(checksum_path), '%s_latest.sha1' % index)
+    try:
+        os.unlink(latest_checksum)
+    except OSError:
+        click.secho('First time creating backup, skipping unlinking checksum',
+                    fg='yellow')
+    os.symlink(checksum_path, latest_checksum)
+    click.secho('Created symlink "%s_latest.sha1" to "%s"' % (index, checksum_path),
                 fg='green')
 
 
