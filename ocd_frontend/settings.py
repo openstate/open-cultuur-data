@@ -81,7 +81,7 @@ ALLOWED_DATE_INTERVALS = ('day', 'week', 'month', 'quarter', 'year')
 RESOLVER_URL_INDEX = 'ocd_resolver'
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
-BACKUP_DIR = os.path.join(os.path.dirname(ROOT_PATH), 'backups')
+DUMPS_DIR = os.path.join(os.path.dirname(ROOT_PATH), 'dumps')
 
 # URL where of the API instance that should be used for management commands
 # Should include API version
