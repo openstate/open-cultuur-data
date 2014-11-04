@@ -16,7 +16,7 @@ from ocd_backend.es import elasticsearch as es
 from ocd_backend.pipeline import setup_pipeline
 from ocd_backend.settings import SOURCES_CONFIG_FILE, DEFAULT_INDEX_PREFIX
 from ocd_backend.utils.misc import load_sources_config
-from ocd_frontend.settings import DUMPS_DIR, API_URL, DUMP_URL
+from ocd_frontend.settings import DUMPS_DIR, API_URL, DUMP_URL, LOCAL_DUMPS_DIR
 from ocd_frontend.wsgi import application
 
 
@@ -440,14 +440,21 @@ def list_dumps(api_url):
 @click.option('--api-url', default=API_URL, help='URL to API instance to fetch '
                                                  'dumps from.')
 @click.option('--dump-url', default=DUMP_URL, help='URL where dumps are hosted,')
-@click.option('--destination', '-d', default=DUMPS_DIR, help='Directory to '
-                                                              'download dumps '
-                                                              'to.')
+@click.option('--destination', '-d', default=LOCAL_DUMPS_DIR,
+              help='Directory to download dumps to.')
 @click.option('--collections', '-c', multiple=True)
 @click.option('--all-collections', '-a', is_flag=True, expose_value=True,
               help='Download latest version of all collections available')
-@click.pass_context
-def download_dump(ctx, api_url, dump_url, destination, collections, all_collections):
+def download_dumps(api_url, dump_url, destination, collections, all_collections):
+    """
+    Download dumps of OCD collections to your machine, for easy ingestion.
+
+    :param api_url: URL to API instance to fetch dumps from
+    :param dump_url: Base URL where dumps are hosted
+    :param destination: path to local directory where dumps should be stored
+    :param collections: Names of collections to fetch dumps for.
+    :param all_collections: If this flag is set, download all available dumps
+    """
     url = '{url}/dumps'.format(url=api_url)
     try:
         r = requests.get(url)
