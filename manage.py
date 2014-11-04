@@ -141,7 +141,7 @@ def _download_dump(index, dump_name=None, target_dir=DUMPS_DIR):
     # Construct name of local file
     filepath = os.path.join(target_dir, index, '{}_{}'.format(
         dump_name.replace('_latest', ''),
-        datetime.now().strftime('%Y%m%d%H%s'))
+        datetime.now().strftime('%Y%m%d%H%S'))
     )
 
     # Get and write dump to disk (iteratively, as dumps could get rather big)
@@ -304,7 +304,7 @@ def extract_start(source_id, sources_config):
         sources_config = SOURCES_CONFIG_FILE
     sources = load_sources_config(sources_config)
 
-    # Find the requested source defenition in the list of available sources
+    # Find the requested source definition in the list of available sources
     source = None
     for candidate_source in sources:
         if candidate_source['id'] == source_id:
@@ -334,7 +334,7 @@ def frontend_runserver(host, port):
 
 @cli.group()
 def dumps():
-    """Dump and restore"""
+    """Create dumps of indices for export"""
 
 
 @dumps.command('create')
