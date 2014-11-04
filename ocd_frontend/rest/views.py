@@ -372,18 +372,18 @@ def resolve(url_id):
                '</html>', 404
 
 
-@bp.route('/backups', methods=['GET'])
-def backups():
-    backup_list = glob.glob('%s/*/*.gz' % current_app.config.get('BACKUP_DIR'))
-    backups = {}
-    for backup in backup_list:
-        index_name, backup_file = backup.replace('%s/' % current_app.config
-                                                 .get('BACKUP_DIR'), '')\
+@bp.route('/dumps', methods=['GET'])
+def dumps():
+    dump_list = glob.glob('%s/*/*.gz' % current_app.config.get('DUMPS_DIR'))
+    dumps = {}
+    for dump in dump_list:
+        index_name, dump_file = dump.replace('%s/' % current_app.config
+                                                 .get('DUMPS_DIR'), '')\
                                                  .split('/')
-        if index_name not in backups:
-            backups[index_name] = []
-        backups[index_name].append(backup_file)
+        if index_name not in dumps:
+            dumps[index_name] = []
+        dumps[index_name].append(dump_file)
 
     return jsonify({
-        'backups': backups
+        'dumps': dumps
     })

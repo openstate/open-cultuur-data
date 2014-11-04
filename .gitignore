@@ -43,8 +43,8 @@ docs/_build/
 # Coverage state file
 .coverage
 
-# Backups
-backups/
+# Dumps
+dumps/
 
 # IDE/editor
 .idea

@@ -12,6 +12,6 @@ if application.app.config.get('DEBUG', False):
     from flask import send_from_directory
 
     @application.app.route('/data/<path:filename>')
-    def download_backup(filename):
-        return send_from_directory(application.app.config.get('BACKUP_DIR'),
+    def download_dump(filename):
+        return send_from_directory(application.app.config.get('DUMPS_DIR'),
                                    filename, as_attachment=True)

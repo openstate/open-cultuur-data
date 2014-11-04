@@ -16,8 +16,49 @@ from ocd_backend.es import elasticsearch as es
 from ocd_backend.pipeline import setup_pipeline
 from ocd_backend.settings import SOURCES_CONFIG_FILE, DEFAULT_INDEX_PREFIX
 from ocd_backend.utils.misc import load_sources_config
-from ocd_frontend.settings import BACKUP_DIR, API_URL, DUMP_URL
+from ocd_frontend.settings import DUMPS_DIR, API_URL, DUMP_URL
 from ocd_frontend.wsgi import application
+
+
+class MultiIntRange(click.ParamType):
+    """
+    A parameter that takes a comma-separated list of integers, and validates
+    that the list actually contains integers, within a given range. Used for
+    validation of multiple select options in the CLI.
+    """
+    name = 'multiple integers in a range'
+
+    def __init__(self, min=None, max=None, clamp=False):
+        self.min = min
+        self.max = max
+        self.clamp = clamp
+
+    def convert(self, value, param, ctx):
+        v = value.strip().split(',')
+        try:
+            v = [int(v) for v in v]
+        except ValueError:
+            self.fail(click.style('{} may only contain integers'.format(value),
+                                  fg='red'), param, ctx)
+
+        minv, maxv = min(v), max(v)
+
+        if self.clamp:
+            if self.min is not None and minv < self.min:
+                return self.min
+            if self.max is not None and maxv > self.max:
+                return self.max
+
+        if self.min is not None and minv < self.min or self.max is \
+            not None and maxv > self.max:
+            self.fail(click.style('{} contains values outside the range of '
+                                  '{} to {}.'.format(value, self.min, self.max),
+                                  fg='red'), param, ctx)
+
+        return v
+
+    def __repr__(self):
+        return 'MultiIntRange ({}, {})'.format(self.min, self.max)
 
 
 def _create_path(path):
@@ -45,30 +86,43 @@ def _checksum_file(target):
     return checksum.hexdigest()
 
 
-def _download_backup(index, backup_name=None, target_dir=BACKUP_DIR):
+def _write_chunks(chunks, f):
+    """
+    Write chunks (iterable) of a downloading file to filehandler f
+    :param chunks: iterable containing chunks to write to disk
+    :param f: open, writable filehandler
+    """
+    for chunk in chunks:
+        # Filter out keep-alive chunks
+        if chunk:
+            f.write(chunk)
+            f.flush()
+
+
+def _download_dump(index, dump_name=None, target_dir=DUMPS_DIR):
     """
     Download a Gzipped dump of a OpenCultuurData collection to disk. Compares
-    the SHA1 checksum of the backup with the backup files already available
+    the SHA1 checksum of the dump with the dump files already available
     locally, and skips downloading if the file is already available.
 
-    :param index: name of the index to get a backup of
-    :param backup_name: Optionally provide a name to download a specific backup
-                        file. Defaults to downloading the latest backup.
-    :param target_dir: Directory to download the backup files to. A directory
+    :param index: name of the index to get a dump of
+    :param dump_name: Optionally provide a name to download a specific dump
+                        file. Defaults to downloading the latest dump.
+    :param target_dir: Directory to download the dump files to. A directory
                        per index is created in the target directory, and per
-                       backup file a checksum and a dump file will be created.
-    :return: Path to downloaded backup
+                       dump file a checksum and a dump file will be created.
+    :return: Path to downloaded dump
     """
-    if not backup_name:
-        # Pick the latest backup file if no other is specified
-        backup_name = '{index}_latest'.format(index=index)
+    if not dump_name:
+        # Pick the latest dump file if no other is specified
+        dump_name = '{index}_latest'.format(index=index)
 
     # Make sure the directory exists
     _create_path(os.path.join(target_dir, index))
 
     # First, get the SHA1 checksum of the file we intend to download
-    r = requests.get('{dump_url}/{index}/{backup_name}.sha1'.format(
-        dump_url=DUMP_URL, index=index, backup_name=backup_name))
+    r = requests.get('{dump_url}/{index}/{dump_name}.sha1'.format(
+        dump_url=DUMP_URL, index=index, dump_name=dump_name))
 
     checksum = r.content
 
@@ -86,19 +140,28 @@ def _download_backup(index, backup_name=None, target_dir=BACKUP_DIR):
 
     # Construct name of local file
     filepath = os.path.join(target_dir, index, '{}_{}'.format(
-        backup_name.replace('_latest', ''),
+        dump_name.replace('_latest', ''),
         datetime.now().strftime('%Y%m%d%H%s'))
     )
 
     # Get and write dump to disk (iteratively, as dumps could get rather big)
-    r = requests.get('{dump_url}/{index}/{backup_name}.gz'.format(
-        dump_url=DUMP_URL, index=index, backup_name=backup_name), stream=True)
+    r = requests.get('{dump_url}/{index}/{dump_name}.gz'.format(
+        dump_url=DUMP_URL, index=index, dump_name=dump_name), stream=True)
+
+    content_length = r.headers.get('content-length', False)
+
     with open('{}.gz'.format(filepath), 'wb') as f:
-        for chunk in r.iter_content(chunk_size=1024):
-            # Filter out keep-alive chunks
-            if chunk:
-                f.write(chunk)
-                f.flush()
+        if content_length:
+            content_length = int(content_length)
+            with click.progressbar(r.iter_content(chunk_size=1024),
+                                   length=content_length / 1024,
+                                   label=click.style(
+                                           'Downloading {}'.format(index),
+                                           fg='green'
+                                   )) as chunks:
+                _write_chunks(chunks, f)
+        else:
+            _write_chunks(r.iter_content(chunk_size=1024), f)
 
     # Compare checksum of new file with the one on the server in order to make
     # sure everything went OK
@@ -113,6 +176,11 @@ def _download_backup(index, backup_name=None, target_dir=BACKUP_DIR):
         f.write(checksum)
 
     return '{}.gz'.format(filepath)
+
+
+def _process_choices(val):
+    print val
+    return val
 
 
 @click.group()
@@ -265,27 +333,27 @@ def frontend_runserver(host, port):
 
 
 @cli.group()
-def backup():
-    """Backup and restore"""
+def dumps():
+    """Dump and restore"""
 
 
-@backup.command('create')
+@dumps.command('create')
 @click.option('--index', default=None)
 @click.pass_context
-def create_backup(ctx, index):
+def create_dump(ctx, index):
     """
-    Create a backup of an index. If you don't provide an ``--index`` option,
-    you will be prompted with a list of available index names. Backups are
-    stored as a gzipped txt file in ``settings.BACKUP_DIR/<index_name>/<
+    Create a dump of an index. If you don't provide an ``--index`` option,
+    you will be prompted with a list of available index names. Dumps are
+    stored as a gzipped txt file in ``settings.DUMPS_DIR/<index_name>/<
     timestamp>_<index-name>.gz``, and a symlink ``<index-name>_latest.gz`` is
-    created, pointing to the last created backup.
+    created, pointing to the last created dump.
 
     :param ctx: Click context, so we can issue other management commands
-    :param index: name of the index you want to create a backup for
+    :param index: name of the index you want to create a dump for
     """
     if not index:
         available_idxs = ctx.invoke(available_indices)
-        index = click.prompt('Name of index to backup')
+        index = click.prompt('Name of index to dump')
 
         if index not in available_idxs:
             click.secho('"%s" is not an available index' % index, fg='red')
@@ -295,14 +363,14 @@ def create_backup(ctx, index):
 
     total_docs = es.count(index=index).get('count')
 
-    path = _create_path(path=os.path.join(BACKUP_DIR, index))
-    backup_name = '%(index_name)s_%(timestamp)s.gz' % {
+    path = _create_path(path=os.path.join(DUMPS_DIR, index))
+    dump_name = '%(index_name)s_%(timestamp)s.gz' % {
         'index_name': index,
         'timestamp': datetime.now().strftime('%Y%m%d%H%M%S')
     }
-    new_backup = os.path.join(path, backup_name)
+    new_dump = os.path.join(path, dump_name)
 
-    with gzip.open(new_backup, 'wb') as g:
+    with gzip.open(new_dump, 'wb') as g:
         with click.progressbar(es_helpers.scan(es, query=match_all, scroll='1m',
                                                index=index),
                                length=total_docs) as documents:
@@ -310,13 +378,13 @@ def create_backup(ctx, index):
                 g.write('%s\n' % json.dumps(doc))
 
     click.secho('Generating checksum', fg='green')
-    checksum = _checksum_file(new_backup)
-    checksum_path = os.path.join(BACKUP_DIR, index, '%s.sha1' % backup_name.split('.')[0])
+    checksum = _checksum_file(new_dump)
+    checksum_path = os.path.join(DUMPS_DIR, index, '%s.sha1' % dump_name.split('.')[0])
 
     with open(checksum_path, 'w') as f:
         f.write(checksum)
 
-    click.secho('Created backup "%s" (checksum %s)' % (backup_name, checksum),
+    click.secho('Created dump "%s" (checksum %s)' % (dump_name, checksum),
                 fg='green')
 
 
@@ -324,68 +392,99 @@ def create_backup(ctx, index):
     try:
         os.unlink(latest)
     except OSError:
-        click.secho('First time creating backup, skipping unlinking',
+        click.secho('First time creating dump, skipping unlinking',
                     fg='yellow')
-    os.symlink(new_backup, latest)
-    click.secho('Created symlink "%s_latest.gz" to "%s"' % (index, new_backup),
+    os.symlink(new_dump, latest)
+    click.secho('Created symlink "%s_latest.gz" to "%s"' % (index, new_dump),
                 fg='green')
 
     latest_checksum = os.path.join(os.path.dirname(checksum_path), '%s_latest.sha1' % index)
     try:
         os.unlink(latest_checksum)
     except OSError:
-        click.secho('First time creating backup, skipping unlinking checksum',
+        click.secho('First time creating dump, skipping unlinking checksum',
                     fg='yellow')
     os.symlink(checksum_path, latest_checksum)
     click.secho('Created symlink "%s_latest.sha1" to "%s"' % (index, checksum_path),
                 fg='green')
 
 
-@backup.command('list')
+@dumps.command('list')
 @click.option('--api-url', default=API_URL)
-def list_backups(api_url):
+def list_dumps(api_url):
     """
-    List available backups of API instance at ``api_address``.
+    List available dumps of API instance at ``api_address``.
 
     :param api_address: URL of API location
     """
-    url = '{url}/backups'.format(url=api_url)
+    url = '{url}/dumps'.format(url=api_url)
 
     try:
         r = requests.get(url)
     except:
-        click.secho('No OCD API instance with backups available at {url}'
+        click.secho('No OCD API instance with dumps available at {url}'
                     .format(url=url), fg='red')
         return
 
     if not r.ok:
         click.secho('Request on {url} failed'.format(url=url), fg='red')
 
-    backups = r.json().get('backups', {})
-    for index in backups:
+    dumps = r.json().get('dumps', {})
+    for index in dumps:
         click.secho(index, fg='green')
-        for backup in sorted(backups.get(index, []), reverse=True):
-            click.secho('\t{backup}'.format(backup=backup), fg='green')
+        for dump in sorted(dumps.get(index, []), reverse=True):
+            click.secho('\t{dump}'.format(dump=dump), fg='green')
 
 
-@backup.command('download')
-@click.option('--api-url', default=API_URL)
-@click.option('--dump-url', default=DUMP_URL)
-@click.option('--destination', '-d', default=BACKUP_DIR)
+@dumps.command('download')
+@click.option('--api-url', default=API_URL, help='URL to API instance to fetch '
+                                                 'dumps from.')
+@click.option('--dump-url', default=DUMP_URL, help='URL where dumps are hosted,')
+@click.option('--destination', '-d', default=DUMPS_DIR, help='Directory to '
+                                                              'download dumps '
+                                                              'to.')
 @click.option('--collections', '-c', multiple=True)
-@click.option('--all-collections', '-a', is_flag=True, expose_value=True)
+@click.option('--all-collections', '-a', is_flag=True, expose_value=True,
+              help='Download latest version of all collections available')
 @click.pass_context
-def download(ctx, api_url, dump_url, destination, collections, all_collections):
-    if all_collections:
-        url = '{url}/backups'.format(url=api_url)
-        try:
-            r = requests.get(url)
-        except:
-            click.secho('Could not connect to API', fg='red')
-            return
+def download_dump(ctx, api_url, dump_url, destination, collections, all_collections):
+    url = '{url}/dumps'.format(url=api_url)
+    try:
+        r = requests.get(url)
+    except:
+        click.secho('Could not connect to API', fg='red')
+        return
 
-        for index in r.json().get('backups'):
-            _download_backup(index, target_dir='temp')
+    dumps = [(i+1, index) for i, index in enumerate(r.json().get('dumps'))]
+    dump_mapping = dict(dumps)
+    available_collections = dump_mapping.values()
+
+    if all_collections:
+        # Download all the things
+        for i, index in dumps:
+            _download_dump(index, target_dir=destination)
+        return
+
+    if not collections:
+        for i, index in dumps:
+            click.secho('{i}) {index}'.format(i=i, index=index), fg='yellow')
+
+        dumps = click.prompt('Which dumps should be downloaded? Please provide '
+                             'the number(s) corresponding to the dumps that sho'
+                             'uld be downloaded',
+                             type=MultiIntRange(*range(dumps[0][0],
+                                                       dumps[-1][0] + 1)))
+        for d in dumps:
+            _download_dump(dump_mapping[d], target_dir=destination)
+
+        return
+
+    for collection in collections:
+        if collection not in available_collections:
+            click.secho('"{}" is not available as a dump, skipping'.format(collection),
+                        fg='red')
+            continue
+        _download_dump(collection, target_dir=destination)
 
 
 if __name__ == '__main__':
