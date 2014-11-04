@@ -45,7 +45,7 @@ docs/_build/
 
 # Dumps
 dumps/
-local_dump/
+local_dumps/
 
 # IDE/editor
 .idea
