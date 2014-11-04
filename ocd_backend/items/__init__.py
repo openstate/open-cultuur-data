@@ -1,6 +1,7 @@
-from hashlib import sha1
-from datetime import datetime
 from collections import MutableMapping
+from datetime import datetime
+from hashlib import sha1
+from ocd_backend.utils import json_encoder
 
 from ocd_backend.exceptions import UnableToGenerateObjectId
 
@@ -106,7 +107,14 @@ class BaseItem(object):
             'content_type': self.data_content_type,
             'data': self.data
         }
-        item.update(dict(self.combined_index_data))
+
+        combined_index_data = dict(self.combined_index_data)
+        item.update(combined_index_data)
+
+        # Store a string representation of the combined index data on the
+        # collection specific index as well, as we need to be able to
+        # reconstruct the combined index from the individual indices
+        item['combined_index_data'] = json_encoder.encode(combined_index_data)
         item.update(self.index_data)
 
         return item
@@ -114,7 +122,7 @@ class BaseItem(object):
     def get_original_object_id(self):
         """Retrieves the ID used by the source for identify this item.
 
-        This method should be implmented by the class that inherits from
+        This method should be implemented by the class that inherits from
         :class:`.BaseItem`.
 
         :rtype: unicode.

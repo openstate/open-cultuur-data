@@ -64,8 +64,8 @@ class BaseTransformer(Task):
             from the source (as a string)
         :type item: dict
         :param item: the deserialized item
-        :returns: a tuple containing the new object id, the item sturctured
-            for the combined index (as a dict) and the item item sturctured
+        :returns: a tuple containing the new object id, the item structured
+            for the combined index (as a dict) and the item item structured
             for the source specific index.
         """
         item = self.item_class(self.source_definition, raw_item_content_type,
