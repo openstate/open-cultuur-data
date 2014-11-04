@@ -10,7 +10,7 @@ from ocd_backend.log import get_source_logger
 log = get_source_logger('loader')
 
 class BaseLoader(Task):
-    """The base class that other loaders should inhert."""
+    """The base class that other loaders should inherit."""
 
     def run(self, *args, **kwargs):
         """Start loading of a single item.
@@ -36,7 +36,7 @@ class BaseLoader(Task):
 
         return self.load_item(object_id, combined_index_doc, doc)
 
-    def load_item(self, combined_index_doc, doc):
+    def load_item(self, object_id, combined_index_doc, doc):
         raise NotImplemented
 
 
