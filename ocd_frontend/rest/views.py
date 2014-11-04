@@ -373,7 +373,7 @@ def resolve(url_id):
 
 
 @bp.route('/dumps', methods=['GET'])
-def dumps():
+def list_dumps():
     dump_list = glob.glob('%s/*/*.gz' % current_app.config.get('DUMPS_DIR'))
     dumps = {}
     for dump in dump_list:
