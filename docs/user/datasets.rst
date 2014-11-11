@@ -206,6 +206,7 @@ Combined index
 Open Archieven index
 ^^^^^^^^^^^^^^^^^^^^
 
+.. _data_openbeelden:
 
 Open Beelden
 ------------
