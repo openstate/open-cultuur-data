@@ -494,5 +494,45 @@ def download_dumps(api_url, dump_url, destination, collections, all_collections)
         _download_dump(collection, target_dir=destination)
 
 
+@dumps.command('load')
+@click.option('--collection', '-c', help='Path to dump of collection to load',
+              default=None, type=click.Path(exists=True))
+@click.option('--collection-name', '-n', help='An index will be created with th'
+                                              'is name. If left empty, collecti'
+                                              'on name will be derived from dum'
+                                              'p name.', default=None)
+def load_dump(collection, collection_name):
+    available_dumps = glob(os.path.join(LOCAL_DUMPS_DIR, '*/*.gz'))
+    if not collection:
+        choices = []
+        for i, dump in enumerate(available_dumps):
+            choices.append(unicode(i+1))
+            click.secho('{i}) {dump}'.format(i=i+1, dump=dump), fg='green')
+        dump_idx = click.prompt('Choose one of the dumps listed above',
+                                type=click.Choice(choices))
+        collection = available_dumps[int(dump_idx) - 1]
+
+    collection = os.path.abspath(collection)
+
+    if not collection_name:
+        collection_name = '_'.join(collection.split('/')[-1].split('.')[0].split('_')[:2])
+
+    source_definition = {
+        'id': collection_name,
+        'extractor': 'ocd_backend.extractors.staticfile.StaticJSONDumpExtractor',
+        'transformer': 'ocd_backend.transformers.BaseTransformer',
+        'loader': 'ocd_backend.loaders.ElasticsearchLoader',
+        'item': 'ocd_backend.items.LocalDumpItem',
+        'dump_path': collection
+    }
+
+    click.secho(str(source_definition), fg='yellow')
+
+    setup_pipeline(source_definition)
+    click.secho('Queued items from {}. Please make sure your Celery workers are'
+                ' running, so the loaded items are processed.'.format(collection),
+                fg='green')
+
+
 if __name__ == '__main__':
     cli()
