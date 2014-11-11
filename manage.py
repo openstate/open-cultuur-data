@@ -20,6 +20,23 @@ from ocd_frontend.settings import DUMPS_DIR, API_URL, DUMP_URL, LOCAL_DUMPS_DIR
 from ocd_frontend.wsgi import application
 
 
+from click.core import Command
+from click.decorators import _make_command
+def command(name=None, cls=None, **attrs):
+    """
+    Wrapper for click Commands, to replace the click.Command docstring with the
+    docstring of the wrapped method (i.e. the methods defined below). This is
+    done to support the autodoc in Sphinx, and the correct display of docstrings
+    """
+    if cls is None:
+        cls = Command
+    def decorator(f):
+        r = _make_command(f, name, attrs, cls)
+        r.__doc__ = f.__doc__
+        return r
+    return decorator
+
+
 class MultiIntRange(click.ParamType):
     """
     A parameter that takes a comma-separated list of integers, and validates
@@ -99,7 +116,7 @@ def _write_chunks(chunks, f):
             f.flush()
 
 
-def _download_dump(index, dump_name=None, target_dir=DUMPS_DIR):
+def _download_dump(index, dump_name=None, target_dir=DUMPS_DIR, dump_url=DUMP_URL):
     """
     Download a Gzipped dump of a OpenCultuurData collection to disk. Compares
     the SHA1 checksum of the dump with the dump files already available
@@ -111,6 +128,7 @@ def _download_dump(index, dump_name=None, target_dir=DUMPS_DIR):
     :param target_dir: Directory to download the dump files to. A directory
                        per index is created in the target directory, and per
                        dump file a checksum and a dump file will be created.
+    :param dump_url: URL where dumps are hosted. Defaults to ``ocd_frontend.settings.DUMP_URL``
     :return: Path to downloaded dump
     """
     if not dump_name:
@@ -194,11 +212,32 @@ def elasticsearch():
     """Manage Elasticsearch"""
 
 
-@elasticsearch.command('put_template')
+@cli.group()
+def extract():
+    """Extraction pipeline"""
+
+
+@cli.group()
+def frontend():
+    """Front-end API"""
+
+
+@cli.group()
+def dumps():
+    """Create dumps of indices for export"""
+
+
+@command('put_template')
 @click.option('--template_file', default='es_mappings/ocd_template.json',
               type=click.File('rb'), help='Path to JSON file containing the template.')
 def es_put_template(template_file):
-    """Put a template."""
+    """
+    Put a template into Elasticsearch. A template contains settings and mappings
+    that should be applied to multiple indices. Check ``es_mappings/ocd_template.json``
+    for an example.
+
+    :param template_file: Path to JSON file containing the template. Defaults to ``es_mappings/ocd_template.json``.
+    """
     click.echo('Putting ES template: %s' % template_file.name)
 
     template = json.load(template_file)
@@ -207,11 +246,16 @@ def es_put_template(template_file):
     es.indices.put_template('ocd_template', template)
 
 
-@elasticsearch.command('put_mapping')
+@command('put_mapping')
 @click.argument('index_name')
 @click.argument('mapping_file', type=click.File('rb'))
 def es_put_mapping(index_name, mapping_file):
-    """Put a mapping for a specified index."""
+    """
+    Put a mapping for a specified index.
+
+    :param index_name: name of the index to PUT a mapping for.
+    :param mapping_file: path to JSON file containing the mapping.
+    """
     click.echo('Putting ES mapping %s for index %s'
                % (mapping_file.name, index_name))
 
@@ -221,10 +265,11 @@ def es_put_mapping(index_name, mapping_file):
     es.indices.put_mapping(index=index_name, body=mapping)
 
 
-@elasticsearch.command('create_indexes')
+@command('create_indexes')
 @click.argument('mapping_dir', type=click.Path(exists=True, resolve_path=True))
 def create_indexes(mapping_dir):
-    """Create all indexes for which a mapping- and settingsfile is available.
+    """
+    Create all indexes for which a mapping- and settings file is available.
 
     It is assumed that mappings in the specified directory follow the
     following naming convention: "ocd_mapping_{SOURCE_NAME}.json".
@@ -245,9 +290,16 @@ def create_indexes(mapping_dir):
         es.indices.create(index=index_name, body=mapping)
 
 
-@elasticsearch.command('delete_indexes')
-def delete_indexes():
-    """Delete all Open Cultuur Data indices."""
+@command('delete_indexes')
+@click.option('--delete-template', is_flag=True, expose_value=True)
+def delete_indexes(delete_template):
+    """
+    Delete all Open Cultuur Data indices. If option ``--delete-template`` is
+    provided, delete the index template too (index template contains default
+    index configuration and mappings).
+
+    :param delete-template: if provided, delete template too
+    """
     index_glob = '%s_*' % DEFAULT_INDEX_PREFIX
     indices = es.indices.status(index=index_glob, human=True)
 
@@ -257,17 +309,24 @@ def delete_indexes():
                                            stats['index']['size']))
     if click.confirm('Are you sure you want to delete the above indices?'):
         es.indices.delete(index=index_glob)
+
+    if delete_template or click.confirm('Do you want to delete the template too?'):
         es.indices.delete_template('ocd_template')
 
 
-@elasticsearch.command('available_indices')
+@command('available_indices')
 def available_indices():
     """
-    List available indices
+    Shows a list of collections available at ``ELASTICSEARCH_HOST:ELASTICSEARCH_PORT``.
     """
     available = []
-    indices = es.cat.indices().strip().split('\n')
-    for index in indices:
+    indices = es.cat.indices()
+
+    if not indices:
+        click.secho('No indices available in this instance', fg='red')
+        return None
+
+    for index in indices.strip().split('\n'):
         index = index.split()
         if u'resolver' not in index[1] and u'combined_index' not in index[1]:
             click.secho('%s (%s docs, %s)' % (index[1], index[4], index[6]),
@@ -277,17 +336,14 @@ def available_indices():
     return available
 
 
-@cli.group()
-def extract():
-    """Extraction pipeline"""
-
-
-@extract.command('list_sources')
-@click.option('--sources_config', default=None, type=click.File('rb'))
+@command('list_sources')
+@click.option('--sources_config', default=SOURCES_CONFIG_FILE, type=click.File('rb'))
 def extract_list_sources(sources_config):
-    """Show a list of available sources."""
-    if not sources_config:
-        sources_config = SOURCES_CONFIG_FILE
+    """
+    Show a list of available sources (preconfigured pipelines).
+
+    :param sources_config: Path to file containing pipeline definitions. Defaults to the value of ``settings.SOURCES_CONFIG_FILE``
+    """
     sources = load_sources_config(sources_config)
 
     click.echo('Available sources:')
@@ -295,13 +351,18 @@ def extract_list_sources(sources_config):
         click.echo(' - %s' % source['id'])
 
 
-@extract.command('start')
-@click.option('--sources_config', default=None, type=click.File('rb'))
+@command('start')
+@click.option('--sources_config', default=SOURCES_CONFIG_FILE,
+              type=click.File('rb'))
 @click.argument('source_id')
 def extract_start(source_id, sources_config):
-    """Start extraction for a specified source."""
-    if not sources_config:
-        sources_config = SOURCES_CONFIG_FILE
+    """
+    Start extraction for a pipeline specified by ``source_id`` defined in
+    ``--sources-config``. ``--sources-config defaults to ``settings.SOURCES_CONFIG_FILE``.
+
+    :param sources_config: Path to file containing pipeline definitions. Defaults to the value of ``settings.SOURCES_CONFIG_FILE``
+    :param source_id: identifier used in ``--sources_config`` to describe pipeline
+    """
     sources = load_sources_config(sources_config)
 
     # Find the requested source definition in the list of available sources
@@ -320,24 +381,20 @@ def extract_start(source_id, sources_config):
     setup_pipeline(source)
 
 
-@cli.group()
-def frontend():
-    """Front-end API"""
-
-
-@frontend.command('runserver')
+@command('runserver')
 @click.argument('host', default='0.0.0.0')
 @click.argument('port', default=5000, type=int)
 def frontend_runserver(host, port):
+    """
+    Run development server on ``host:port``.
+
+    :param host: host to run dev server on (defaults to 0.0.0.0)
+    :param port: defaults to 5000
+    """
     run_simple(host, port, application, use_reloader=True, use_debugger=True)
 
 
-@cli.group()
-def dumps():
-    """Create dumps of indices for export"""
-
-
-@dumps.command('create')
+@command('create')
 @click.option('--index', default=None)
 @click.pass_context
 def create_dump(ctx, index):
@@ -353,6 +410,8 @@ def create_dump(ctx, index):
     """
     if not index:
         available_idxs = ctx.invoke(available_indices)
+        if not available_idxs:
+            return
         index = click.prompt('Name of index to dump')
 
         if index not in available_idxs:
@@ -409,11 +468,13 @@ def create_dump(ctx, index):
                 fg='green')
 
 
-@dumps.command('list')
+@command('list')
 @click.option('--api-url', default=API_URL)
 def list_dumps(api_url):
     """
-    List available dumps of API instance at ``api_address``.
+    List available dumps of API instance at ``api_address``. Use this option to
+    obtain information about dumps available at other OpenCultuurData API
+    instances.
 
     :param api_address: URL of API location
     """
@@ -436,24 +497,24 @@ def list_dumps(api_url):
             click.secho('\t{dump}'.format(dump=dump), fg='green')
 
 
-@dumps.command('download')
+@command('download')
 @click.option('--api-url', default=API_URL, help='URL to API instance to fetch '
                                                  'dumps from.')
-@click.option('--dump-url', default=DUMP_URL, help='URL where dumps are hosted,')
 @click.option('--destination', '-d', default=LOCAL_DUMPS_DIR,
               help='Directory to download dumps to.')
+@click.option('--dump-url', default=DUMP_URL, help='URL where dumps are hosted,')
 @click.option('--collections', '-c', multiple=True)
 @click.option('--all-collections', '-a', is_flag=True, expose_value=True,
               help='Download latest version of all collections available')
-def download_dumps(api_url, dump_url, destination, collections, all_collections):
+def download_dumps(api_url, destination, dump_url, collections, all_collections):
     """
     Download dumps of OCD collections to your machine, for easy ingestion.
 
-    :param api_url: URL to API instance to fetch dumps from
-    :param dump_url: Base URL where dumps are hosted
-    :param destination: path to local directory where dumps should be stored
-    :param collections: Names of collections to fetch dumps for.
-    :param all_collections: If this flag is set, download all available dumps
+    :param api_url: URL to API instance to fetch dumps from. Defaults to ``ocd_frontend.settings.API_URL``, which is set to the API instance hosted by OpenCultuurData itself.
+    :param dump_url: Base URL where dumps are hosted. Defaults to ``ocd_frontend.settings.DUMP_URL``, which is set to the dumps OpenCultuurData hosts.
+    :param destination: path to local directory where dumps should be stored. Defaults to ``ocd_frontend.settings.LOCAL_DUMPS_DIR``.
+    :param collections: Names of collections to fetch dumps for. Optional; you will be prompted to select collections when not provided.
+    :param all_collections: If this flag is set, download all available dumps. Optional; you will be prompted to select collections when not provided.
     """
     url = '{url}/dumps'.format(url=api_url)
     try:
@@ -469,7 +530,7 @@ def download_dumps(api_url, dump_url, destination, collections, all_collections)
     if all_collections:
         # Download all the things
         for i, index in dumps:
-            _download_dump(index, target_dir=destination)
+            _download_dump(index, target_dir=destination, dump_url=dump_url)
         return
 
     if not collections:
@@ -494,36 +555,44 @@ def download_dumps(api_url, dump_url, destination, collections, all_collections)
         _download_dump(collection, target_dir=destination)
 
 
-@dumps.command('load')
-@click.option('--collection', '-c', help='Path to dump of collection to load',
+@command('load')
+@click.option('--collection-dump', '-c', help='Path to dump of collection to load',
               default=None, type=click.Path(exists=True))
 @click.option('--collection-name', '-n', help='An index will be created with th'
                                               'is name. If left empty, collecti'
                                               'on name will be derived from dum'
                                               'p name.', default=None)
-def load_dump(collection, collection_name):
+def load_dump(collection_dump, collection_name):
+    """
+    Restore an index from a dump file.
+
+    :param collection_dump: Path to a local gzipped dump to load.
+    :param collection_name: Name for the local index to restore the dump to. Optional; will be derived from the dump name, at your own risk. Note that the pipeline will add a "ocd_" prefix string to the collection name, to ensure the proper mapping and settings are applied.
+    """
     available_dumps = glob(os.path.join(LOCAL_DUMPS_DIR, '*/*.gz'))
-    if not collection:
+    if not collection_dump:
         choices = []
         for i, dump in enumerate(available_dumps):
             choices.append(unicode(i+1))
             click.secho('{i}) {dump}'.format(i=i+1, dump=dump), fg='green')
         dump_idx = click.prompt('Choose one of the dumps listed above',
                                 type=click.Choice(choices))
-        collection = available_dumps[int(dump_idx) - 1]
+        collection_dump = available_dumps[int(dump_idx) - 1]
 
-    collection = os.path.abspath(collection)
+    collection = os.path.abspath(collection_dump)
 
     if not collection_name:
-        collection_name = '_'.join(collection.split('/')[-1].split('.')[0].split('_')[:2])
+        collection_id = '_'.join(collection.split('/')[-1].split('.')[0].split('_')[:2])
+        collection_name = collection_id.replace('ocd_', '')
 
     source_definition = {
-        'id': collection_name,
+        'id': collection_id,
         'extractor': 'ocd_backend.extractors.staticfile.StaticJSONDumpExtractor',
         'transformer': 'ocd_backend.transformers.BaseTransformer',
         'loader': 'ocd_backend.loaders.ElasticsearchLoader',
         'item': 'ocd_backend.items.LocalDumpItem',
-        'dump_path': collection
+        'dump_path': collection,
+        'index_name': collection_name
     }
 
     click.secho(str(source_definition), fg='yellow')
@@ -532,6 +601,25 @@ def load_dump(collection, collection_name):
     click.secho('Queued items from {}. Please make sure your Celery workers are'
                 ' running, so the loaded items are processed.'.format(collection),
                 fg='green')
+
+
+# Register commands explicitly with groups, so we can easily use the docstring
+# wrapper
+frontend.add_command(frontend_runserver)
+
+dumps.add_command(load_dump)
+dumps.add_command(list_dumps)
+dumps.add_command(create_dump)
+dumps.add_command(download_dumps)
+
+elasticsearch.add_command(es_put_template)
+elasticsearch.add_command(es_put_mapping)
+elasticsearch.add_command(create_indexes)
+elasticsearch.add_command(delete_indexes)
+elasticsearch.add_command(available_indices)
+
+extract.add_command(extract_list_sources)
+extract.add_command(extract_start)
 
 
 if __name__ == '__main__':
