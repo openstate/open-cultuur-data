@@ -11,7 +11,7 @@ from ocd_backend.utils.misc import load_object
 
 class BaseTransformer(Task):
     def run(self, *args, **kwargs):
-        """Start tranformation of a single item.
+        """Start transformation of a single item.
 
         This method is called by the extractor and expects args to
         contain the content-type and the original item (as a string).
