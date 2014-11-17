@@ -1,4 +1,4 @@
-from ocd_backend.extractors import BaseExtractor, HttpRequestMixin, log
+from ocd_backend.extractors import BaseExtractor, HttpRequestMixin
 from ocd_backend.exceptions import ConfigurationError
 
 from click import progressbar

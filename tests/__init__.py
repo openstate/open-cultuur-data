@@ -1,1 +1,2 @@
-from extractors.staticfile import *
+from extractors import *
+from transformers import *
