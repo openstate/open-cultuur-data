@@ -1,15 +1,6 @@
-import os
-import sys
-import re
-from pprint import pprint
-from StringIO import StringIO
 from datetime import datetime
-
-import mock
-from mock import MagicMock
 from nose.tools import raises
 
-import ocd_backend
 from ocd_backend.items import StrictMappingDict
 
 
