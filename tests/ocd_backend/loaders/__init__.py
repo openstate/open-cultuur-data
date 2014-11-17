@@ -1,16 +1,12 @@
-import json
-import os
-
-from ocd_backend.items import LocalDumpItem
-
-from . import ItemTestCase
+import os.path
+from unittest import TestCase
 
 
-class LocalDumpItemTestCase(ItemTestCase):
+class LoaderTestCase(TestCase):
+
     def setUp(self):
-        super(LocalDumpItemTestCase, self).setUp()
         self.PWD = os.path.dirname(__file__)
-        dump_path = os.path.abspath(os.path.join(self.PWD, '../test_dumps/ocd_openbeelden_test.gz'))
+        dump_path = os.path.abspath(os.path.join(self.PWD, '..', 'test_dumps/ocd_openbeelden_test.gz'))
         self.source_definition = {
             'id': 'test_definition',
             'extractor': 'ocd_backend.extractors.staticfile.StaticJSONDumpExtractor',
@@ -20,8 +16,7 @@ class LocalDumpItemTestCase(ItemTestCase):
             'dump_path': dump_path,
             'index_name': 'openbeelden'
         }
-        with open(os.path.abspath(os.path.join(self.PWD, '../test_dumps/item.json')), 'r') as f:
-            self.item = json.load(f)
 
-    def test_something(self):
-        print self.item
+# Import test modules here so the noserunner can pick them up, and the
+# ExtractorTestCase is parsed. Add additional testcases when required
+from .es_loader import ESLoaderTestCase
