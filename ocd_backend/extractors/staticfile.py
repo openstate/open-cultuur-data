@@ -107,7 +107,15 @@ class StaticJSONDumpExtractor(BaseExtractor):
 
 
     def run(self):
+        """
+        Override ``run`` as we don't have a HTTP request context
+        :return:
+        """
         dump_path = self.source_definition.get('dump_path')
+        for item in self.extract_items(dump_path):
+            yield item
+
+    def extract_items(self, dump_path):
         with progressbar(gzip.open(dump_path, 'rb'), label='Loading %s' %
                 dump_path) as f:
             for line in f:
