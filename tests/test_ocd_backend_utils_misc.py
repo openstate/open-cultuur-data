@@ -1,14 +1,3 @@
-import os
-import sys
-import re
-from pprint import pprint
-from StringIO import StringIO
-
-import mock
-from mock import MagicMock
-from nose.tools import raises
-
-import ocd_backend
 from ocd_backend.utils.misc import load_sources_config, load_object
 
 
@@ -30,4 +19,3 @@ def test_load_all_sources():
 def _load_source(source):
     for phase in ['extractor', 'transformer', 'item', 'loader']:
         module = load_object(source[phase])
-    
