@@ -38,47 +38,6 @@ def command(name=None, cls=None, **attrs):
     return decorator
 
 
-class MultiIntRange(click.ParamType):
-    """
-    A parameter that takes a comma-separated list of integers, and validates
-    that the list actually contains integers, within a given range. Used for
-    validation of multiple select options in the CLI.
-    """
-    name = 'multiple integers in a range'
-
-    def __init__(self, min=None, max=None, clamp=False):
-        self.min = min
-        self.max = max
-        self.clamp = clamp
-
-    def convert(self, value, param, ctx):
-        v = value.strip().split(',')
-        try:
-            v = [int(v) for v in v]
-        except ValueError:
-            self.fail(click.style('{} may only contain integers'.format(value),
-                                  fg='red'), param, ctx)
-
-        minv, maxv = min(v), max(v)
-
-        if self.clamp:
-            if self.min is not None and minv < self.min:
-                return self.min
-            if self.max is not None and maxv > self.max:
-                return self.max
-
-        if self.min is not None and minv < self.min or self.max is \
-            not None and maxv > self.max:
-            self.fail(click.style('{} contains values outside the range of '
-                                  '{} to {}.'.format(value, self.min, self.max),
-                                  fg='red'), param, ctx)
-
-        return v
-
-    def __repr__(self):
-        return 'MultiIntRange ({}, {})'.format(self.min, self.max)
-
-
 def _create_path(path):
     if not os.path.exists(path):
         click.secho('Creating path "%s"' % path, fg='green')
@@ -134,7 +93,7 @@ def _download_dump(dump_url, collection, target_dir=DUMPS_DIR):
     _create_path(os.path.join(target_dir, collection))
 
     # First, get the SHA1 checksum of the file we intend to download
-    r = requests.get(dump_url.replace('.gz', '.sha1'))
+    r = requests.get('{}.sha1'.format(dump_url))
 
     checksum = r.content
 
@@ -183,7 +142,7 @@ def _download_dump(dump_url, collection, target_dir=DUMPS_DIR):
         os.remove('{}.gz'.format(filepath))
         return
 
-    with open('{}.sha1'.format(filepath), 'w') as f:
+    with open('{}.gz.sha1'.format(filepath), 'w') as f:
         f.write(checksum)
 
     return '{}.gz'.format(filepath)
@@ -431,7 +390,7 @@ def create_dump(ctx, index):
 
     click.secho('Generating checksum', fg='green')
     checksum = _checksum_file(new_dump)
-    checksum_path = os.path.join(DUMPS_DIR, index, '%s.sha1' % dump_name.split('.')[0])
+    checksum_path = os.path.join(DUMPS_DIR, index, '%s.sha1' % dump_name)
 
     with open(checksum_path, 'w') as f:
         f.write(checksum)
@@ -450,14 +409,14 @@ def create_dump(ctx, index):
     click.secho('Created symlink "%s_latest.gz" to "%s"' % (index, new_dump),
                 fg='green')
 
-    latest_checksum = os.path.join(os.path.dirname(checksum_path), '%s_latest.sha1' % index)
+    latest_checksum = os.path.join(os.path.dirname(checksum_path), '%s_latest.gz.sha1' % index)
     try:
         os.unlink(latest_checksum)
     except OSError:
         click.secho('First time creating dump, skipping unlinking checksum',
                     fg='yellow')
     os.symlink(checksum_path, latest_checksum)
-    click.secho('Created symlink "%s_latest.sha1" to "%s"' % (index, checksum_path),
+    click.secho('Created symlink "%s_latest.gz.sha1" to "%s"' % (index, checksum_path),
                 fg='green')
 
 
@@ -528,8 +487,8 @@ def download_dumps(api_url, destination, collections, all_collections):
         return
 
     if not collections:
-        for i, index in available_collections:
-            click.secho('{i}) {index}'.format(i=i, index=index), fg='yellow')
+        for i, dump in available_collections:
+            click.secho('{i}) {index}'.format(i=i, index=dump), fg='yellow')
 
         collection = click.prompt('For which collection do you want to download'
                                   ' a dump? Please provide the number correspon'
@@ -557,7 +516,16 @@ def download_dumps(api_url, destination, collections, all_collections):
             click.secho('"{}" is not available as a dump, skipping'.format(collection),
                         fg='red')
             continue
-        dump_url = [d for d in dumps.get(collection) if d.endswith('latest.gz')][0]
+
+        for i, dump in enumerate(dumps[collection]):
+            click.secho('{i}) {dump}'.format(i=i+1, dump=dump), fg='yellow')
+
+        dump_url = click.prompt('Which dump of the collection "{collection}" do'
+                                ' you want to download? Please provide the numb'
+                                'er corresponding to the dump that you want to '
+                                'download',
+                                type=click.Choice([str(j) for j in range(1, len(dumps[collection]) + 1)]))
+        dump_url = dumps[collection][int(dump_url)]
 
         _download_dump(dump_url=dump_url, collection=collection,
                        target_dir=destination)
@@ -588,9 +556,9 @@ def load_dump(collection_dump, collection_name):
         collection_dump = available_dumps[int(dump_idx) - 1]
 
     collection = os.path.abspath(collection_dump)
+    collection_id = '_'.join(collection.split('/')[-1].split('.')[0].split('_')[:2])
 
     if not collection_name:
-        collection_id = '_'.join(collection.split('/')[-1].split('.')[0].split('_')[:2])
         collection_name = collection_id.replace('ocd_', '')
 
     source_definition = {
