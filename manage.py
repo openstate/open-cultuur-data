@@ -7,6 +7,7 @@ import gzip
 from hashlib import sha1
 import os
 import requests
+from urlparse import urljoin
 
 import click
 from elasticsearch import helpers as es_helpers
@@ -116,37 +117,30 @@ def _write_chunks(chunks, f):
             f.flush()
 
 
-def _download_dump(index, dump_name=None, target_dir=DUMPS_DIR, dump_url=DUMP_URL):
+def _download_dump(dump_url, collection, target_dir=DUMPS_DIR):
     """
     Download a Gzipped dump of a OpenCultuurData collection to disk. Compares
     the SHA1 checksum of the dump with the dump files already available
     locally, and skips downloading if the file is already available.
 
-    :param index: name of the index to get a dump of
-    :param dump_name: Optionally provide a name to download a specific dump
-                        file. Defaults to downloading the latest dump.
+    :param dump_url: URL to the dump of an index
+    :param collection: Name of the collection the URL is a dump of
     :param target_dir: Directory to download the dump files to. A directory
                        per index is created in the target directory, and per
                        dump file a checksum and a dump file will be created.
-    :param dump_url: URL where dumps are hosted. Defaults to ``ocd_frontend.settings.DUMP_URL``
     :return: Path to downloaded dump
     """
-    if not dump_name:
-        # Pick the latest dump file if no other is specified
-        dump_name = '{index}_latest'.format(index=index)
-
     # Make sure the directory exists
-    _create_path(os.path.join(target_dir, index))
+    _create_path(os.path.join(target_dir, collection))
 
     # First, get the SHA1 checksum of the file we intend to download
-    r = requests.get('{dump_url}/{index}/{dump_name}.sha1'.format(
-        dump_url=DUMP_URL, index=index, dump_name=dump_name))
+    r = requests.get(dump_url.replace('.gz', '.sha1'))
 
     checksum = r.content
 
     # Compare checksums of already downloaded files with the checksum of the
     # file we are trying to download
-    for c in glob('{}/*.sha1'.format(os.path.join(target_dir, index))):
+    for c in glob('{}/*.sha1'.format(os.path.join(target_dir, collection))):
         # latest is a symlink
         if 'latest' in c:
             continue
@@ -157,14 +151,13 @@ def _download_dump(index, dump_name=None, target_dir=DUMPS_DIR, dump_url=DUMP_UR
                 return
 
     # Construct name of local file
-    filepath = os.path.join(target_dir, index, '{}_{}'.format(
-        dump_name.replace('_latest', ''),
+    filepath = os.path.join(target_dir, collection, '{}_{}'.format(
+        collection,
         datetime.now().strftime('%Y%m%d%H%S'))
     )
 
     # Get and write dump to disk (iteratively, as dumps could get rather big)
-    r = requests.get('{dump_url}/{index}/{dump_name}.gz'.format(
-        dump_url=DUMP_URL, index=index, dump_name=dump_name), stream=True)
+    r = requests.get(dump_url, stream=True)
 
     content_length = r.headers.get('content-length', False)
 
@@ -174,7 +167,7 @@ def _download_dump(index, dump_name=None, target_dir=DUMPS_DIR, dump_url=DUMP_UR
             with click.progressbar(r.iter_content(chunk_size=1024),
                                    length=content_length / 1024,
                                    label=click.style(
-                                           'Downloading {}'.format(index),
+                                           'Downloading {}'.format(dump_url),
                                            fg='green'
                                    )) as chunks:
                 _write_chunks(chunks, f)
@@ -476,9 +469,9 @@ def list_dumps(api_url):
     obtain information about dumps available at other OpenCultuurData API
     instances.
 
-    :param api_address: URL of API location
+    :param api_url: URL of API location
     """
-    url = '{url}/dumps'.format(url=api_url)
+    url = urljoin(api_url, 'dumps')
 
     try:
         r = requests.get(url)
@@ -502,57 +495,72 @@ def list_dumps(api_url):
                                                  'dumps from.')
 @click.option('--destination', '-d', default=LOCAL_DUMPS_DIR,
               help='Directory to download dumps to.')
-@click.option('--dump-url', default=DUMP_URL, help='URL where dumps are hosted,')
+# @click.option('--dump-url', default=DUMP_URL, help='URL where dumps are hosted,')
 @click.option('--collections', '-c', multiple=True)
 @click.option('--all-collections', '-a', is_flag=True, expose_value=True,
               help='Download latest version of all collections available')
-def download_dumps(api_url, destination, dump_url, collections, all_collections):
+def download_dumps(api_url, destination, collections, all_collections):
     """
     Download dumps of OCD collections to your machine, for easy ingestion.
 
     :param api_url: URL to API instance to fetch dumps from. Defaults to ``ocd_frontend.settings.API_URL``, which is set to the API instance hosted by OpenCultuurData itself.
-    :param dump_url: Base URL where dumps are hosted. Defaults to ``ocd_frontend.settings.DUMP_URL``, which is set to the dumps OpenCultuurData hosts.
     :param destination: path to local directory where dumps should be stored. Defaults to ``ocd_frontend.settings.LOCAL_DUMPS_DIR``.
     :param collections: Names of collections to fetch dumps for. Optional; you will be prompted to select collections when not provided.
     :param all_collections: If this flag is set, download all available dumps. Optional; you will be prompted to select collections when not provided.
     """
-    url = '{url}/dumps'.format(url=api_url)
+    url = urljoin(api_url, 'dumps')
     try:
         r = requests.get(url)
     except:
         click.secho('Could not connect to API', fg='red')
         return
 
-    dumps = [(i+1, index) for i, index in enumerate(r.json().get('dumps'))]
-    dump_mapping = dict(dumps)
-    available_collections = dump_mapping.values()
+    available_collections = [(i+1, index) for i, index in enumerate(r.json().get('dumps'))]
+    dumps = r.json().get('dumps')
 
     if all_collections:
         # Download all the things
-        for i, index in dumps:
-            _download_dump(index, target_dir=destination, dump_url=dump_url)
+        for collection in dumps:
+            _download_dump([d for d in dumps.get(collection)
+                            if d.endswith('_latest.gz')][0],
+                           collection=collection,
+                           target_dir=destination)
         return
 
     if not collections:
-        for i, index in dumps:
+        for i, index in available_collections:
             click.secho('{i}) {index}'.format(i=i, index=index), fg='yellow')
 
-        dumps = click.prompt('Which dumps should be downloaded? Please provide '
-                             'the number(s) corresponding to the dumps that sho'
-                             'uld be downloaded',
-                             type=MultiIntRange(*range(dumps[0][0],
-                                                       dumps[-1][0] + 1)))
-        for d in dumps:
-            _download_dump(dump_mapping[d], target_dir=destination)
+        collection = click.prompt('For which collection do you want to download'
+                                  ' a dump? Please provide the number correspon'
+                                  'ding to the collection that you want to down'
+                                  'load', type=click.Choice([
+            str(i[0]) for i in available_collections]))
 
+        collection = dict(available_collections)[int(collection)]
+        for i, dump in enumerate(dumps[collection]):
+            click.secho('{i}) {dump}'.format(i=i+1, dump=dump), fg='yellow')
+
+        dump_url = click.prompt('Which dump of the collection "{collection}" do'
+                                ' you want to download? Please provide the numb'
+                                'er corresponding to the dump that you want to '
+                                'download',
+                                type=click.Choice([str(j) for j in range(1, len(dumps[collection]) + 1)]))
+        dump_url = dumps[collection][int(dump_url)]
+
+        _download_dump(dump_url=dump_url, collection=collection,
+                       target_dir=destination)
         return
 
     for collection in collections:
-        if collection not in available_collections:
+        if collection not in dumps.keys():
             click.secho('"{}" is not available as a dump, skipping'.format(collection),
                         fg='red')
             continue
-        _download_dump(collection, target_dir=destination)
+        dump_url = [d for d in dumps.get(collection) if d.endswith('latest.gz')][0]
+
+        _download_dump(dump_url=dump_url, collection=collection,
+                       target_dir=destination)
 
 
 @command('load')
