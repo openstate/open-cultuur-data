@@ -10,7 +10,7 @@ from ocd_backend.log import get_source_logger
 log = get_source_logger('loader')
 
 class BaseLoader(Task):
-    """The base class that other loaders should inhert."""
+    """The base class that other loaders should inherit."""
 
     def run(self, *args, **kwargs):
         """Start loading of a single item.
@@ -36,7 +36,7 @@ class BaseLoader(Task):
 
         return self.load_item(object_id, combined_index_doc, doc)
 
-    def load_item(self, combined_index_doc, doc):
+    def load_item(self, object_id, combined_index_doc, doc):
         raise NotImplemented
 
 
@@ -55,7 +55,13 @@ class ElasticsearchLoader(BaseLoader):
         log.info('Indexing documents...')
         elasticsearch.index(index=settings.COMBINED_INDEX, doc_type='item',
                             id=object_id, body=combined_index_doc)
-        elasticsearch.index(index='%s_%s' % (settings.DEFAULT_INDEX_PREFIX, self.source_definition['id']),
+
+        index_name = self.source_definition['id']
+        if 'index_name' in self.source_definition:
+            index_name = self.source_definition['index_name']
+
+        elasticsearch.index(index='%s_%s' % (settings.DEFAULT_INDEX_PREFIX,
+                                             index_name),
                             doc_type='item', id=object_id, body=doc)
 
         # For each media_urls.url, add a resolver document to the
@@ -73,3 +79,17 @@ class ElasticsearchLoader(BaseLoader):
                                          body=url_doc)
                 except ConflictError:
                     log.debug('Resolver document %s already exists' % url_hash)
+
+
+class DummyLoader(BaseLoader):
+    """
+    Prints the item to the console, for debugging purposes.
+    """
+    def load_item(self, object_id, combined_index_doc, doc):
+        print '=' * 50
+        print '%s %s %s' % ('=' * 4, object_id, '=' * 4)
+        print '%s %s %s' % ('-' * 20, 'combined', '-' * 20)
+        print combined_index_doc
+        print '%s %s %s' % ('-' * 20, 'doc', '-' * 25)
+        print doc
+        print '=' * 50

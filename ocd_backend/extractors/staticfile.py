@@ -1,6 +1,8 @@
 from ocd_backend.extractors import BaseExtractor, HttpRequestMixin
 from ocd_backend.exceptions import ConfigurationError
 
+from click import progressbar
+import gzip
 from lxml import etree
 
 
@@ -81,7 +83,7 @@ class StaticXmlExtractor(StaticFileBaseExtractor):
         if self.default_namespace is not None:
             # the namespace map has a key None if there is a default namespace
             # so the configuration has to specify the default key
-            # xpath uqeries do not allow an empty default namespace
+            # xpath queries do not allow an empty default namespace
             self.namespaces = tree.nsmap
             try:
                 self.namespaces[self.default_namespace] = self.namespaces[None]
@@ -91,3 +93,30 @@ class StaticXmlExtractor(StaticFileBaseExtractor):
 
         for item in tree.xpath(self.item_xpath, namespaces=self.namespaces):
             yield 'application/xml', etree.tostring(item)
+
+
+class StaticJSONDumpExtractor(BaseExtractor):
+    """
+    Extract items from JSON dumps.
+    """
+    def __init__(self, *args, **kwargs):
+        super(StaticJSONDumpExtractor, self).__init__(*args, **kwargs)
+
+        if not self.source_definition.get('dump_path'):
+            raise ConfigurationError('Missing \'dump_path\' definition')
+
+
+    def run(self):
+        """
+        Override ``run`` as we don't have a HTTP request context
+        :return:
+        """
+        dump_path = self.source_definition.get('dump_path')
+        for item in self.extract_items(dump_path):
+            yield item
+
+    def extract_items(self, dump_path):
+        with progressbar(gzip.open(dump_path, 'rb'), label='Loading %s' %
+                dump_path) as f:
+            for line in f:
+                yield 'application/json', line.strip()
