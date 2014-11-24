@@ -49,3 +49,6 @@ local_dumps/
 
 # IDE/editor
 .idea
+
+dumps/*
+local_dumps/*
