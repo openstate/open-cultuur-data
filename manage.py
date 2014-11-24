@@ -17,7 +17,7 @@ from ocd_backend.es import elasticsearch as es
 from ocd_backend.pipeline import setup_pipeline
 from ocd_backend.settings import SOURCES_CONFIG_FILE, DEFAULT_INDEX_PREFIX
 from ocd_backend.utils.misc import load_sources_config
-from ocd_frontend.settings import DUMPS_DIR, API_URL, DUMP_URL, LOCAL_DUMPS_DIR
+from ocd_frontend.settings import DUMPS_DIR, API_URL, LOCAL_DUMPS_DIR
 from ocd_frontend.wsgi import application
 
 
@@ -176,7 +176,7 @@ def frontend():
 
 @cli.group()
 def dumps():
-    """Create dumps of indices for export"""
+    """Create and load dumps of indices"""
 
 
 @command('put_template')
@@ -454,7 +454,6 @@ def list_dumps(api_url):
                                                  'dumps from.')
 @click.option('--destination', '-d', default=LOCAL_DUMPS_DIR,
               help='Directory to download dumps to.')
-# @click.option('--dump-url', default=DUMP_URL, help='URL where dumps are hosted,')
 @click.option('--collections', '-c', multiple=True)
 @click.option('--all-collections', '-a', is_flag=True, expose_value=True,
               help='Download latest version of all collections available')
