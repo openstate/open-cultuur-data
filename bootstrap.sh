@@ -14,6 +14,7 @@ sudo service elasticsearch start
 sudo apt-get install -y libxml2-dev libxslt1-dev libssl-dev libffi-dev python-dev python-setuptools python-virtualenv git > /dev/null
 sudo easy_install -q pip
 virtualenv -q ocd
+chown -R vagrant:vagrant ocd
 
 source ocd/bin/activate
 

@@ -26,6 +26,7 @@ The API exposes several functionalities on those collections, such as fulltext-s
 - :ref:`Similar to <rest_similar>`
 - ... (analysis, caching, ...)
 
+.. _dev_etl:
 
 Extract, Transform, Load, or ETL
 --------------------------------
