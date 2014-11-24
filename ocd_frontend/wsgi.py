@@ -1,3 +1,4 @@
+import os.path
 from werkzeug.wsgi import DispatcherMiddleware
 
 from ocd_frontend import rest
@@ -13,5 +14,7 @@ if application.app.config.get('DEBUG', False):
 
     @application.app.route('/data/<path:filename>')
     def download_dump(filename):
-        return send_from_directory(application.app.config.get('DUMPS_DIR'),
-                                   filename, as_attachment=True)
+        collection_name = '_'.join(filename.split('_')[:2])
+        base_dir = os.path.join(application.app.config.get('DUMPS_DIR'),
+                                collection_name)
+        return send_from_directory(base_dir, filename, as_attachment=True)
