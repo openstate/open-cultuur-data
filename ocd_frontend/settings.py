@@ -89,7 +89,7 @@ LOCAL_DUMPS_DIR = os.path.join(os.path.dirname(ROOT_PATH), 'local_dumps')
 API_URL = 'http://api.opencultuurdata.nl/v0/'
 
 # URL where collection dumps are hosted
-DUMP_URL = 'http://dumps.opencultuurdata.nl'
+DUMP_URL = 'http://dumps.opencultuurdata.nl/'
 
 # Allow any settings to be defined in local_settings.py which should be
 # ignored in your version control system allowing for settings to be
