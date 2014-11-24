@@ -53,9 +53,9 @@ Installation
    $ wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.2.0.deb
    $ sudo dpkg -i elasticsearch-1.2.0.deb
 
-4. Install liblxml, libxslt and python-dev::
+4. Install liblxml, libxslt, libssl, libffi and python-dev::
 
-   $ sudo apt-get install libxml2-dev libxslt1-dev python-dev
+   $ sudo apt-get install libxml2-dev libxslt1-dev libssl-dev libffi-dev python-dev
 
 5. Install pip and virtualenv::
 

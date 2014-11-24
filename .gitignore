@@ -42,3 +42,6 @@ docs/_build/
 
 # Coverage state file
 .coverage
+
+# IDE/editor
+.idea
