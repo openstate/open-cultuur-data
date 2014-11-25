@@ -146,5 +146,13 @@
             "herkomst":40,
             "licentie":85
         }
+    },
+    {
+      "id": "gemeente_ede",
+      "extractor": "ocd_backend.extractors.staticfile.StaticJSONExtractor",
+      "transformer": "ocd_backend.transformers.BaseTransformer",
+      "item": "ocd_backend.items.gemeente_ede.GemeenteEdeItem",
+      "loader": "ocd_backend.loaders.ElasticsearchLoader",
+      "file_url": "http://static.opencultuurdata.nl/gemeente_ede/2014OpenData_ABWigman_CSV_06-12.json"
     }
 ]
