@@ -20,17 +20,42 @@ All API endpoints are designed according to the idea that there is an operation 
 
 Arguments to an endpoint are placed behind the method definition, or supplied as JSON in a POST request. For instance, the :ref:`similar objects endpoint <rest_similar>` can be executed within the context of a collection, and needs an ``object_id`` to execute on.
 
-.. Collection overview and statistics
-.. ----------------------------------
+Collection overview and statistics
+----------------------------------
 
-.. .. http:get:: /collections
+.. http:get:: /sources
 
-..    :statuscode 200: OK, no errors.
+   Get a list of all available sources (collections) with item counts
 
-.. .. http:get:: /stats
+   **Example request**
 
-..    :statuscode 200: OK, no errors.
+   .. sourcecode:: http
 
+      $ curl -i -XGET 'http://api.opencultuurdata.nl/v0/sources'
+
+   **Example response**
+
+    .. sourcecode:: http
+
+      HTTP/1.0 200 OK
+      Content-Type: application/json
+      Content-Length: 1885
+      Date: Mon, 19 May 2014 12:58:43 GMT
+
+      {
+         "sources": [
+             {
+                "count": 562,
+                "id": "zoutkamp",
+                "name": "Visserijmuseum Zoutkamp"
+             },
+             {
+                "count": 207,
+                "id": "textielmuseum",
+                "name": "TextielMuseum"
+             }
+         ]
+      }
 
 .. _rest_search:
 

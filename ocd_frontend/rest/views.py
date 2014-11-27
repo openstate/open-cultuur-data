@@ -164,11 +164,8 @@ def format_sources_results(results):
     sources = []
 
     for bucket in results['aggregations']['index']['buckets']:
-        # we do not need stats about the combined index or the resolver
-        if bucket['key'] == 'ocd_combined_index' or bucket['key'] == 'ocd_resolver':
-            continue
         sources.append({
-            'id': bucket['key'].replace('ocd_', ''),
+            'id': bucket['key'],
             'name': bucket['collection']['buckets'][0]['key'],
             'count': bucket['collection']['buckets'][0]['doc_count']
         })
@@ -187,7 +184,7 @@ def list_sources():
         'aggregations': {
             'index': {
                 'terms': {
-                    'field': '_index'
+                    'field': 'meta.source_id'
                 },
                 'aggregations': {
                     'collection': {
@@ -201,7 +198,7 @@ def list_sources():
         "size": 0
     }
 
-    es_r = current_app.es.search(body=es_q, index='_all')
+    es_r = current_app.es.search(body=es_q, index=current_app.config['COMBINED_INDEX'])
 
     return jsonify(format_sources_results(es_r))
 
