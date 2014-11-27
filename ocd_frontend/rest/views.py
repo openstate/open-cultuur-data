@@ -184,7 +184,8 @@ def list_sources():
         'aggregations': {
             'index': {
                 'terms': {
-                    'field': 'meta.source_id'
+                    'field': 'meta.source_id',
+                    'size': 0,
                 },
                 'aggregations': {
                     'collection': {
