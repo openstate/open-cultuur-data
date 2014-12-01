@@ -133,7 +133,7 @@ class A2AItem(BaseItem):
 
         return mainPersons, allPersons
 
-    def _get_title(self, mainPersons):
+    def _get_title(self, mainPersons, eventType):
         # title wordt samengesteld uit het eventtype, naam/namen van de
         # hoofdpersoon/hoofdpersonen
         title = ', '.join(filter(None, (eventType, ' & '.join(mainPersons))))
@@ -259,28 +259,31 @@ class A2AItem(BaseItem):
         )
 
     def _get_collection(self):
-        return self.get_attribute(
+        return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
             'a2a:Collection'
         )
 
     def _get_registry_number(self):
-        return self.get_attribute(
+        return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
             'a2a:RegistryNumber'
         )
 
     def _get_archive_number(self):
-        return self.get_attribute(
+        return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
             'a2a:Archive'
         )
 
     def _get_source_remark(self):
-        return self.get_attribute(
+        return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceRemark/'
             'a2a:Value'
         )
+
+    def _get_authors(self):
+        return []
 
     def get_combined_index_data(self):
         combined_index_data = {}
@@ -291,10 +294,10 @@ class A2AItem(BaseItem):
         eventType = self._get_event_type()
 
         # plaats van de gebeurtenis
-        eventPlace = self._et_event_place()
+        eventPlace = self._get_event_place()
 
         # naam van de archiefinstelling
-        institutionName = self_get_institution_name()
+        institutionName = self._get_institution_name()
 
         # bepalen van de hoofdpersonen bij de gebeurtenis voor gebruik in title
         # (mainPersonKeyRefs) op basis van RelationEP
@@ -302,7 +305,7 @@ class A2AItem(BaseItem):
 
         # title wordt samengesteld uit het eventtype, naam/namen van de
         # hoofdpersoon/hoofdpersonen
-        combined_index_data['title'] = self._get_title(mainPersons)
+        combined_index_data['title'] = self._get_title(mainPersons, eventType)
 
         # bron type
         sourceType = self._get_source_type()
@@ -323,10 +326,11 @@ class A2AItem(BaseItem):
         parsedDate, parsedGranularity = self._get_date_and_granularity()
         if parsedDate is not None:
             combined_index_data['date'] = parsedDate
-            combined_index_data['granularity'] = parsedGranularity
+            combined_index_data['date_granularity'] = parsedGranularity
 
         # omdat dit meta-data van naar archieven overgebrachte
         # overheidsdocumenten zijn is er geen auteur
+        combined_index_data['authors'] = self._get_authors()
 
         # available scans (1 or more...)
         combined_index_data['media_urls'] = self._get_media_urls()
@@ -336,13 +340,6 @@ class A2AItem(BaseItem):
 
     def get_index_data(self):
         return {}
-
-    def get_attribute(self, xpath, attrib):
-        obj = self.original_item.find(xpath, namespaces=self.namespaces)
-        if obj is not None:
-            return obj.get(attrib)
-        else:
-            return None
 
     def get_all_text(self):
         text_items = []
