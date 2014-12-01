@@ -35,11 +35,7 @@ class A2AItem(BaseItem):
         log.info('Processing record %s' % id)
         return id
 
-    def get_combined_index_data(self):
-        combined_index_data = {}
-
-        log.info('Getting combined index data ...')
-
+    def _get_event_type(self):
         # soort gebeurtenis, bijv. Geboorte
         # <a2a:Event eid="Event1" a2a:EventType="Overlijden">
         eventRecord = self._get_node_or_none(
@@ -55,7 +51,13 @@ class A2AItem(BaseItem):
 
         eventType = eventType.replace('other:', '')
 
+        return eventType
+
+    def _get_event_place(self):
         # plaats van de gebeurtenis
+        eventRecord = self._get_node_or_none(
+            './/oai:metadata/a2a:A2A/a2a:Event'
+        )
         eventPlace = None
         eventPlaceRecord = self._get_node_or_none(
             './a2a:EventPlace/a2a:Place', eventRecord
@@ -63,12 +65,16 @@ class A2AItem(BaseItem):
         if eventPlaceRecord is not None:
             eventPlace = eventPlaceRecord.text
 
+        return eventPlace
+
+    def _get_institution_name(self):
         # naam van de archiefinstelling
-        institutionName = self._get_text_or_none(
+        return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
             'a2a:InstitutionName'
         )
 
+    def _get_main_persons(self):
         # bepalen van de hoofdpersonen bij de gebeurtenis voor gebruik in title
         # (mainPersonKeyRefs) op basis van RelationEP
         mainPersonKeyRefs = []
@@ -125,24 +131,32 @@ class A2AItem(BaseItem):
                     ' '.join(filter(None, (personVN, personVV, personAN)))
                 )
 
+        return mainPersons, allPersons
+
+    def _get_title(self, mainPersons):
         # title wordt samengesteld uit het eventtype, naam/namen van de
         # hoofdpersoon/hoofdpersonen
         title = ', '.join(filter(None, (eventType, ' & '.join(mainPersons))))
-        combined_index_data['title'] = unicode(title)
+        return unicode(title)
 
+    def _get_source_type(self):
         # bron type
-        sourceType = self._get_text_or_none(
+        return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceType'
         )
 
+    def _get_source_place(self):
         # plaats van de bron
-        sourcePlace = self._get_text_or_none(
+        return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourcePlace/a2a:Place'
         )
 
+    def _get_description(
+        self, institutionName, sourceType, sourcePlace, allPersons
+    ):
         # in description worden alle persoonsnamen, de sourceType, sourcePlace,
         # InstitutionName samengevoegd
-        description = ', '.join(
+        return ', '.join(
             filter(
                 None, (
                     institutionName, sourceType, sourcePlace, ' & '.join(
@@ -151,11 +165,13 @@ class A2AItem(BaseItem):
                 )
             )
         )
-        if description:
-            combined_index_data['description'] = unicode(description)
 
+    def _get_date_and_granularity(self):
         # datum van de gebeurtenis, opgedeeld in dag, maand en jaar, niet
         # altijd (allemaal) aanwezig ...
+        parsedDate = None
+        parsedGranularity = 0
+
         eventDate = None
         eventDateObj = self._get_node_or_none(
             './/oai:metadata/a2a:A2A/a2a:Event/a2a:EventDate'
@@ -180,35 +196,34 @@ class A2AItem(BaseItem):
                         int(eventDateDay) > 0 and
                         int(eventDateDay) < 32
                     ):
-                        combined_index_data['date'] = datetime.strptime(
+                        parsedDate = datetime.strptime(
                             eventDateDay + "-" + eventDateMonth + "-" +
                             eventDateYear,
                             '%d-%m-%Y'
                         )
-                        combined_index_data['date_granularity'] = 8
+                        parsedGranularity = 8
                     else:    # geen dag
-                        combined_index_data['date'] = datetime.strptime(
+                        parsedDate = datetime.strptime(
                             eventDateMonth + "-" + eventDateYear, '%m-%Y'
                         )
-                        combined_index_data['date_granularity'] = 6
+                        parsedGranularity = 6
                 else:    # geen maand/dag
-                    combined_index_data['date'] = datetime.strptime(
+                    parsedDate = datetime.strptime(
                         eventDateYear, '%Y'
                     )
-                    combined_index_data['date_granularity'] = 4
+                    parsedGranularity = 4
+        return parsedDate, parsedGranularity
 
-        # omdat dit meta-data van naar archieven overgebrachte
-        # overheidsdocumenten zijn is er geen auteur
-
-        combined_index_data['media_urls'] = []
-
+    def _get_media_urls(self):
         # available scans (1 or more...)
+        media_urls = []
+
         scanUriPreview = self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceAvailableScans/'
             'a2a:UriPreview'
         )
         if scanUriPreview is not None:
-            combined_index_data['media_urls'].append({
+            media_urls.append({
                 'original_url': scanUriPreview,
                 'content_type': 'image/jpeg'
             })
@@ -224,10 +239,97 @@ class A2AItem(BaseItem):
                     'a2a:UriPreview', scan
                 )
                 if scanUriPreview is not None:
-                    combined_index_data['media_urls'].append({
+                    media_urls.append({
                         'original_url': scanUriPreview,
                         'content_type': 'image/jpeg'
                     })
+
+        return media_urls
+
+    def _get_document_number(self):
+        return self._get_text_or_none(
+            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
+            'a2a:DocumentNumber'
+        )
+
+    def _get_book(self):
+        return self._get_text_or_none(
+            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
+            'a2a:Book'
+        )
+
+    def _get_collection(self):
+        return self.get_attribute(
+            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
+            'a2a:Collection'
+        )
+
+    def _get_registry_number(self):
+        return self.get_attribute(
+            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
+            'a2a:RegistryNumber'
+        )
+
+    def _get_archive_number(self):
+        return self.get_attribute(
+            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
+            'a2a:Archive'
+        )
+
+    def _get_source_remark(self):
+        return self.get_attribute(
+            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceRemark/'
+            'a2a:Value'
+        )
+
+    def get_combined_index_data(self):
+        combined_index_data = {}
+
+        log.info('Getting combined index data ...')
+
+        # soort gebeurtenis, bijv. Geboorte
+        eventType = self._get_event_type()
+
+        # plaats van de gebeurtenis
+        eventPlace = self._et_event_place()
+
+        # naam van de archiefinstelling
+        institutionName = self_get_institution_name()
+
+        # bepalen van de hoofdpersonen bij de gebeurtenis voor gebruik in title
+        # (mainPersonKeyRefs) op basis van RelationEP
+        mainPersons, allPersons = self._get_main_persons()
+
+        # title wordt samengesteld uit het eventtype, naam/namen van de
+        # hoofdpersoon/hoofdpersonen
+        combined_index_data['title'] = self._get_title(mainPersons)
+
+        # bron type
+        sourceType = self._get_source_type()
+
+        # plaats van de bron
+        sourcePlace = self._get_source_place()
+
+        # in description worden alle persoonsnamen, de sourceType, sourcePlace,
+        # InstitutionName samengevoegd
+        description = self._get_description(
+            institutionName, sourceType, sourcePlace, allPersons
+        )
+        if description:
+            combined_index_data['description'] = unicode(description)
+
+        # datum van de gebeurtenis, opgedeeld in dag, maand en jaar, niet
+        # altijd (allemaal) aanwezig ...
+        parsedDate, parsedGranularity = self._get_date_and_granularity()
+        if parsedDate is not None:
+            combined_index_data['date'] = parsedDate
+            combined_index_data['granularity'] = parsedGranularity
+
+        # omdat dit meta-data van naar archieven overgebrachte
+        # overheidsdocumenten zijn is er geen auteur
+
+        # available scans (1 or more...)
+        combined_index_data['media_urls'] = self._get_media_urls()
 
         pprint(combined_index_data)
         return combined_index_data
@@ -246,115 +348,71 @@ class A2AItem(BaseItem):
         text_items = []
 
         # gebeurtenis type
-        eventType = self.get_attribute(
-            './/oai:metadata/a2a:A2A/a2a:Event',
-            '{http://Mindbus.nl/A2A}EventType'
-        )
-        if eventType is not None:
-            eventType.replace("other:", "")
-            text_items.append(eventType)
+        eventType = self._get_event_type()
+        text_items.append(eventType)
 
         # plaats van de gebeurtenis
-        eventPlace = self.get_attribute(
-            './/oai:metadata/a2a:A2A/a2a:Event/a2a:EventPlace',
-            '{http://Mindbus.nl/A2A}Place'
-        )
-        if eventPlace is not None:
-            text_items.append(eventPlace)
+        eventPlace = self._get_event_place()
+        text_items.append(eventPlace)
 
         # bron type
-        sourceType = self.get_attribute(
-            './/oai:metadata/a2a:A2A/a2a:Source',
-            '{http://Mindbus.nl/A2A}SourceType'
-        )
-        if sourceType is not None:
-            text_items.append(sourceType)
+        sourceType = self._get_source_type()
+        text_items.append(sourceType)
 
         # plaats van de bron
-        sourcePlace = self.get_attribute(
-            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourcePlace',
-            '{http://Mindbus.nl/A2A}Place'
-        )
-        if sourcePlace is not None:
-            text_items.append(sourcePlace)
+        sourcePlace = self._get_source_place()
+        text_items.append(sourcePlace)
 
         # naam van de archiefinstelling
-        institutionName = self.get_attribute(
-            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference',
-            '{http://Mindbus.nl/A2A}InstitutionName'
-        )
-        if institutionName is not None:
-            text_items.append(institutionName)
+        institutionName = self._get_institution_name()
+        text_items.append(institutionName)
 
         # document nummer
-        documentNumber = self.get_attribute(
-            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference',
-            '{http://Mindbus.nl/A2A}DocumentNumber'
-        )
-        if documentNumber is not None:
-            text_items.append(documentNumber)
+        documentNumber = self._get_document_number()
+        text_items.append(documentNumber)
 
         # naam van boek
-        bookName = self.get_attribute(
-            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference',
-            '{http://Mindbus.nl/A2A}Book'
-        )
-        if bookName is not None:
-            text_items.append(bookName)
+        bookName = self._get_book()
+        text_items.append(bookName)
 
         # naam van collectie
-        collectieName = self.get_attribute(
-            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference',
-            '{http://Mindbus.nl/A2A}Collection'
-        )
-        if collectieName is not None:
-            text_items.append(collectieName)
+        collectieName = self._get_collection()
+        text_items.append(collectieName)
 
         # registratie nummer
-        registrationNumber = self.get_attribute(
-            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference',
-            '{http://Mindbus.nl/A2A}RegistryNumber'
-        )
-        if registrationNumber is not None:
-            text_items.append(registrationNumber)
+        registrationNumber = self._get_registry_number()
+        text_items.append(registrationNumber)
 
         # archief nummer
-        archiveNumber = self.get_attribute(
-            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference',
-            '{http://Mindbus.nl/A2A}Archive'
-        )
-        if archiveNumber is not None:
-            text_items.append(archiveNumber)
+        archiveNumber = self._get_archive_number()
+        text_items.append(archiveNumber)
 
         # bron opmerking
-        sourceRemark = self.get_attribute(
-            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceRemark',
-            '{http://Mindbus.nl/A2A}Value'
-        )
-        if sourceRemark is not None:
-            text_items.append(sourceRemark)
+        sourceRemark = self._get_source_remark()
+        text_items.append(sourceRemark)
 
         # personen
         persons = self.original_item.findall(
             './/oai:metadata/a2a:A2A/a2a:Person',
             namespaces=self.namespaces
         )
-        if persons is not None:
-            for person in persons:
-                personName = person.find(
-                    './/a2a:PersonName', namespaces=self.namespaces
-                )
-                personVN = personName.get(
-                    '{http://Mindbus.nl/A2A}PersonNameFirstName'
-                )
-                personVV = personName.get(
-                    '{http://Mindbus.nl/A2A}PersonNamePrefixLastName'
-                )
-                personAN = personName.get(
-                    '{http://Mindbus.nl/A2A}PersonNameLastName'
-                )
-                text_items.append(
-                    ' '.join(filter(None, (personVN, personVV, personAN)))
-                )
+        if persons is None:
+            persons = []
+        for person in persons:
+            personName = self._get_node_or_none(
+                './/a2a:PersonName', person
+            )
+            personVN = self._get_text_or_none(
+                './/a2a:PersonNameFirstName', personName
+            )
+            personVV = self._get_text_or_none(
+                './/a2a:PersonNamePrefixLastName', personName
+            )
+            personAN = self._get_text_or_none(
+                './/a2a:PersonNameLastName', personName
+            )
+            text_items.append(
+                ' '.join(filter(None, (personVN, personVV, personAN)))
+            )
 
         return u' '.join([ti for ti in text_items if ti is not None])
