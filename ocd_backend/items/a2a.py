@@ -32,7 +32,7 @@ class A2AItem(BaseItem):
 
     def get_original_object_id(self):
         id = self._get_text_or_none('.//oai:header/oai:identifier')
-        log.info('Processing record %s' % id)
+        # log.info('Processing record %s' % id)
         return id
 
     def _get_event_type(self):
@@ -288,7 +288,7 @@ class A2AItem(BaseItem):
     def get_combined_index_data(self):
         combined_index_data = {}
 
-        log.info('Getting combined index data ...')
+        # log.info('Getting combined index data ...')
 
         # soort gebeurtenis, bijv. Geboorte
         eventType = self._get_event_type()
@@ -324,9 +324,8 @@ class A2AItem(BaseItem):
         # datum van de gebeurtenis, opgedeeld in dag, maand en jaar, niet
         # altijd (allemaal) aanwezig ...
         parsedDate, parsedGranularity = self._get_date_and_granularity()
-        if parsedDate is not None:
-            combined_index_data['date'] = parsedDate
-            combined_index_data['date_granularity'] = parsedGranularity
+        combined_index_data['date'] = parsedDate
+        combined_index_data['date_granularity'] = parsedGranularity
 
         # omdat dit meta-data van naar archieven overgebrachte
         # overheidsdocumenten zijn is er geen auteur
