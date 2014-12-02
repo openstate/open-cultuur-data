@@ -441,4 +441,29 @@ Combined index
 Tropenmuseum index
 ^^^^^^^^^^^^^^^^^^
 
+Regionaal Archief Tilburg
+-------------------------
 
+This dataset contains genealogical data from the `Regional Archive of Tilburg <http://www.regionaalarchieftilburg.nl/zoeken-in-databases/genealogie/welke-bronnen-zijn-al-beschikbaar>`_.
+Content is harvested by using the `OAI-PMH feed <http://api.memorix-maior.nl/collectiebeheer/a2a/key/42de466c-8cb5-11e3-9b8b-00155d012a18/tenant/tlb?verb=Identify>`_. The OCD implementation uses the 'oai_a2a' (Archive 2 All) data format.
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``EventType`` and ``PersonName``     | Only names of 'main' persons in event  |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``InstitutionName``, ``SourceType``, | Names of all related persons           |
+|                        | ``SourcePlace`` and ``PersonName``   |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``EventDate``                        | ``date_granularity`` varies between 8  |
+|                        |                                      | and 10                                 |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``SourceAvailableScans``             | Thumbnails of records are (in general) |
+|                        |                                      | hosted by the original archive         |
++------------------------+--------------------------------------+----------------------------------------+
+
+Regionaal Archief Tilburg index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
