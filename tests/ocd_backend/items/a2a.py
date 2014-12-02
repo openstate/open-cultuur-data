@@ -1,5 +1,6 @@
 from lxml import etree
 import os
+import datetime
 
 from ocd_backend.log import get_source_logger
 
@@ -108,6 +109,128 @@ class A2ATestCase(ItemTestCase):
             if data[field] is not None:
                 self.assertIsInstance(data[field], field_type)
 
+    def test_get_event_type(self):
+        item = self._instantiate_item()
+        self.assertEqual(
+            item._get_event_type(), self.event_type
+        )
+
+    def test_get_event_place(self):
+        item = self._instantiate_item()
+        self.assertEqual(
+            item._get_event_place(), self.event_place
+        )
+
+    def test_get_institution_name(self):
+        item = self._instantiate_item()
+        self.assertEqual(
+            item._get_institution_name(), self.institution_name
+        )
+
+    def test_get_main_persons(self):
+        item = self._instantiate_item()
+        main_persons, all_persons = item._get_main_persons()
+        self.assertEqual(
+            main_persons, self.main_persons
+        )
+
+    def test_get_all_persons(self):
+        item = self._instantiate_item()
+        main_persons, all_persons = item._get_main_persons()
+        self.assertEqual(
+            all_persons, self.all_persons
+        )
+
+    def test_get_title(self):
+        item = self._instantiate_item()
+        main_persons, all_persons = item._get_main_persons()
+        event_type = item._get_event_type()
+        self.assertEqual(
+            item._get_title(main_persons, event_type), self.title
+        )
+
+    def test_get_soure_type(self):
+        item = self._instantiate_item()
+        self.assertEqual(
+            item._get_source_type(), self.source_type
+        )
+
+    def test_get_soure_place(self):
+        item = self._instantiate_item()
+        self.assertEqual(
+            item._get_source_place(), self.source_place
+        )
+
+    def test_get_description(self):
+        item = self._instantiate_item()
+        main_persons, all_persons = item._get_main_persons()
+        institution_name = item._get_institution_name()
+        source_type = item._get_source_type()
+        source_place = item._get_source_place()
+        self.assertEqual(
+            item._get_description(
+                institution_name, source_type, source_place, all_persons
+            ), self.description
+        )
+
+    def test_get_date_and_granularity(self):
+        item = self._instantiate_item()
+        date, granularity = item._get_date_and_granularity()
+        self.assertEqual(
+            date, self.date
+        )
+        self.assertEqual(
+            granularity, self.date_granularity
+        )
+
+    def test_media_urls(self):
+        item = self._instantiate_item()
+        self.assertEqual(
+            item._get_media_urls(), self.media_urls
+        )
+
+    def test_document_number(self):
+        item = self._instantiate_item()
+        self.assertEqual(
+            item._get_document_number(), self.document_number
+        )
+
+    def test_book(self):
+        item = self._instantiate_item()
+        self.assertEqual(
+            item._get_book(), self.book
+        )
+
+    def test_source_collection(self):
+        item = self._instantiate_item()
+        self.assertEqual(
+            item._get_collection(), self.source_collection
+        )
+
+    def test_registry_number(self):
+        item = self._instantiate_item()
+        self.assertEqual(
+            item._get_registry_number(), self.registry_number
+        )
+
+    def test_archive_number(self):
+        item = self._instantiate_item()
+        self.assertEqual(
+            item._get_archive_number(), self.archive_number
+        )
+
+    def test_source_remark(self):
+        item = self._instantiate_item()
+        self.assertEqual(
+            item._get_source_remark(), self.source_remark
+        )
+
+    def test_authors(self):
+        item = self._instantiate_item()
+        self.assertEqual(
+            item._get_authors(), self.authors
+        )
+
 
 class OpenArchievenTestCase(A2ATestCase):
     def _set_default_values(self):
@@ -125,6 +248,31 @@ class OpenArchievenTestCase(A2ATestCase):
                 u'&identifier=000002e0-e965-e554-0ffd-fae16753075a'
             )
         }
+        self.event_type = u'Registratie'
+        self.event_place = None
+        self.institution_name = u'Erfgoed Leiden en omstreken'
+        self.main_persons = [u'Johanna Catharina Fakkel']
+        self.all_persons = [u'Johanna Catharina Fakkel']
+        self.title = u'Registratie, Johanna Catharina Fakkel'
+        self.source_type = u'Bevolkingsregister'
+        self.source_place = u'Leiden'
+        self.description = (
+            u'Erfgoed Leiden en omstreken, Bevolkingsregister, '
+            u'Leiden, Johanna Catharina Fakkel'
+        )
+        self.date = datetime.datetime(1919, 2, 19)
+        self.date_granularity = 8
+        self.media_urls = []
+        self.document_number = None
+        self.book = u'01. A-Ba. (1 - 407)'
+        self.source_collection = (
+            u'Archiefnaam: Archief van het algemeen en dagelijks bestuur, '
+            u'(1545) 1816-1929 (1963); Bevolkingsbo...'
+        )
+        self.registry_number = u'1305'
+        self.archive_number = u'516'
+        self.source_remark = None
+        self.authors = []
 
     def _get_source_id(self):
         return 'openarchieven'
@@ -154,6 +302,46 @@ class RegionaalArchiefTilburgTestCase(A2ATestCase):
                 u'000002dd-842d-fe78-0a08-8fb6209ae4f1'
             )
         }
+        self.event_type = u'Registratie'
+        self.event_place = None
+        self.institution_name = u'Regionaal Archief Tilburg'
+        self.main_persons = [u'Antonius Johannes Theodorus Luijten']
+        self.all_persons = [u'Antonius Johannes Theodorus Luijten']
+        self.title = u'Registratie, Antonius Johannes Theodorus Luijten'
+        self.source_type = u'Bevolkingsregister'
+        self.source_place = u'Goirle'
+        self.description = (
+            u'Regionaal Archief Tilburg, Bevolkingsregister, '
+            u'Goirle, Antonius Johannes Theodorus Luijten'
+        )
+        self.date = None
+        self.date_granularity = 0
+        self.media_urls = [
+            {
+                'original_url': (
+                    u'http://images.memorix.nl/tlb/thumb/140x140/'
+                    u'4c70a2ff-1df9-56ce-85f3-74491f9d13ae.jpg'
+                ),
+                'content_type': 'image/jpeg'
+            },
+            {
+                'original_url': (
+                    u'http://images.memorix.nl/tlb/thumb/140x140/'
+                    u'288f43a4-d5c4-54b5-30b3-b2e9910ad128.jpg'
+                ),
+                'content_type': 'image/jpeg'
+            }
+        ]
+        self.document_number = None
+        self.book = u'Inv. nr. 267 1910-1937 Gezinskaarten K-P'
+        self.source_collection = (
+            u'Archiefnaam: Bevolkingsregister Goirle, Bron: boek, Deel: 267, '
+            u'Periode: 1910-1937'
+        )
+        self.registry_number = u'267'
+        self.archive_number = u'0906'
+        self.source_remark = None
+        self.authors = []
 
     def _get_source_id(self):
         return 'ra_tilburg'
