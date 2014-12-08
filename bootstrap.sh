@@ -1,7 +1,3 @@
-#!/bin/bash
-
-export DEBIAN_FRONTEND=noninteractive
-
 echo "Provisioning"
 sudo apt-get update -qq
 sudo apt-get install -y -qq python-software-properties
@@ -18,6 +14,8 @@ sudo service elasticsearch start
 sudo apt-get install -y libxml2-dev libxslt1-dev libssl-dev libffi-dev python-dev python-setuptools python-virtualenv git > /dev/null
 sudo easy_install -q pip
 virtualenv -q ocd
+
+cp /vagrant/bashrc ~/.bashrc
 
 echo "Installing requirements"
 source ocd/bin/activate
