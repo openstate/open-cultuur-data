@@ -7,6 +7,8 @@ import gzip
 from hashlib import sha1
 import os
 import requests
+import sys
+import time
 from urlparse import urljoin
 
 import click
@@ -537,12 +539,16 @@ def download_dumps(api_url, destination, collections, all_collections):
                                               'is name. If left empty, collecti'
                                               'on name will be derived from dum'
                                               'p name.', default=None)
-def load_dump(collection_dump, collection_name):
+@click.option('-w', '--wait', help='If this flag is provided, the command will '
+                                   'block until all items have finished process'
+                                   'ing.', is_flag=True, default=False)
+def load_dump(collection_dump, collection_name, wait):
     """
     Restore an index from a dump file.
 
     :param collection_dump: Path to a local gzipped dump to load.
     :param collection_name: Name for the local index to restore the dump to. Optional; will be derived from the dump name, at your own risk. Note that the pipeline will add a "ocd_" prefix string to the collection name, to ensure the proper mapping and settings are applied.
+    :param wait: If True, the command will periodically poll the resultset to see whether it is still running or has finished.
     """
     available_dumps = glob(os.path.join(LOCAL_DUMPS_DIR, '*/*.gz'))
     if not collection_dump:
@@ -573,8 +579,9 @@ def load_dump(collection_dump, collection_name):
     click.secho(str(source_definition), fg='yellow')
 
     setup_pipeline(source_definition)
-    click.secho('Queued items from {}. Please make sure your Celery workers are'
-                ' running, so the loaded items are processed.'.format(collection),
+
+    click.secho('Queued items from {}. Please make sure your Celery workers'
+                ' are running, so the loaded items are processed.'.format(collection),
                 fg='green')
 
 
