@@ -16,7 +16,7 @@ sudo easy_install -q pip
 virtualenv -q ocd
 chown -R vagrant:vagrant ocd
 
-source ocd/bin/activate
+cp /vagrant/bashrc ~/.bashrc
 
 echo "Installing requirements"
 cd /vagrant
