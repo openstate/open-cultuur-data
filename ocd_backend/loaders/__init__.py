@@ -5,12 +5,15 @@ from celery import Task
 
 from ocd_backend import settings
 from ocd_backend.es import elasticsearch
+from ocd_backend.exceptions import ConfigurationError
 from ocd_backend.log import get_source_logger
 
 log = get_source_logger('loader')
 
 class BaseLoader(Task):
     """The base class that other loaders should inherit."""
+
+    ignore_result = False
 
     def run(self, *args, **kwargs):
         """Start loading of a single item.
@@ -50,19 +53,22 @@ class ElasticsearchLoader(BaseLoader):
     Each URL found in ``media_urls`` is added as a document to the
     ``RESOLVER_URL_INDEX`` (if it doesn't already exist).
     """
+    def run(self, *args, **kwargs):
+        self.index_name = kwargs.get('index_name')
+
+        if not self.index_name:
+            raise ConfigurationError('The name of the index is not provided')
+
+        super(ElasticsearchLoader, self).run(*args, **kwargs)
 
     def load_item(self, object_id, combined_index_doc, doc):
         log.info('Indexing documents...')
         elasticsearch.index(index=settings.COMBINED_INDEX, doc_type='item',
                             id=object_id, body=combined_index_doc)
 
-        index_name = self.source_definition['id']
-        if 'index_name' in self.source_definition:
-            index_name = self.source_definition['index_name']
-
-        elasticsearch.index(index='%s_%s' % (settings.DEFAULT_INDEX_PREFIX,
-                                             index_name),
-                            doc_type='item', id=object_id, body=doc)
+        # Index documents into new index
+        elasticsearch.index(index=self.index_name, doc_type='item', body=doc,
+                            id=object_id)
 
         # For each media_urls.url, add a resolver document to the
         # RESOLVER_URL_INDEX
@@ -79,6 +85,8 @@ class ElasticsearchLoader(BaseLoader):
                                          body=url_doc)
                 except ConflictError:
                     log.debug('Resolver document %s already exists' % url_hash)
+
+        return object_id
 
 
 class DummyLoader(BaseLoader):

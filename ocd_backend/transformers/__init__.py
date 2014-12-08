@@ -10,6 +10,9 @@ from ocd_backend.utils.misc import load_object
 
 
 class BaseTransformer(Task):
+
+    ignore_result = False
+
     def run(self, *args, **kwargs):
         """Start transformation of a single item.
 
