@@ -22,4 +22,4 @@ class UpdateAlias(Task):
         es.indices.update_aliases(body=actions)
 
         # Remove old index
-        es.indices.delete(index=self.current_index_name)
+        es.indices.delete(index=current_index_name)

@@ -48,7 +48,7 @@ def setup_pipeline(source_definition):
 
     tasks = []
     for item in extractor.run():
-        tasks.append(chain(transformer.s(*item, source_definition=source_definition), loader.s(source_definition=source_definition, index_name=new_index_name)))
+        tasks.append(chain(transformer.si(*item, source_definition=source_definition), loader.s(source_definition=source_definition, index_name=new_index_name)))
 
     chord(group(tasks), update_alias.si(current_index_name=current_index_name,
                                         new_index_name=new_index_name,
