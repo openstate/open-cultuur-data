@@ -36,6 +36,9 @@ def parse_search_request(data, mlt=False):
     if not query and not mlt:
         raise OcdApiError('Missing \'query\'', 400)
 
+    # Additional fields requested to include in the response
+    include_fields = [f.strip() for f in data.get('include_fields', []) if f.strip()]
+
     n_from, n_size = validate_from_and_size(data)
 
     # Check if 'sort' was specified, if not, fallback to '_score'
@@ -139,7 +142,8 @@ def parse_search_request(data, mlt=False):
         'sort': sort,
         'order': order,
         'facets': facets,
-        'filters': filters
+        'filters': filters,
+        'include_fields': include_fields
     }
 
 
@@ -158,6 +162,22 @@ def format_search_results(results):
         hit['_source']['meta']['ocd_url'] = url_for('api.get_object', **kwargs)
 
     return results
+
+
+def validate_included_fields(include_fields, excluded_fields, allowed_to_include):
+    """
+    Utility method that determines if the requested fields that the user wants
+    to see included may actually be included.
+
+    :param include_fields: Fields requested to be included
+    :param excluded_fields: Fields that are excluded by default
+    :param allowed_to_include: Fields that the user is allowed include
+    :return:
+    """
+    for field in include_fields:
+        if field and field in excluded_fields and field in allowed_to_include:
+            excluded_fields.remove(field)
+    return excluded_fields
 
 
 def format_sources_results(results):
@@ -209,6 +229,12 @@ def list_sources():
 def search():
     search_req = parse_search_request(request.data)
 
+    excluded_fields = validate_included_fields(
+        include_fields=search_req['include_fields'],
+        excluded_fields=['all_text', 'media_urls.original_url'],
+        allowed_to_include=['all_text']
+    )
+
     # Construct the query we are going to send to Elasticsearch
     es_q = {
         'query': {
@@ -236,7 +262,7 @@ def search():
             search_req['sort']: {'order': search_req['order']}
         },
         '_source': {
-            'exclude': ['all_text', 'media_urls.original_url']
+            'exclude': excluded_fields
         }
     }
 
@@ -261,6 +287,13 @@ def search_source(source_id):
 
     search_req = parse_search_request(request.data)
 
+    excluded_fields = validate_included_fields(
+        include_fields=search_req['include_fields'],
+        excluded_fields=['all_text', 'source_data', 'media_urls.original_url',
+                         'combined_index_data'],
+        allowed_to_include=['all_text', 'source_data']
+    )
+
     # Construct the query we are going to send to Elasticsearch
     es_q = {
         'query': {
@@ -288,7 +321,7 @@ def search_source(source_id):
             search_req['sort']: {'order': search_req['order']}
         },
         '_source': {
-            'exclude': ['all_text', 'source_data', 'media_urls.original_url']
+            'exclude': excluded_fields
         }
     }
 
@@ -309,10 +342,18 @@ def search_source(source_id):
 def get_object(source_id, object_id):
     index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'], source_id)
 
+    include_fields = [f.strip() for f in request.args.get('include_fields', '').split(',') if f.strip()]
+
+    excluded_fields = validate_included_fields(
+        include_fields=include_fields,
+        excluded_fields=['all_text', 'source_data', 'media_urls.original_url',
+                         'combined_index_data'],
+        allowed_to_include=['all_text', 'source_data']
+    )
+
     try:
         obj = current_app.es.get(index=index_name, id=object_id,
-                                 _source_exclude=['source_data', 'all_text',
-                                                  'media_urls.original_url'])
+                                 _source_exclude=excluded_fields)
     except NotFoundError, e:
         if e.error.startswith('IndexMissingException'):
             message = 'Source \'%s\' does not exist' % source_id
@@ -358,6 +399,12 @@ def similar(object_id, source_id=None):
     else:
         index_name = current_app.config['COMBINED_INDEX']
 
+    excluded_fields = validate_included_fields(
+        include_fields=include_fields,
+        excluded_fields=['all_text'],
+        allowed_to_include=['all_text']
+    )
+
     es_q = {
         'query': {
             'filtered': {
@@ -387,7 +434,7 @@ def similar(object_id, source_id=None):
             search_params['sort']: {'order': search_params['order']}
         },
         '_source': {
-            'exclude': ['all_text']
+            'exclude': excluded_fields
         }
     }
 
