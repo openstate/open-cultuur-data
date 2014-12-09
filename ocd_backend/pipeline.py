@@ -40,10 +40,6 @@ def setup_pipeline(source_definition):
     transformer = load_object(source_definition['transformer'])()
     loader = load_object(source_definition['loader'])()
 
-
-    # jobs = group(chain(transformer.s(*item, source_definition=source_definition), loader.s(source_definition=source_definition, index_name=new_index_name)) for item in extractor.run())
-    # jobs = [chain(transformer.s(*item, source_definition=source_definition), loader.s(source_definition=source_definition, index_name=new_index_name)) for item in extractor.run()]
-    # print jobs
     update_alias = UpdateAlias()
 
     tasks = []
