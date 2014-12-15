@@ -18,7 +18,7 @@ DEFAULT_INDEX_PREFIX = 'ocd'
 
 # The fields which can be used for sorting results via the REST API
 SORTABLE_FIELDS = (
-    'meta.source', 'meta.processing_started', 'meta.processing_finished',
+    'meta.source_id', 'meta.processing_started', 'meta.processing_finished',
     'date', 'date_granularity', 'authors', '_score'
 )
 
