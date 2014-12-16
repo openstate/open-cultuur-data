@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from ocd_backend.items import BaseItem
 from ocd_backend.utils.misc import parse_date
@@ -15,7 +15,7 @@ class GemeenteEdeItem(BaseItem):
         }
 
     def get_collection(self):
-        return u'Gemeente Ede'
+        return u'Gemeentearchief Ede'
 
     def get_rights(self):
         return unicode(self.original_item['Licentie'])
@@ -25,7 +25,7 @@ class GemeenteEdeItem(BaseItem):
             'Vroegst mogelijke datering', None
         )
         if earliest_date is not None:
-            return 12, datetime.datetime.fromtimestamp(int(earliest_date))
+            return 12, datetime.fromtimestamp(int(earliest_date))
         else:
             return None, None
 
