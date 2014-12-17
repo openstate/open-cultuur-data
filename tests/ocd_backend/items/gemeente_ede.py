@@ -41,6 +41,15 @@ class GemeenteEdeItemTestCase(ItemTestCase):
         self.original_object_urls = {
             u'html': u'https://commons.wikimedia.org/wiki/File:GA32573.jpg'
         }
+        self.media_urls = [
+            {
+                'original_url': (
+                    'https://upload.wikimedia.org/wikipedia/commons/b/b1/'
+                    'Bijgebouw_van_jachthuis._-_A.B._Wigman_-_GA32573.jpg'
+                ),
+                'content_type': 'image/jpeg'
+            }
+        ]
 
     def test_item_collection(self):
         item = GemeenteEdeItem(
@@ -95,6 +104,14 @@ class GemeenteEdeItemTestCase(ItemTestCase):
         )
         self.assertEqual(type(item.get_all_text()), unicode)
         self.assertTrue(len(item.get_all_text()) > 0)
+
+    def test_media_urls(self):
+        item = GemeenteEdeItem(
+            self.source_definition, 'application/json',
+            self.raw_item, self.item
+        )
+        data = item.get_combined_index_data()
+        self.assertEqual(data['media_urls'], self.media_urls)
 
     def test_combined_index_data_types(self):
         item = GemeenteEdeItem(

@@ -101,13 +101,12 @@ class StaticJSONExtractor(StaticFileBaseExtractor):
     """
     Extract items from JSON files.
     """
-    def __init__(self, *args, **kwargs):
-        super(StaticJSONExtractor, self).__init__(*args, **kwargs)
-
-        if not self.source_definition.get('file_url'):
-            raise ConfigurationError('Missing \'file_url\' definition')
 
     def extract_items(self, static_content):
+        """
+        Extracts items from a JSON file. It is assumed to be an array
+        of items.
+        """
         static_json = json.loads(static_content)
 
         for item in static_json:
