@@ -1,4 +1,7 @@
 from datetime import datetime
+import re
+
+import requests
 
 from ocd_backend.items import BaseItem
 from ocd_backend.utils.misc import parse_date
@@ -29,6 +32,25 @@ class GemeenteEdeItem(BaseItem):
         else:
             return None, None
 
+    def _get_image_link(self):
+        img_page_url = self.original_item["Link naar de afbeelding"]
+
+        resp = requests.get(img_page_url)
+        if resp.status_code < 200 or resp.status_code >= 300:
+            return None
+
+        # <div class="fullImageLink" id="file">
+        # <a href="//upload.wikimedia.org/wikipedia/commons/b/b1/Bijgebouw_van_
+        # jachthuis._-_A.B._Wigman_-_GA32573.jpg">
+        matches = re.search(
+            '<div class=\"fullImageLink\" id=\"file\"><a href=\"([^\"]+)\">',
+            resp.text
+        )
+        print matches
+        if matches is not None:
+            return u'https:' + unicode(matches.group(1))
+        return None
+
     def get_combined_index_data(self):
         index_data = {}
         index_data['title'] = unicode(
@@ -50,13 +72,16 @@ class GemeenteEdeItem(BaseItem):
         ]
 
         # get jpeg images from static host
-        img_url = self.original_item["Link naar de afbeelding"]
-        index_data['media_urls'] = [
-            {
-                'original_url': img_url,
-                'content_type': 'image/jpeg'
-            }
-        ]
+        img_url = self._get_image_link()
+        if img_url is not None:
+            index_data['media_urls'] = [
+                {
+                    'original_url': img_url,
+                    'content_type': 'image/jpeg'
+                }
+            ]
+        else:
+            index_data['media_urls'] = []
 
         index_data['all_text'] = self.get_all_text()
 
