@@ -12,8 +12,6 @@ from .mixins import FlaskTestCaseMixin
 
 class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
 
-    indices = ['ocd_test_combined_index'] #, 'ocd_testindex', 'ocd_test_resolver']
-
     def create_app(self):
         """
         Create instance of Flask application for testing.
@@ -33,7 +31,8 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         # Elasticsearch should be running for the tests
         self.assertTrue(self.es_client.ping(), msg='Elasticsearch cluster is not '
                                               'running')
-        self.add_indices()
+        indices = ['ocd_test_combined_index'] #, 'ocd_testindex', 'ocd_test_resolver']
+        self.add_indices(indices)
 
         doc_files = glob.glob(os.path.join(self.PWD, 'test_data/test_combined/*.json'))
         # Index some test data
@@ -52,12 +51,12 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         )
         # TODO: We should have a better way of generating test data
 
-    def add_indices(self):
+    def add_indices(self, indices):
         """
         Add indices specified in ``self.indices``, and register cleanup method
         for each one.
         """
-        for index in self.indices:
+        for index in indices:
             self.es_client.indices.create(index)
             self.addCleanup(self.remove_index, index)
 
