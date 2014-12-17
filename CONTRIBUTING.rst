@@ -33,7 +33,7 @@ We really like to receive good pull requests for patches, new features or improv
 
 Our advice is to first discuss changes, before you start working on a large pull-request (for instance, when implementing new features or significant refactoring of the code). Otherwise you risk spending time on something that won't be (directly) merged into the project.
 
-Please adhere to the :ref:`dev_coding_conventions` used throughout the project.
+Please adhere to the :ref:`dev_coding_conventions` used throughout the project. Make sure that your pull request includes proper tests (and that they pass) and documentation.
 
 To submit a pull request, follow this process:
 
