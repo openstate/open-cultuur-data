@@ -12,6 +12,8 @@ from .mixins import FlaskTestCaseMixin
 
 class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
 
+    indices = ['ocd_test_combined_index'] #, 'ocd_testindex', 'ocd_test_resolver']
+
     def create_app(self):
         """
         Create instance of Flask application for testing.
@@ -31,21 +33,18 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         # Elasticsearch should be running for the tests
         self.assertTrue(self.es_client.ping(), msg='Elasticsearch cluster is not '
                                               'running')
-
-        # Create some test indices
-        # self.es_client.indices.create('ocd_testindex')
-        self.es_client.indices.create('ocd_test_combined_index')
-        # self.es_client.indices.create('ocd_test_resolver')
+        self.add_indices()
 
         doc_files = glob.glob(os.path.join(self.PWD, 'test_data/test_combined/*.json'))
         # Index some test data
         for f in doc_files:
             with open(f, 'rb') as doc_file:
                 doc = json.load(doc_file)
+                # Explicitly refresh index, as the upcoming count request can
+                # be faster to execute than the refresh rate of the ES instance
                 self.es_client.index(index='ocd_test_combined_index', body=doc,
-                                     doc_type='item')
+                                     doc_type='item', refresh=True)
 
-        import ipdb; ipdb.set_trace()
         # Check if every test document is actually indexed
         self.assertEqual(
             self.es_client.count(index='ocd_test_combined_index').get('count'),
@@ -53,18 +52,24 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         )
         # TODO: We should have a better way of generating test data
 
-    def tearDown(self):
-        # Delete test indices down
-        # self.es_client.indices.delete('ocd_testindex')
-        self.es_client.indices.delete('ocd_test_combined_index')
-        # self.es_client.indices.delete('ocd_test_resolver')
+    def add_indices(self):
+        """
+        Add indices specified in ``self.indices``, and register cleanup method
+        for each one.
+        """
+        for index in self.indices:
+            self.es_client.indices.create(index)
+            self.addCleanup(self.remove_index, index)
+
+    def remove_index(self, index_name):
+        self.es_client.indices.delete(index_name)
 
     def test_search(self):
         url = url_for('api.search')
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de'}))
         self.assert_ok_json(response)
-        import ipdb; ipdb.set_trace()
+        # import ipdb; ipdb.set_trace()
 
     def test_missing_query(self):
         """'query' is a required search parameter"""
