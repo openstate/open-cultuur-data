@@ -17,11 +17,11 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         Create instance of Flask application for testing.
         :return:
         """
-        app = rest.create_app(settings_override={
-            'TESTING': True,
-            'COMBINED_INDEX': 'ocd_test_combined_index',
-            'RESOLVER_URL_INDEX': 'ocd_test_resolver'
-        })
+        app = rest.create_app()
+        app.config['TESTING'] = True
+        app.config['COMBINED_INDEX'] = 'ocd_test_combined_index'
+        app.config['RESOLVER_URL_INDEX'] = 'ocd_test_resolver'
+
         self.es_client = app.es.es
         self.PWD = os.path.dirname(__file__)
 
@@ -57,8 +57,9 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         for each one.
         """
         for index in indices:
-            self.es_client.indices.create(index)
-            self.addCleanup(self.remove_index, index)
+            if not self.es_client.indices.exists(index):
+                self.es_client.indices.create(index)
+                self.addCleanup(self.remove_index, index)
 
     def remove_index(self, index_name):
         self.es_client.indices.delete(index_name)
