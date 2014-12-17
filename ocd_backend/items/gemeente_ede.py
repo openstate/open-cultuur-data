@@ -46,7 +46,6 @@ class GemeenteEdeItem(BaseItem):
             '<div class=\"fullImageLink\" id=\"file\"><a href=\"([^\"]+)\">',
             resp.text
         )
-        print matches
         if matches is not None:
             return u'https:' + unicode(matches.group(1))
         return None
