@@ -68,21 +68,20 @@ def parse_search_request(data, mlt=False):
 
         # Take the default facet options from the settings
         facets[facet] = available_facets[facet]
-
         f_type = facets[facet].keys()[0]
         if f_type == 'terms':
-            if 'size' in facet_opts:
-                size = facet_opts['size']
+            if 'size' in facet_opts.get(f_type, {}):
+                size = facet_opts[f_type]['size']
                 if type(size) is not int:
                     raise OcdApiError('\'facets.%s.size\' should be an integer' % facet, 400)
 
                 facets[facet][f_type]['size'] = size
 
         elif f_type == 'date_histogram':
-            if 'interval' in facet_opts:
-                interval = facet_opts['interval']
+            if 'interval' in facet_opts.get(f_type, {}):
+                interval = facet_opts[f_type]['interval']
                 if type(interval) is not unicode:
-                    raise OcdApiError('\'facets.%s.interval\' should be a strimg' % facet, 400)
+                    raise OcdApiError('\'facets.%s.interval\' should be a string' % facet, 400)
 
                 if interval not in current_app.config['ALLOWED_DATE_INTERVALS']:
                     raise OcdApiError('\'%s\' is an invalid interval for '
