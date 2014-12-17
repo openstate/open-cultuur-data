@@ -25,12 +25,12 @@ SORTABLE_FIELDS = (
 # Defenition of the ES facets (and filters) that are accassible through
 # the REST API
 AVAILABLE_FACETS = {
-    'retrieved_at': {
-        'date_histogram': {
-            'field': 'retrieved_at',
-            'interval': 'month'
-        }
-    },
+    # 'retrieved_at': {
+    #     'date_histogram': {
+    #         'field': 'retrieved_at',
+    #         'interval': 'month'
+    #     }
+    # },
     'rights': {
         'terms': {
             'field': 'meta.rights',
