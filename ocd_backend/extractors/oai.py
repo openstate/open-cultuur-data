@@ -27,7 +27,7 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
         a string.
 
         :type params: dict
-        :param params: a dictonary sent as arguments in the query string
+        :param params: a dictionary sent as arguments in the query string
         """
         # Add the set variable to the parameters (if available)
         if self.oai_set:
