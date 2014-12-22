@@ -147,6 +147,7 @@
             "licentie":85
         }
     },
+    {
         "id": "kb_watermarks",
         "extractor": "ocd_backend.extractors.oai.OaiExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
