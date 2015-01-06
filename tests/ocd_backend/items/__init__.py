@@ -6,7 +6,9 @@ class ItemTestCase(TestCase):
 
     def setUp(self):
         self.PWD = os.path.dirname(__file__)
-        dump_path = os.path.abspath(os.path.join(self.PWD, '..', 'test_dumps/ocd_openbeelden_test.gz'))
+        dump_path = os.path.abspath(
+            os.path.join(self.PWD, '..', 'test_dumps/ocd_openbeelden_test.gz')
+        )
         self.source_definition = {
             'id': 'test_definition',
             'extractor': 'ocd_backend.extractors.staticfile.StaticJSONDumpExtractor',
@@ -20,3 +22,4 @@ class ItemTestCase(TestCase):
 # Import test modules here so the noserunner can pick them up, and the
 # ExtractorTestCase is parsed. Add additional testcases when required
 from .localdump import LocalDumpItemTestCase
+from .gemeente_ede import GemeenteEdeItemTestCase

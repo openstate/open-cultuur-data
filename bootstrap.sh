@@ -11,13 +11,17 @@ sudo apt-get install -y -qq redis-server
 sudo apt-get install -y -qq openjdk-7-jre-headless
 
 echo "Installing Elasticsearch"
-wget -q https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.1.deb
-sudo dpkg -i elasticsearch-1.4.1.deb > /dev/null
+wget -q https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.deb
+sudo dpkg -i elasticsearch-1.4.2.deb > /dev/null
 sudo service elasticsearch start
 
 sudo apt-get install -y libxml2-dev libxslt1-dev libssl-dev libffi-dev python-dev python-setuptools python-virtualenv git > /dev/null
 sudo easy_install -q pip
 virtualenv -q ocd
+
+chown -R vagrant:vagrant ocd
+
+cp /vagrant/bashrc ~/.bashrc
 
 echo "Installing requirements"
 source ocd/bin/activate

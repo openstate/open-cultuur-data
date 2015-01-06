@@ -148,13 +148,21 @@
         }
     },
     {
-        "id": "kb_watermarks",
-        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
-        "transformer": "ocd_backend.transformers.BaseTransformer",
-        "item": "ocd_backend.items.kb.WatermarksItem",
-        "loader": "ocd_backend.loaders.ElasticsearchLoader",
-        "oai_base_url": "http://services.kb.nl/mdo/oai",
-        "oai_metadata_prefix": "dcx",
-        "oai_set": "WILC"
+      "id": "kb_watermarks",
+      "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+      "transformer": "ocd_backend.transformers.BaseTransformer",
+      "item": "ocd_backend.items.kb.WatermarksItem",
+      "loader": "ocd_backend.loaders.ElasticsearchLoader",
+      "oai_base_url": "http://services.kb.nl/mdo/oai",
+      "oai_metadata_prefix": "dcx",
+      "oai_set": "WILC"
+    },
+    {
+      "id": "gemeente_ede",
+      "extractor": "ocd_backend.extractors.staticfile.StaticJSONExtractor",
+      "transformer": "ocd_backend.transformers.BaseTransformer",
+      "item": "ocd_backend.items.gemeente_ede.GemeenteEdeItem",
+      "loader": "ocd_backend.loaders.ElasticsearchLoader",
+      "file_url": "http://static.opencultuurdata.nl/gemeente_ede/2014OpenData_ABWigman_CSV_06-12.json"
     }
 ]

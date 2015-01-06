@@ -7,6 +7,8 @@ import gzip
 from hashlib import sha1
 import os
 import requests
+import sys
+import time
 from urlparse import urljoin
 
 import click
@@ -573,8 +575,9 @@ def load_dump(collection_dump, collection_name):
     click.secho(str(source_definition), fg='yellow')
 
     setup_pipeline(source_definition)
-    click.secho('Queued items from {}. Please make sure your Celery workers are'
-                ' running, so the loaded items are processed.'.format(collection),
+
+    click.secho('Queued items from {}. Please make sure your Celery workers'
+                ' are running, so the loaded items are processed.'.format(collection),
                 fg='green')
 
 
