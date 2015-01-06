@@ -19,6 +19,10 @@ sudo apt-get install -y libxml2-dev libxslt1-dev libssl-dev libffi-dev python-de
 sudo easy_install -q pip
 virtualenv -q ocd
 
+chown -R vagrant:vagrant ocd
+
+cp /vagrant/bashrc ~/.bashrc
+
 echo "Installing requirements"
 source ocd/bin/activate
 cd /vagrant
