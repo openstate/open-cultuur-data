@@ -468,3 +468,28 @@ Gemeentearchief Ede
 
 Gemeentearchief Ede index
 ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Koninklijke Bibliotheek - Watermarks
+------------------------------------
+
+This dataset contains watermark images from the `Koninklijke Bibliotheek <http://watermark.kb.nl/default/search/advanced/>`_.
+The `archive's OAI-MPH interface <http://www.kb.nl/sites/default/files/docs/Techniek-WILC.pdf>`_ is used to harvest content
+that the archive has made available under an open license.
+
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+-----------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                         | Comment                                |
++========================+=========================================+========================================+
+| ``title``              | ``dc:title``                            |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+| ``description``        | ``dc:description``                      |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+| ``date``               | ``dc:date``                             |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+| ``authors``            | ``dc:creator``                          |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+| ``media_urls``         | ``dc:identifier`` and ``dcx:thumbnail`` |                                        |
++------------------------+-----------------------------------------+----------------------------------------+

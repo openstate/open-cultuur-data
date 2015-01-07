@@ -11,7 +11,9 @@ class ItemTestCase(TestCase):
         )
         self.source_definition = {
             'id': 'test_definition',
-            'extractor': 'ocd_backend.extractors.staticfile.StaticJSONDumpExtractor',
+            'extractor': (
+                'ocd_backend.extractors.staticfile.StaticJSONDumpExtractor'
+            ),
             'transformer': 'ocd_backend.transformers.BaseTransformer',
             'item': 'ocd_backend.items.LocalDumpItem',
             'loader': 'ocd_backend.loaders.ElasticsearchLoader',
@@ -23,3 +25,4 @@ class ItemTestCase(TestCase):
 # ExtractorTestCase is parsed. Add additional testcases when required
 from .localdump import LocalDumpItemTestCase
 from .gemeente_ede import GemeenteEdeItemTestCase
+from .kb_watermarks import WatermarksItemTestCase

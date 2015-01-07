@@ -2,6 +2,7 @@ from datetime import datetime
 
 from ocd_backend.items import BaseItem
 
+
 class WatermarksItem(BaseItem):
     namespaces = {
         'oai': 'http://www.openarchives.org/OAI/2.0/',
@@ -11,21 +12,10 @@ class WatermarksItem(BaseItem):
         'xml': 'http://www.w3.org/XML/1998/namespace'
     }
 
-    media_mime_types = {
-        'webm': 'video/webm',
-        'ogv': 'video/ogg',
-        'ogg': 'audio/ogg',
-        'mp4': 'video/mp4',
-        'm3u8': 'application/x-mpegURL',
-        'ts': 'video/MP2T',
-        'mpeg': 'video/mpeg',
-        'mpg': 'video/mpeg',
-        'png': 'image/png',
-        'jpg': 'image/jpg',
-    }
-
     def _get_text_or_none(self, xpath_expression):
-        node = self.original_item.find(xpath_expression, namespaces=self.namespaces)
+        node = self.original_item.find(
+            xpath_expression, namespaces=self.namespaces
+        )
         if node is not None and node.text is not None:
             return unicode(node.text)
 
@@ -37,15 +27,20 @@ class WatermarksItem(BaseItem):
     def get_original_object_urls(self):
         original_id = self.get_original_object_id()
         return {
-            'xml': 'http://services.kb.nl/mdo/oai?verb=GetRecord&identifier=%s&metadataPrefix=dcx' % original_id,
-            'html': 'http://watermark.kb.nl/search/view/id/%s' % original_id.split(':')[-1]
+            'xml': (
+                'http://services.kb.nl/mdo/oai?verb=GetRecord&identifier=%s'
+                '&metadataPrefix=dcx' % (original_id,)
+            ),
+            'html': 'http://watermark.kb.nl/search/view/id/%s' % (
+                original_id.split(':')[-1],
+            )
         }
 
     def get_collection(self):
         return u'Koninklijke Bibliotheek - Watermarks'
 
     def get_rights(self):
-        return u'CC0'
+        return u'http://creativecommons.org/publicdomain/zero/1.0/deed.nl'
 
     def get_combined_index_data(self):
         combined_index_data = {}
@@ -53,9 +48,12 @@ class WatermarksItem(BaseItem):
         title = self._get_text_or_none('.//dc:title')
         combined_index_data['title'] = title
 
-        description = self._get_text_or_none('.//dc:description')
-        if description:
-            combined_index_data['description'] = description
+        description = self._get_text_or_none(
+            './/dc:description'
+        )
+        if description is None:
+            description = u''
+        combined_index_data['description'] = description
 
         date = self._get_text_or_none('.//dc:date')
         if date:
@@ -63,7 +61,7 @@ class WatermarksItem(BaseItem):
                 combined_index_data['date'] = datetime.strptime(
                     self._get_text_or_none('.//dc:date').strip(),
                     '%Y, %d %b'
-                    )
+                )
                 combined_index_data['date_granularity'] = 8
             except ValueError, e:
                 combined_index_data['date'] = None
@@ -73,8 +71,10 @@ class WatermarksItem(BaseItem):
         if authors:
             combined_index_data['authors'] = [authors]
 
-        mediums = self.original_item.xpath('.//dc:identifier | .//dcx:thumbnail',
-                                              namespaces=self.namespaces) # always jpg
+        mediums = self.original_item.xpath(
+            './/dc:identifier | .//dcx:thumbnail',
+            namespaces=self.namespaces
+        )  # always jpg
 
         if mediums is not None:
             combined_index_data['media_urls'] = []
@@ -82,8 +82,10 @@ class WatermarksItem(BaseItem):
             for medium in mediums:
                 combined_index_data['media_urls'].append({
                     'original_url': medium.text,
-                    'content_type': self.media_mime_types['jpg']
+                    'content_type': 'image/jpeg'
                 })
+
+        combined_index_data['all_text'] = self.get_all_text()
 
         return combined_index_data
 
@@ -100,8 +102,9 @@ class WatermarksItem(BaseItem):
         text_items.append(self._get_text_or_none('.//dc:creator'))
 
         # Subject
-        subjects = self.original_item.findall('.//dc:subject',
-                                              namespaces=self.namespaces)
+        subjects = self.original_item.findall(
+            './/dc:subject', namespaces=self.namespaces
+        )
         for subject in subjects:
             text_items.append(unicode(subject.text))
 
