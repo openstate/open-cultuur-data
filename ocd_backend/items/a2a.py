@@ -1,10 +1,9 @@
 from datetime import datetime
-from pprint import pprint
 
 from ocd_backend.log import get_source_logger
 from ocd_backend.items import BaseItem
 
-log = get_source_logger('loader')
+log = get_source_logger('item')
 
 
 class A2AItem(BaseItem):
@@ -15,11 +14,20 @@ class A2AItem(BaseItem):
     }
 
     def _get_node_or_none(self, xpath_expression, node=None):
+        """
+        Returns the requested node based on the xpath expression. Returns None
+        if the node did not exist.
+        """
         if node is None:
             node = self.original_item
         return node.find(xpath_expression, namespaces=self.namespaces)
 
     def _get_text_or_none(self, xpath_expression, start_node=None):
+        """
+        Returns the text node(s) in the node requested based on the xpath
+        expression. Returns None if no text nodes could be found. Optionally
+        you can specify a start_node for the expression.
+        """
         if start_node is None:
             start_node = self.original_item
         node = start_node.find(
@@ -32,12 +40,13 @@ class A2AItem(BaseItem):
 
     def get_original_object_id(self):
         id = self._get_text_or_none('.//oai:header/oai:identifier')
-        # log.info('Processing record %s' % id)
         return id
 
     def _get_event_type(self):
-        # soort gebeurtenis, bijv. Geboorte
-        # <a2a:Event eid="Event1" a2a:EventType="Overlijden">
+        """
+        Returns the event type for an A2A record. This describes what kind
+        of event occured.
+        """
         eventRecord = self._get_node_or_none(
             './/oai:metadata/a2a:A2A/a2a:Event'
         )
@@ -54,7 +63,9 @@ class A2AItem(BaseItem):
         return eventType
 
     def _get_event_place(self):
-        # plaats van de gebeurtenis
+        """
+        Returns the place of an event. This describes where the event occured.
+        """
         eventRecord = self._get_node_or_none(
             './/oai:metadata/a2a:A2A/a2a:Event'
         )
@@ -68,15 +79,18 @@ class A2AItem(BaseItem):
         return eventPlace
 
     def _get_institution_name(self):
-        # naam van de archiefinstelling
+        """
+        Returns the name of the institution that owns this A2A record.
+        """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
             'a2a:InstitutionName'
         )
 
     def _get_main_persons(self):
-        # bepalen van de hoofdpersonen bij de gebeurtenis voor gebruik in title
-        # (mainPersonKeyRefs) op basis van RelationEP
+        """
+        Returns the name(s) of the main person(s) involved in the event.
+        """
         mainPersonKeyRefs = []
         relations = self.original_item.findall(
             './/oai:metadata/a2a:A2A/a2a:RelationEP',
@@ -99,8 +113,7 @@ class A2AItem(BaseItem):
             ]:
                 mainPersonKeyRefs.append(personKeyRef)
 
-        # samenvoegen van alle namen van hoofdpersonen (mainPersons) en
-        # betrokken personen (allPersons)
+        # concat all names of the main and involved persons in the event
         mainPersons = []
         allPersons = []
         persons = self.original_item.findall(
@@ -125,7 +138,6 @@ class A2AItem(BaseItem):
                 ' '.join(filter(None, (personVN, personVV, personAN)))
             )
             personPid = person.get('pid')
-            pprint(personPid)
             if personPid in mainPersonKeyRefs:
                 mainPersons.append(
                     ' '.join(filter(None, (personVN, personVV, personAN)))
@@ -134,19 +146,26 @@ class A2AItem(BaseItem):
         return mainPersons, allPersons
 
     def _get_title(self, mainPersons, eventType):
-        # title wordt samengesteld uit het eventtype, naam/namen van de
-        # hoofdpersoon/hoofdpersonen
+        """
+        Returns the title of the event. The title of the event is a combination
+        of the list of main persons and the event type, which you need to
+        specify.
+        """
         title = ', '.join(filter(None, (eventType, ' & '.join(mainPersons))))
         return unicode(title)
 
     def _get_source_type(self):
-        # bron type
+        """
+        Returns the type of the source of this A2A record.
+        """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceType'
         )
 
     def _get_source_place(self):
-        # plaats van de bron
+        """
+        Returns the place of the source.
+        """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourcePlace/a2a:Place'
         )
@@ -154,8 +173,12 @@ class A2AItem(BaseItem):
     def _get_description(
         self, institutionName, sourceType, sourcePlace, allPersons
     ):
-        # in description worden alle persoonsnamen, de sourceType, sourcePlace,
-        # InstitutionName samengevoegd
+        """
+        Returns a description of the A2A event. This description is constructed
+        The description is a concatenation of all persons involved, as well as
+        the source type, source place and the name of the institution which
+        is the owner of the A2A record.
+        """
         return ', '.join(
             filter(
                 None, (
@@ -167,8 +190,9 @@ class A2AItem(BaseItem):
         )
 
     def _get_date_and_granularity(self):
-        # datum van de gebeurtenis, opgedeeld in dag, maand en jaar, niet
-        # altijd (allemaal) aanwezig ...
+        """
+        Returns the date of the event, or None when it was not available/
+        """
         parsedDate = None
         parsedGranularity = 0
 
@@ -202,12 +226,12 @@ class A2AItem(BaseItem):
                             '%d-%m-%Y'
                         )
                         parsedGranularity = 8
-                    else:    # geen dag
+                    else:
                         parsedDate = datetime.strptime(
                             eventDateMonth + "-" + eventDateYear, '%m-%Y'
                         )
                         parsedGranularity = 6
-                else:    # geen maand/dag
+                else:
                     parsedDate = datetime.strptime(
                         eventDateYear, '%Y'
                     )
@@ -215,7 +239,10 @@ class A2AItem(BaseItem):
         return parsedDate, parsedGranularity
 
     def _get_media_urls(self):
-        # available scans (1 or more...)
+        """
+        Returns the media urls of the A2A record, if avaiable. The media urls
+        are the scans of the certificates.
+        """
         media_urls = []
 
         scanUriPreview = self._get_text_or_none(
@@ -227,7 +254,7 @@ class A2AItem(BaseItem):
                 'original_url': scanUriPreview,
                 'content_type': 'image/jpeg'
             })
-        else:   # meerdere scans?
+        else:   # multiple scans?
             scans = self.original_item.findall(
                 './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceAvailableScans/'
                 'a2a:Scan', namespaces=self.namespaces
@@ -247,94 +274,97 @@ class A2AItem(BaseItem):
         return media_urls
 
     def _get_document_number(self):
+        """
+        Returns the document number of the A2A record, if available.
+        """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
             'a2a:DocumentNumber'
         )
 
     def _get_book(self):
+        """
+        Returns the book from which this A2A record was extracted.
+        """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
             'a2a:Book'
         )
 
     def _get_collection(self):
+        """
+        Returns the collection, which this A2A record is a part of, if
+        available
+        """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
             'a2a:Collection'
         )
 
     def _get_registry_number(self):
+        """
+        Returns the registry number for this A2A record, if available.
+        """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
             'a2a:RegistryNumber'
         )
 
     def _get_archive_number(self):
+        """
+        Returns the archive number of this A2A record, if available.
+        """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
             'a2a:Archive'
         )
 
     def _get_source_remark(self):
+        """
+        Returns the source remark for this A2A record, if avaiable.
+        """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceRemark/'
             'a2a:Value'
         )
 
     def _get_authors(self):
+        """
+        Returns the authors of the certificate. Currently not implemented.
+        """
         return []
 
     def get_combined_index_data(self):
         combined_index_data = {}
 
-        # log.info('Getting combined index data ...')
-
-        # soort gebeurtenis, bijv. Geboorte
         eventType = self._get_event_type()
 
-        # plaats van de gebeurtenis
         eventPlace = self._get_event_place()
 
-        # naam van de archiefinstelling
         institutionName = self._get_institution_name()
 
-        # bepalen van de hoofdpersonen bij de gebeurtenis voor gebruik in title
-        # (mainPersonKeyRefs) op basis van RelationEP
         mainPersons, allPersons = self._get_main_persons()
 
-        # title wordt samengesteld uit het eventtype, naam/namen van de
-        # hoofdpersoon/hoofdpersonen
         combined_index_data['title'] = self._get_title(mainPersons, eventType)
 
-        # bron type
         sourceType = self._get_source_type()
 
-        # plaats van de bron
         sourcePlace = self._get_source_place()
 
-        # in description worden alle persoonsnamen, de sourceType, sourcePlace,
-        # InstitutionName samengevoegd
         description = self._get_description(
             institutionName, sourceType, sourcePlace, allPersons
         )
         if description:
             combined_index_data['description'] = unicode(description)
 
-        # datum van de gebeurtenis, opgedeeld in dag, maand en jaar, niet
-        # altijd (allemaal) aanwezig ...
         parsedDate, parsedGranularity = self._get_date_and_granularity()
         combined_index_data['date'] = parsedDate
         combined_index_data['date_granularity'] = parsedGranularity
 
-        # omdat dit meta-data van naar archieven overgebrachte
-        # overheidsdocumenten zijn is er geen auteur
         combined_index_data['authors'] = self._get_authors()
 
-        # available scans (1 or more...)
         combined_index_data['media_urls'] = self._get_media_urls()
 
-        pprint(combined_index_data)
         return combined_index_data
 
     def get_index_data(self):
@@ -343,51 +373,39 @@ class A2AItem(BaseItem):
     def get_all_text(self):
         text_items = []
 
-        # gebeurtenis type
         eventType = self._get_event_type()
         text_items.append(eventType)
 
-        # plaats van de gebeurtenis
         eventPlace = self._get_event_place()
         text_items.append(eventPlace)
 
-        # bron type
         sourceType = self._get_source_type()
         text_items.append(sourceType)
 
-        # plaats van de bron
         sourcePlace = self._get_source_place()
         text_items.append(sourcePlace)
 
-        # naam van de archiefinstelling
         institutionName = self._get_institution_name()
         text_items.append(institutionName)
 
-        # document nummer
         documentNumber = self._get_document_number()
         text_items.append(documentNumber)
 
-        # naam van boek
         bookName = self._get_book()
         text_items.append(bookName)
 
-        # naam van collectie
         collectieName = self._get_collection()
         text_items.append(collectieName)
 
-        # registratie nummer
         registrationNumber = self._get_registry_number()
         text_items.append(registrationNumber)
 
-        # archief nummer
         archiveNumber = self._get_archive_number()
         text_items.append(archiveNumber)
 
-        # bron opmerking
         sourceRemark = self._get_source_remark()
         text_items.append(sourceRemark)
 
-        # personen
         persons = self.original_item.findall(
             './/oai:metadata/a2a:A2A/a2a:Person',
             namespaces=self.namespaces
