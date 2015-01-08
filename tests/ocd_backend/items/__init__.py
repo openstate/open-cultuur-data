@@ -25,3 +25,4 @@ class ItemTestCase(TestCase):
 # ExtractorTestCase is parsed. Add additional testcases when required
 from .localdump import LocalDumpItemTestCase
 from .a2a import OpenArchievenTestCase, RegionaalArchiefTilburgTestCase
+from .gemeente_ede import GemeenteEdeItemTestCase

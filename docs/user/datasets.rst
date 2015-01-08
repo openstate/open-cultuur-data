@@ -467,3 +467,31 @@ Combined index
 
 Regionaal Archief Tilburg index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Beeldbank Erfgoed Leiden
+------------------------
+
+This dataset contains historical images from the `Erfgoed Leiden en omstreken <http://www.archiefleiden.nl/home/collecties/beeldmateriaal/zoeken-in-beeldmateriaal>`_. The `archive's OpenSearch API <http://www.opencultuurdata.nl/wiki/regionaal-archief-leiden-beeldbank/>`_ is used to harvest content
+that the archive has made available under an open license.
+
+
+Gemeentearchief Ede
+^^^^^^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``Omschrijving``                     |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``Beschrijving van de afbeelding``   |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``'Vroegst mogelijke datering'``     |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``Auteur``                           |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``ese:isShownBy``                    | Each ``media_url`` entry contains an   |
+|                        |                                      | object for the image link.             |
++------------------------+--------------------------------------+----------------------------------------+
+
+Gemeentearchief Ede index
+^^^^^^^^^^^^^^^^^^^^^^^^^

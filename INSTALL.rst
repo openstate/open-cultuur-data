@@ -50,8 +50,8 @@ Installation
 
 3. Install Elasticsearch::
    
-   $ wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.2.0.deb
-   $ sudo dpkg -i elasticsearch-1.2.0.deb
+   $ wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.deb
+   $ sudo dpkg -i elasticsearch-1.4.2.deb
 
 4. Install liblxml, libxslt, libssl, libffi and python-dev::
 

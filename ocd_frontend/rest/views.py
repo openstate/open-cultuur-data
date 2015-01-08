@@ -160,6 +160,50 @@ def format_search_results(results):
     return results
 
 
+def format_sources_results(results):
+    sources = []
+
+    for bucket in results['aggregations']['index']['buckets']:
+        sources.append({
+            'id': bucket['key'],
+            'name': bucket['collection']['buckets'][0]['key'],
+            'count': bucket['collection']['buckets'][0]['doc_count']
+        })
+
+    return {
+        'sources': sources
+    }
+
+
+@bp.route('/sources', methods=['GET'])
+def list_sources():
+    es_q = {
+        'query': {
+            'match_all': {}
+        },
+        'aggregations': {
+            'index': {
+                'terms': {
+                    'field': 'meta.source_id',
+                    'size': 0,
+                },
+                'aggregations': {
+                    'collection': {
+                        'terms': {
+                            'field': 'meta.collection'
+                        }
+                    }
+                }
+            }
+        },
+        "size": 0
+    }
+
+    es_r = current_app.es.search(body=es_q, index=current_app.config['COMBINED_INDEX'])
+
+    return jsonify(format_sources_results(es_r))
+
+
 @bp.route('/search', methods=['POST'])
 @decode_json_post_data
 def search():
