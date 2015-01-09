@@ -148,6 +148,15 @@
         }
     },
     {
+      "id": "ra_tilburg",
+      "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+      "transformer": "ocd_backend.transformers.BaseTransformer",
+      "item": "ocd_backend.items.ra_tilburg.RegionaalArchiefTilburgItem",
+      "loader": "ocd_backend.loaders.ElasticsearchLoader",
+      "oai_base_url": "http://api.memorix-maior.nl/collectiebeheer/a2a/key/42de466c-8cb5-11e3-9b8b-00155d012a18/tenant/tlb",
+      "oai_metadata_prefix": "oai_a2a"
+    },
+    {
       "id": "gemeente_ede",
       "extractor": "ocd_backend.extractors.staticfile.StaticJSONExtractor",
       "transformer": "ocd_backend.transformers.BaseTransformer",
