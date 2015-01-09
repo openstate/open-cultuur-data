@@ -11,7 +11,9 @@ class ItemTestCase(TestCase):
         )
         self.source_definition = {
             'id': 'test_definition',
-            'extractor': 'ocd_backend.extractors.staticfile.StaticJSONDumpExtractor',
+            'extractor': (
+                'ocd_backend.extractors.staticfile.StaticJSONDumpExtractor'
+            ),
             'transformer': 'ocd_backend.transformers.BaseTransformer',
             'item': 'ocd_backend.items.LocalDumpItem',
             'loader': 'ocd_backend.loaders.ElasticsearchLoader',
@@ -22,4 +24,5 @@ class ItemTestCase(TestCase):
 # Import test modules here so the noserunner can pick them up, and the
 # ExtractorTestCase is parsed. Add additional testcases when required
 from .localdump import LocalDumpItemTestCase
+from .a2a import OpenArchievenTestCase, RegionaalArchiefTilburgTestCase
 from .gemeente_ede import GemeenteEdeItemTestCase
