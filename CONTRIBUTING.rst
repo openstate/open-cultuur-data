@@ -56,7 +56,11 @@ To submit a pull request, follow this process:
 
    $ git push origin <topic-branch-name>
 
-5. Open a `Pull Request <https://help.github.com/articles/using-pull-requests/>`_ with a clear title and description against the master branch.
+5. When you've finished writing your awesome additions to the OpenCultuurData API, please make sure you merge with the `upstream dev` branch before you submit your pull request, in order to prevent us from running into massive merge conflict resolutions::
+
+   $ git pull upstream dev
+
+6. Open a `Pull Request <https://help.github.com/articles/using-pull-requests/>`_ with a clear title and description against the `dev` branch.
 
 .. _dev_coding_conventions:
 
