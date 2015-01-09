@@ -16,7 +16,8 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         Create instance of Flask application for testing.
         :return:
         """
-        from ocd_frontend import rest  # import here to prevent namespace clashing
+        # import here to prevent namespace clashing
+        from ocd_frontend import rest
 
         app = rest.create_app()
         app.config['TESTING'] = True
