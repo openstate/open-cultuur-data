@@ -3,6 +3,7 @@ from ocd_backend.exceptions import ConfigurationError
 
 from click import progressbar
 import gzip
+import json
 from lxml import etree
 
 
@@ -73,9 +74,10 @@ class StaticXmlExtractor(StaticFileBaseExtractor):
 
         self.default_namespace = None
         if 'default_namespace' in self.source_definition:
-            self.default_namespace = self.source_definition['default_namespace']
-            
-        
+            self.default_namespace = self.source_definition[
+                'default_namespace'
+            ]
+
     def extract_items(self, static_content):
         tree = etree.fromstring(static_content)
 
@@ -95,6 +97,22 @@ class StaticXmlExtractor(StaticFileBaseExtractor):
             yield 'application/xml', etree.tostring(item)
 
 
+class StaticJSONExtractor(StaticFileBaseExtractor):
+    """
+    Extract items from JSON files.
+    """
+
+    def extract_items(self, static_content):
+        """
+        Extracts items from a JSON file. It is assumed to be an array
+        of items.
+        """
+        static_json = json.loads(static_content)
+
+        for item in static_json:
+            yield 'application/json', json.dumps(item)
+
+
 class StaticJSONDumpExtractor(BaseExtractor):
     """
     Extract items from JSON dumps.
@@ -104,7 +122,6 @@ class StaticJSONDumpExtractor(BaseExtractor):
 
         if not self.source_definition.get('dump_path'):
             raise ConfigurationError('Missing \'dump_path\' definition')
-
 
     def run(self):
         """
@@ -116,7 +133,8 @@ class StaticJSONDumpExtractor(BaseExtractor):
             yield item
 
     def extract_items(self, dump_path):
-        with progressbar(gzip.open(dump_path, 'rb'), label='Loading %s' %
-                dump_path) as f:
+        with progressbar(
+            gzip.open(dump_path, 'rb'), label='Loading %s' % dump_path
+        ) as f:
             for line in f:
                 yield 'application/json', line.strip()
