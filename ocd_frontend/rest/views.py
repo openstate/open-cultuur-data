@@ -68,6 +68,7 @@ def parse_search_request(data, mlt=False):
 
         # Take the default facet options from the settings
         facets[facet] = available_facets[facet]
+
         f_type = facets[facet].keys()[0]
         if f_type == 'terms':
             if 'size' in facet_opts.get(f_type, {}):
@@ -177,6 +178,50 @@ def validate_included_fields(include_fields, excluded_fields, allowed_to_include
         if field and field in excluded_fields and field in allowed_to_include:
             excluded_fields.remove(field)
     return excluded_fields
+
+
+def format_sources_results(results):
+    sources = []
+
+    for bucket in results['aggregations']['index']['buckets']:
+        sources.append({
+            'id': bucket['key'],
+            'name': bucket['collection']['buckets'][0]['key'],
+            'count': bucket['collection']['buckets'][0]['doc_count']
+        })
+
+    return {
+        'sources': sources
+    }
+
+
+@bp.route('/sources', methods=['GET'])
+def list_sources():
+    es_q = {
+        'query': {
+            'match_all': {}
+        },
+        'aggregations': {
+            'index': {
+                'terms': {
+                    'field': 'meta.source_id',
+                    'size': 0,
+                },
+                'aggregations': {
+                    'collection': {
+                        'terms': {
+                            'field': 'meta.collection'
+                        }
+                    }
+                }
+            }
+        },
+        "size": 0
+    }
+
+    es_r = current_app.es.search(body=es_q, index=current_app.config['COMBINED_INDEX'])
+
+    return jsonify(format_sources_results(es_r))
 
 
 @bp.route('/search', methods=['POST'])
