@@ -44,7 +44,7 @@ class OcdApiError(Exception):
 
 def decode_json_post_data(fn):
     """Decorator that parses POSTed JSON and attaches it to the request
-    oject (:obj:`request.data`)."""
+    object (:obj:`request.data`)."""
 
     @wraps(fn)
     def wrapped_function(*args, **kwargs):
