@@ -6,7 +6,6 @@ import random
 from flask import url_for, current_app
 from flask.ext.testing import TestCase
 
-from ocd_frontend import rest
 from .mixins import FlaskTestCaseMixin
 
 
@@ -17,6 +16,8 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         Create instance of Flask application for testing.
         :return:
         """
+        from ocd_frontend import rest  # import here to prevent namespace clashing
+
         app = rest.create_app()
         app.config['TESTING'] = True
         app.config['COMBINED_INDEX'] = 'ocd_test_combined_index'
