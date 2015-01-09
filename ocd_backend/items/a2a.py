@@ -31,52 +31,44 @@ class A2AItem(BaseItem):
         if start_node is None:
             start_node = self.original_item
         node = start_node.find(
-            xpath_expression, namespaces=self.namespaces
-        )
+            xpath_expression, namespaces=self.namespaces)
         if node is not None and node.text is not None:
             return unicode(node.text)
 
         return None
 
     def get_original_object_id(self):
-        id = self._get_text_or_none('.//oai:header/oai:identifier')
-        return id
+        return self._get_text_or_none('.//oai:header/oai:identifier')
 
     def _get_event_type(self):
         """
         Returns the event type for an A2A record. This describes what kind
         of event occured.
         """
-        eventRecord = self._get_node_or_none(
-            './/oai:metadata/a2a:A2A/a2a:Event'
-        )
-        eventType = None
-        if eventRecord is not None:
-            eventTypeRecord = self._get_node_or_none(
-                './a2a:EventType', eventRecord
-            )
-            if eventTypeRecord is not None:
-                eventType = eventTypeRecord.text
+        event_record = self._get_node_or_none(
+            './/oai:metadata/a2a:A2A/a2a:Event')
+        event_type = None
+        if event_record is not None:
+            event_type_record = self._get_node_or_none(
+                './a2a:EventType', event_record)
+            if event_type_record is not None:
+                event_type = event_type_record.text.replace('other:', '')
 
-        eventType = eventType.replace('other:', '')
-
-        return eventType
+        return event_type
 
     def _get_event_place(self):
         """
         Returns the place of an event. This describes where the event occured.
         """
-        eventRecord = self._get_node_or_none(
-            './/oai:metadata/a2a:A2A/a2a:Event'
-        )
-        eventPlace = None
-        eventPlaceRecord = self._get_node_or_none(
-            './a2a:EventPlace/a2a:Place', eventRecord
-        )
-        if eventPlaceRecord is not None:
-            eventPlace = eventPlaceRecord.text
+        event_record = self._get_node_or_none(
+            './/oai:metadata/a2a:A2A/a2a:Event')
+        event_place = None
+        event_place_record = self._get_node_or_none(
+            './a2a:EventPlace/a2a:Place', event_record)
+        if event_place_record is not None:
+            event_place = event_place_record.text
 
-        return eventPlace
+        return event_place
 
     def _get_institution_name(self):
         """
@@ -84,74 +76,60 @@ class A2AItem(BaseItem):
         """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
-            'a2a:InstitutionName'
-        )
+            'a2a:InstitutionName')
 
     def _get_main_persons(self):
         """
         Returns the name(s) of the main person(s) involved in the event.
         """
-        mainPersonKeyRefs = []
+        main_person_key_refs = []
         relations = self.original_item.findall(
             './/oai:metadata/a2a:A2A/a2a:RelationEP',
-            namespaces=self.namespaces
-        )
+            namespaces=self.namespaces)
         if relations is None:
             relations = []
         for relation in relations:
-            relationType = self._get_text_or_none(
-                './a2a:RelationType',
-                relation
-            )
-            personKeyRef = self._get_text_or_none(
+            relation_type = self._get_text_or_none(
+                './a2a:RelationType', relation)
+            person_key_ref = self._get_text_or_none(
                 './a2a:PersonKeyRef',
-                relation
-            )
-            if relationType in [
-                "Kind", "Overledene", "Werknemer", "Bruid", "Bruidegom",
-                "Geregistreerde"
-            ]:
-                mainPersonKeyRefs.append(personKeyRef)
+                relation)
+            if relation_type in [
+                    "Kind", "Overledene", "Werknemer", "Bruid", "Bruidegom",
+                    "Geregistreerde"]:
+                main_person_key_refs.append(person_key_ref)
 
         # concat all names of the main and involved persons in the event
-        mainPersons = []
-        allPersons = []
+        main_persons = []
+        all_persons = []
         persons = self.original_item.findall(
-            './/oai:metadata/a2a:A2A/a2a:Person', namespaces=self.namespaces
-        )
+            './/oai:metadata/a2a:A2A/a2a:Person', namespaces=self.namespaces)
         if persons is None:
             persons = []
         for person in persons:
-            personName = self._get_node_or_none(
-                './/a2a:PersonName', person
-            )
-            personVN = self._get_text_or_none(
-                './/a2a:PersonNameFirstName', personName
-            )
-            personVV = self._get_text_or_none(
-                './/a2a:PersonNamePrefixLastName', personName
-            )
-            personAN = self._get_text_or_none(
-                './/a2a:PersonNameLastName', personName
-            )
-            allPersons.append(
-                ' '.join(filter(None, (personVN, personVV, personAN)))
-            )
-            personPid = person.get('pid')
-            if personPid in mainPersonKeyRefs:
-                mainPersons.append(
-                    ' '.join(filter(None, (personVN, personVV, personAN)))
-                )
+            person_name = self._get_node_or_none(
+                './/a2a:PersonName', person)
+            person_vn = self._get_text_or_none(
+                './/a2a:PersonNameFirstName', person_name)
+            person_vv = self._get_text_or_none(
+                './/a2a:PersonNamePrefixLastName', person_name)
+            person_an = self._get_text_or_none(
+                './/a2a:PersonNameLastName', person_name)
+            full_name = ' '.join(
+                filter(None, (person_vn, person_vv, person_an)))
+            all_persons.append(full_name)
+            if person.get('pid') in main_person_key_refs:
+                main_persons.append(full_name)
 
-        return mainPersons, allPersons
+        return main_persons, all_persons
 
-    def _get_title(self, mainPersons, eventType):
+    def _get_title(self, main_persons, event_type):
         """
         Returns the title of the event. The title of the event is a combination
         of the list of main persons and the event type, which you need to
         specify.
         """
-        title = ', '.join(filter(None, (eventType, ' & '.join(mainPersons))))
+        title = ', '.join(filter(None, (event_type, ' & '.join(main_persons))))
         return unicode(title)
 
     def _get_source_type(self):
@@ -159,84 +137,61 @@ class A2AItem(BaseItem):
         Returns the type of the source of this A2A record.
         """
         return self._get_text_or_none(
-            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceType'
-        )
+            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceType')
 
     def _get_source_place(self):
         """
         Returns the place of the source.
         """
         return self._get_text_or_none(
-            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourcePlace/a2a:Place'
-        )
+            './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourcePlace/a2a:Place')
 
     def _get_description(
-        self, institutionName, sourceType, sourcePlace, allPersons
-    ):
+            self, institutionName, sourceType, sourcePlace, allPersons):
         """
         Returns a description of the A2A event. This description is constructed
         The description is a concatenation of all persons involved, as well as
         the source type, source place and the name of the institution which
         is the owner of the A2A record.
         """
-        return ', '.join(
-            filter(
-                None, (
-                    institutionName, sourceType, sourcePlace, ' & '.join(
-                        allPersons
-                    )
-                )
-            )
-        )
+        return ', '.join(filter(None, (
+            institutionName, sourceType, sourcePlace, ' & '.join(allPersons))))
 
     def _get_date_and_granularity(self):
         """
         Returns the date of the event, or None when it was not available/
         """
-        parsedDate = None
-        parsedGranularity = 0
+        parsed_date = None
+        parsed_granularity = 0
 
-        eventDate = None
-        eventDateObj = self._get_node_or_none(
-            './/oai:metadata/a2a:A2A/a2a:Event/a2a:EventDate'
-        )
-        if eventDateObj is not None:
-            eventDateDay = self._get_text_or_none(
-                './a2a:Day', eventDateObj
-            )
-            eventDateMonth = self._get_text_or_none(
-                './a2a:Month', eventDateObj
-            )
-            eventDateYear = self._get_text_or_none(
-                './a2a:Year', eventDateObj
-            )
-            if eventDateYear is not None:
-                if (
-                    eventDateMonth is not None and int(eventDateMonth) > 0 and
-                    int(eventDateMonth) < 13
-                ):
-                    if (
-                        eventDateDay is not None and
-                        int(eventDateDay) > 0 and
-                        int(eventDateDay) < 32
-                    ):
-                        parsedDate = datetime.strptime(
-                            eventDateDay + "-" + eventDateMonth + "-" +
-                            eventDateYear,
-                            '%d-%m-%Y'
-                        )
-                        parsedGranularity = 8
+        event_date_obj = self._get_node_or_none(
+            './/oai:metadata/a2a:A2A/a2a:Event/a2a:EventDate')
+        if event_date_obj is not None:
+            event_date_day = self._get_text_or_none(
+                './a2a:Day', event_date_obj)
+            event_date_month = self._get_text_or_none(
+                './a2a:Month', event_date_obj)
+            event_date_year = self._get_text_or_none(
+                './a2a:Year', event_date_obj)
+            if event_date_year is not None:
+                if (event_date_month is not None and
+                        int(event_date_month) > 0 and
+                        int(event_date_month) < 13):
+                    if (event_date_day is not None and
+                            int(event_date_day) > 0 and
+                            int(event_date_day) < 32):
+                        parsed_date = datetime.strptime(
+                            event_date_day + "-" + event_date_month + "-" +
+                            event_date_year, '%d-%m-%Y')
+                        parsed_granularity = 8
                     else:
-                        parsedDate = datetime.strptime(
-                            eventDateMonth + "-" + eventDateYear, '%m-%Y'
-                        )
-                        parsedGranularity = 6
+                        parsed_date = datetime.strptime(
+                            event_date_month + "-" + event_date_year, '%m-%Y')
+                        parsed_granularity = 6
                 else:
-                    parsedDate = datetime.strptime(
-                        eventDateYear, '%Y'
-                    )
-                    parsedGranularity = 4
-        return parsedDate, parsedGranularity
+                    parsed_date = datetime.strptime(event_date_year, '%Y')
+                    parsed_granularity = 4
+        return parsed_date, parsed_granularity
 
     def _get_media_urls(self):
         """
@@ -245,31 +200,26 @@ class A2AItem(BaseItem):
         """
         media_urls = []
 
-        scanUriPreview = self._get_text_or_none(
+        scan_uri_preview = self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceAvailableScans/'
-            'a2a:UriPreview'
-        )
-        if scanUriPreview is not None:
+            'a2a:UriPreview')
+        if scan_uri_preview is not None:
             media_urls.append({
-                'original_url': scanUriPreview,
-                'content_type': 'image/jpeg'
-            })
+                'original_url': scan_uri_preview,
+                'content_type': 'image/jpeg'})
         else:   # multiple scans?
             scans = self.original_item.findall(
                 './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceAvailableScans/'
-                'a2a:Scan', namespaces=self.namespaces
-            )
+                'a2a:Scan', namespaces=self.namespaces)
             if scans is None:
                 scans = []
             for scan in scans:
-                scanUriPreview = self._get_text_or_none(
-                    'a2a:UriPreview', scan
-                )
-                if scanUriPreview is not None:
+                scan_uri_preview = self._get_text_or_none(
+                    'a2a:UriPreview', scan)
+                if scan_uri_preview is not None:
                     media_urls.append({
-                        'original_url': scanUriPreview,
-                        'content_type': 'image/jpeg'
-                    })
+                        'original_url': scan_uri_preview,
+                        'content_type': 'image/jpeg'})
 
         return media_urls
 
@@ -279,8 +229,7 @@ class A2AItem(BaseItem):
         """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
-            'a2a:DocumentNumber'
-        )
+            'a2a:DocumentNumber')
 
     def _get_book(self):
         """
@@ -288,8 +237,7 @@ class A2AItem(BaseItem):
         """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
-            'a2a:Book'
-        )
+            'a2a:Book')
 
     def _get_collection(self):
         """
@@ -298,8 +246,7 @@ class A2AItem(BaseItem):
         """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
-            'a2a:Collection'
-        )
+            'a2a:Collection')
 
     def _get_registry_number(self):
         """
@@ -307,8 +254,7 @@ class A2AItem(BaseItem):
         """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
-            'a2a:RegistryNumber'
-        )
+            'a2a:RegistryNumber')
 
     def _get_archive_number(self):
         """
@@ -316,8 +262,7 @@ class A2AItem(BaseItem):
         """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceReference/'
-            'a2a:Archive'
-        )
+            'a2a:Archive')
 
     def _get_source_remark(self):
         """
@@ -325,8 +270,7 @@ class A2AItem(BaseItem):
         """
         return self._get_text_or_none(
             './/oai:metadata/a2a:A2A/a2a:Source/a2a:SourceRemark/'
-            'a2a:Value'
-        )
+            'a2a:Value')
 
     def _get_authors(self):
         """
@@ -337,29 +281,29 @@ class A2AItem(BaseItem):
     def get_combined_index_data(self):
         combined_index_data = {}
 
-        eventType = self._get_event_type()
+        event_type = self._get_event_type()
 
-        eventPlace = self._get_event_place()
+        event_place = self._get_event_place()
 
-        institutionName = self._get_institution_name()
+        institution_name = self._get_institution_name()
 
-        mainPersons, allPersons = self._get_main_persons()
+        main_persons, all_persons = self._get_main_persons()
 
-        combined_index_data['title'] = self._get_title(mainPersons, eventType)
+        combined_index_data['title'] = self._get_title(
+            main_persons, event_type)
 
-        sourceType = self._get_source_type()
+        source_type = self._get_source_type()
 
-        sourcePlace = self._get_source_place()
+        source_place = self._get_source_place()
 
         description = self._get_description(
-            institutionName, sourceType, sourcePlace, allPersons
-        )
+            institution_name, source_type, source_place, all_persons)
         if description:
             combined_index_data['description'] = unicode(description)
 
-        parsedDate, parsedGranularity = self._get_date_and_granularity()
-        combined_index_data['date'] = parsedDate
-        combined_index_data['date_granularity'] = parsedGranularity
+        parsed_date, parsed_granularity = self._get_date_and_granularity()
+        combined_index_data['date'] = parsed_date
+        combined_index_data['date_granularity'] = parsed_granularity
 
         combined_index_data['authors'] = self._get_authors()
 
@@ -373,38 +317,17 @@ class A2AItem(BaseItem):
     def get_all_text(self):
         text_items = []
 
-        eventType = self._get_event_type()
-        text_items.append(eventType)
-
-        eventPlace = self._get_event_place()
-        text_items.append(eventPlace)
-
-        sourceType = self._get_source_type()
-        text_items.append(sourceType)
-
-        sourcePlace = self._get_source_place()
-        text_items.append(sourcePlace)
-
-        institutionName = self._get_institution_name()
-        text_items.append(institutionName)
-
-        documentNumber = self._get_document_number()
-        text_items.append(documentNumber)
-
-        bookName = self._get_book()
-        text_items.append(bookName)
-
-        collectieName = self._get_collection()
-        text_items.append(collectieName)
-
-        registrationNumber = self._get_registry_number()
-        text_items.append(registrationNumber)
-
-        archiveNumber = self._get_archive_number()
-        text_items.append(archiveNumber)
-
-        sourceRemark = self._get_source_remark()
-        text_items.append(sourceRemark)
+        text_items.append(self._get_event_type())
+        text_items.append(self._get_event_place())
+        text_items.append(self._get_source_type())
+        text_items.append(self._get_source_place())
+        text_items.append(self._get_institution_name())
+        text_items.append(self._get_document_number())
+        text_items.append(self._get_book())
+        text_items.append(self._get_collection())
+        text_items.append(self._get_registry_number())
+        text_items.append(self._get_archive_number())
+        text_items.append(self._get_source_remark())
 
         persons = self.original_item.findall(
             './/oai:metadata/a2a:A2A/a2a:Person',
@@ -413,20 +336,14 @@ class A2AItem(BaseItem):
         if persons is None:
             persons = []
         for person in persons:
-            personName = self._get_node_or_none(
-                './/a2a:PersonName', person
-            )
-            personVN = self._get_text_or_none(
-                './/a2a:PersonNameFirstName', personName
-            )
-            personVV = self._get_text_or_none(
-                './/a2a:PersonNamePrefixLastName', personName
-            )
-            personAN = self._get_text_or_none(
-                './/a2a:PersonNameLastName', personName
-            )
+            person_name = self._get_node_or_none('.//a2a:PersonName', person)
+            person_vn = self._get_text_or_none(
+                './/a2a:PersonNameFirstName', person_name)
+            person_vv = self._get_text_or_none(
+                './/a2a:PersonNamePrefixLastName', person_name)
+            person_an = self._get_text_or_none(
+                './/a2a:PersonNameLastName', person_name)
             text_items.append(
-                ' '.join(filter(None, (personVN, personVV, personAN)))
-            )
+                ' '.join(filter(None, (person_vn, person_vv, person_an))))
 
         return u' '.join([ti for ti in text_items if ti is not None])
