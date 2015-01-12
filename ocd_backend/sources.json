@@ -148,6 +148,15 @@
         }
     },
     {
+      "id": "zaanstad",
+      "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+      "transformer": "ocd_backend.transformers.BaseTransformer",
+      "item": "ocd_backend.items.zaanstad.GAZaanstadItem",
+      "loader": "ocd_backend.loaders.ElasticsearchLoader",
+      "oai_base_url": "https://maior.memorix.nl/api/oai/zaa/key/3e1f051a-62df-492b-a060-c001e4db644f/",
+      "oai_metadata_prefix": "ese"
+    },
+    {
       "id": "ra_tilburg",
       "extractor": "ocd_backend.extractors.oai.OaiExtractor",
       "transformer": "ocd_backend.transformers.BaseTransformer",
