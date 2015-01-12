@@ -24,5 +24,6 @@ class ItemTestCase(TestCase):
 # Import test modules here so the noserunner can pick them up, and the
 # ExtractorTestCase is parsed. Add additional testcases when required
 from .localdump import LocalDumpItemTestCase
+from .a2a import OpenArchievenTestCase, RegionaalArchiefTilburgTestCase
 from .gemeente_ede import GemeenteEdeItemTestCase
 from .kb_watermarks import WatermarksItemTestCase

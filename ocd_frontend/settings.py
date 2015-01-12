@@ -18,19 +18,19 @@ DEFAULT_INDEX_PREFIX = 'ocd'
 
 # The fields which can be used for sorting results via the REST API
 SORTABLE_FIELDS = (
-    'meta.source', 'meta.processing_started', 'meta.processing_finished',
+    'meta.source_id', 'meta.processing_started', 'meta.processing_finished',
     'date', 'date_granularity', 'authors', '_score'
 )
 
 # Defenition of the ES facets (and filters) that are accassible through
 # the REST API
 AVAILABLE_FACETS = {
-    'retrieved_at': {
-        'date_histogram': {
-            'field': 'retrieved_at',
-            'interval': 'month'
-        }
-    },
+    # 'retrieved_at': {
+    #     'date_histogram': {
+    #         'field': 'retrieved_at',
+    #         'interval': 'month'
+    #     }
+    # },
     'rights': {
         'terms': {
             'field': 'meta.rights',
