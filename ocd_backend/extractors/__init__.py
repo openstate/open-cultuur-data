@@ -1,6 +1,5 @@
 import requests
 
-from ocd_backend.exceptions import ConfigurationError
 from ocd_backend.settings import USER_AGENT
 from ocd_backend.log import get_source_logger
 

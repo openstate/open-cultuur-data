@@ -206,6 +206,7 @@ Combined index
 Open Archieven index
 ^^^^^^^^^^^^^^^^^^^^
 
+.. _data_openbeelden:
 
 Open Beelden
 ------------
@@ -440,4 +441,57 @@ Combined index
 Tropenmuseum index
 ^^^^^^^^^^^^^^^^^^
 
+Regionaal Archief Tilburg
+-------------------------
 
+This dataset contains genealogical data from the `Regional Archive of Tilburg <http://www.regionaalarchieftilburg.nl/zoeken-in-databases/genealogie/welke-bronnen-zijn-al-beschikbaar>`_.
+Content is harvested by using the `OAI-PMH feed <http://api.memorix-maior.nl/collectiebeheer/a2a/key/42de466c-8cb5-11e3-9b8b-00155d012a18/tenant/tlb?verb=Identify>`_. The OCD implementation uses the 'oai_a2a' (Archive 2 All) data format.
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``EventType`` and ``PersonName``     | Only names of 'main' persons in event  |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``InstitutionName``, ``SourceType``, | Names of all related persons           |
+|                        | ``SourcePlace`` and ``PersonName``   |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``EventDate``                        | ``date_granularity`` varies between 8  |
+|                        |                                      | and 10                                 |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``SourceAvailableScans``             | Thumbnails of records are (in general) |
+|                        |                                      | hosted by the original archive         |
++------------------------+--------------------------------------+----------------------------------------+
+
+Regionaal Archief Tilburg index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Beeldbank Erfgoed Leiden
+------------------------
+
+This dataset contains historical images from the `Erfgoed Leiden en omstreken <http://www.archiefleiden.nl/home/collecties/beeldmateriaal/zoeken-in-beeldmateriaal>`_. The `archive's OpenSearch API <http://www.opencultuurdata.nl/wiki/regionaal-archief-leiden-beeldbank/>`_ is used to harvest content
+that the archive has made available under an open license.
+
+
+Gemeentearchief Ede
+^^^^^^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``Omschrijving``                     |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``Beschrijving van de afbeelding``   |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``'Vroegst mogelijke datering'``     |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``Auteur``                           |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``ese:isShownBy``                    | Each ``media_url`` entry contains an   |
+|                        |                                      | object for the image link.             |
++------------------------+--------------------------------------+----------------------------------------+
+
+Gemeentearchief Ede index
+^^^^^^^^^^^^^^^^^^^^^^^^^

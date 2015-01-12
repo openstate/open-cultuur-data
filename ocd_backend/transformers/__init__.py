@@ -10,8 +10,11 @@ from ocd_backend.utils.misc import load_object
 
 
 class BaseTransformer(Task):
+
+    ignore_result = False
+
     def run(self, *args, **kwargs):
-        """Start tranformation of a single item.
+        """Start transformation of a single item.
 
         This method is called by the extractor and expects args to
         contain the content-type and the original item (as a string).
@@ -64,8 +67,8 @@ class BaseTransformer(Task):
             from the source (as a string)
         :type item: dict
         :param item: the deserialized item
-        :returns: a tuple containing the new object id, the item sturctured
-            for the combined index (as a dict) and the item item sturctured
+        :returns: a tuple containing the new object id, the item structured
+            for the combined index (as a dict) and the item item structured
             for the source specific index.
         """
         item = self.item_class(self.source_definition, raw_item_content_type,
@@ -73,4 +76,4 @@ class BaseTransformer(Task):
 
         self.add_resolveable_media_urls(item)
 
-        return item.get_object_id(), item.get_combined_index_doc(), item.get_index_doc()
+        return item.get_object_id(), item.get_combined_index_doc(), item.get_index_doc(), self.request.id

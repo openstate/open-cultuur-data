@@ -5,12 +5,15 @@ from celery import Task
 
 from ocd_backend import settings
 from ocd_backend.es import elasticsearch
+from ocd_backend.exceptions import ConfigurationError
 from ocd_backend.log import get_source_logger
 
 log = get_source_logger('loader')
 
 class BaseLoader(Task):
-    """The base class that other loaders should inhert."""
+    """The base class that other loaders should inherit."""
+
+    ignore_result = False
 
     def run(self, *args, **kwargs):
         """Start loading of a single item.
@@ -27,16 +30,17 @@ class BaseLoader(Task):
         """
         self.source_definition = kwargs['source_definition']
 
-        object_id, combined_index_doc, doc = args[0]
+        object_id, combined_index_doc, doc, transformer_task_id = args[0]
 
         # Add the 'processing.finished' datetime to the documents
         finished = datetime.now()
         combined_index_doc['meta']['processing_finished'] = finished
         doc['meta']['processing_finished'] = finished
 
-        return self.load_item(object_id, combined_index_doc, doc)
+        return self.load_item(object_id, combined_index_doc, doc,
+                              transformer_task_id)
 
-    def load_item(self, combined_index_doc, doc):
+    def load_item(self, object_id, combined_index_doc, doc, transformer_task_id):
         raise NotImplemented
 
 
@@ -50,13 +54,22 @@ class ElasticsearchLoader(BaseLoader):
     Each URL found in ``media_urls`` is added as a document to the
     ``RESOLVER_URL_INDEX`` (if it doesn't already exist).
     """
+    def run(self, *args, **kwargs):
+        self.index_name = kwargs.get('index_name')
 
-    def load_item(self, object_id, combined_index_doc, doc):
+        if not self.index_name:
+            raise ConfigurationError('The name of the index is not provided')
+
+        return super(ElasticsearchLoader, self).run(*args, **kwargs)
+
+    def load_item(self, object_id, combined_index_doc, doc, transformer_task_id):
         log.info('Indexing documents...')
         elasticsearch.index(index=settings.COMBINED_INDEX, doc_type='item',
                             id=object_id, body=combined_index_doc)
-        elasticsearch.index(index='%s_%s' % (settings.DEFAULT_INDEX_PREFIX, self.source_definition['id']),
-                            doc_type='item', id=object_id, body=doc)
+
+        # Index documents into new index
+        elasticsearch.index(index=self.index_name, doc_type='item', body=doc,
+                            id=object_id)
 
         # For each media_urls.url, add a resolver document to the
         # RESOLVER_URL_INDEX
@@ -73,3 +86,23 @@ class ElasticsearchLoader(BaseLoader):
                                          body=url_doc)
                 except ConflictError:
                     log.debug('Resolver document %s already exists' % url_hash)
+
+        return {
+            'item_id': object_id,
+            'task_id': self.request.id,
+            'transformer_task_id': transformer_task_id
+        }
+
+
+class DummyLoader(BaseLoader):
+    """
+    Prints the item to the console, for debugging purposes.
+    """
+    def load_item(self, object_id, combined_index_doc, doc, transformer_task_id):
+        print '=' * 50
+        print '%s %s %s' % ('=' * 4, object_id, '=' * 4)
+        print '%s %s %s' % ('-' * 20, 'combined', '-' * 20)
+        print combined_index_doc
+        print '%s %s %s' % ('-' * 20, 'doc', '-' * 25)
+        print doc
+        print '=' * 50

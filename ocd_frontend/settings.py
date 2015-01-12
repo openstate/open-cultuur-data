@@ -1,3 +1,5 @@
+import os.path
+
 DEBUG = True
 ELASTICSEARCH_HOST = '127.0.0.1'
 ELASTICSEARCH_PORT = 9200
@@ -16,19 +18,19 @@ DEFAULT_INDEX_PREFIX = 'ocd'
 
 # The fields which can be used for sorting results via the REST API
 SORTABLE_FIELDS = (
-    'meta.source', 'meta.processing_started', 'meta.processing_finished',
+    'meta.source_id', 'meta.processing_started', 'meta.processing_finished',
     'date', 'date_granularity', 'authors', '_score'
 )
 
 # Defenition of the ES facets (and filters) that are accassible through
 # the REST API
 AVAILABLE_FACETS = {
-    'retrieved_at': {
-        'date_histogram': {
-            'field': 'retrieved_at',
-            'interval': 'month'
-        }
-    },
+    # 'retrieved_at': {
+    #     'date_histogram': {
+    #         'field': 'retrieved_at',
+    #         'interval': 'month'
+    #     }
+    # },
     'rights': {
         'terms': {
             'field': 'meta.rights',
@@ -77,6 +79,20 @@ AVAILABLE_FACETS = {
 ALLOWED_DATE_INTERVALS = ('day', 'week', 'month', 'quarter', 'year')
 
 RESOLVER_URL_INDEX = 'ocd_resolver'
+
+ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+DUMPS_DIR = os.path.join(os.path.dirname(ROOT_PATH), 'dumps')
+LOCAL_DUMPS_DIR = os.path.join(os.path.dirname(ROOT_PATH), 'local_dumps')
+
+# URL where of the API instance that should be used for management commands
+# Should include API version and a trailing slash.
+# Can be overridden in the CLI when required, for instance when the user wants
+# to download dumps from another API instance than the one hosted by OpenState
+API_URL = 'http://api.opencultuurdata.nl/v0/'
+
+# URL where collection dumps are hosted. This is used for generating full URLs
+# to dumps in the /dumps endpoint
+DUMP_URL = 'http://dumps.opencultuurdata.nl/'
 
 # Allow any settings to be defined in local_settings.py which should be
 # ignored in your version control system allowing for settings to be
