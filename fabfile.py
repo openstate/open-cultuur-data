@@ -25,6 +25,7 @@ STAGES = {
         'project_dir': '/home/breyten/open-cultuur-data-test',
         'virtualenv': '/home/breyten/open-cultuur-data-test/.virtualenv',
         'code_repo': 'git@github.com:openstate/open-cultuur-data.git',
+        'docs_built_dir': '/home/breyten/open-cultuur-data-test/docs-built'
     },
     'production': {
         'hosts': ['breyten@api.opencultuurdata.nl'],
@@ -33,6 +34,7 @@ STAGES = {
         'project_dir': '/home/breyten/open-cultuur-data',
         'virtualenv': '/home/breyten/open-cultuur-data/.virtualenv',
         'code_repo': 'git@github.com:openstate/open-cultuur-data.git',
+        'docs_built_dir': '/home/breyten/open-cultuur-data-test/docs-built'
     }
 }
 
@@ -104,6 +106,12 @@ def push_sources():
         env.code_branch, env.code_branch,))
     with cd(env.code_dir):
         run('git pull origin %s' % env.code_branch)
+
+
+@task
+def build_documentation():
+    with cd(env.code_dir):
+        run('sphinx-build docs %s' % env.docs_built_dir)
 
 
 @task
@@ -195,4 +203,5 @@ def deploy():
 
     push_sources()
     install_dependencies()
+    build_documentation()
     webserver_restart()
