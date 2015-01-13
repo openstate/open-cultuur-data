@@ -63,11 +63,15 @@ def install_dependencies():
     with virtualenv(env.virtualenv):
         with cd(env.code_dir):
             run_venv("pip install -r requirements.txt")
-            put("ocd_backend/local_settings_%s.py" % (
-                env.stage), os.path.join(
+            backend_local_file = "ocd_backend/local_settings_%s.py" % (
+                env.stage)
+            frontend_local_file = "ocd_frontend/local_settings_%s.py" % (
+                env.stage)
+            if os.path.exists(backend_local_file):
+                put(backend_local_file, os.path.join(
                     env.project_dir, 'ocd_backend/local_settings.py'))
-            put("ocd_frontend/local_settings_%s.py" % (
-                env.stage), os.path.join(
+            if os.path.exists(frontend_local_file):
+                put(frontend_local_file, os.path.join(
                     env.project_dir, 'ocd_frontend/local_settings.py'))
 
 
