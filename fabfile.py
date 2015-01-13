@@ -110,6 +110,7 @@ def push_sources():
 
 @task
 def build_documentation():
+    ensure_virtualenv()
     with virtualenv(env.virtualenv):
         with cd(env.code_dir):
             run('sphinx-build docs %s' % env.docs_built_dir)
