@@ -64,11 +64,11 @@ def install_dependencies():
         with cd(env.code_dir):
             run_venv("pip install -r requirements.txt")
             put("ocd_backend/local_settings_%s.py" % (
-                env.stage, os.path.join(
-                    env.project_dir, 'ocd_backend/local_settings.py')))
+                env.stage), os.path.join(
+                    env.project_dir, 'ocd_backend/local_settings.py'))
             put("ocd_frontend/local_settings_%s.py" % (
-                env.stage, os.path.join(
-                    env.project_dir, 'ocd_frontend/local_settings.py')))
+                env.stage), os.path.join(
+                    env.project_dir, 'ocd_frontend/local_settings.py'))
 
 
 def ensure_virtualenv():
