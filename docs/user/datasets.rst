@@ -112,7 +112,8 @@ Combined index
 | ``date``               | ``dc:date``                          | It is assumed that the full date-time  |
 |                        |                                      | is known for all items. The            |
 |                        |                                      | ``date_granularity`` is therefor       |
-|                        |                                      | always 14.                             |
+|                        |                                      | always 14. If the date is equal to     |
+|                        |                                      | 0002-11-30T00:00:00Z it is unknown.    |
 +------------------------+--------------------------------------+----------------------------------------+
 | ``authors``            | ``dc:creator``                       | Author is not included if '[onbekend]'.|
 +------------------------+--------------------------------------+----------------------------------------+
