@@ -1,5 +1,6 @@
 import glob
 import json
+import mock
 import os.path
 import random
 
@@ -12,7 +13,6 @@ from .mixins import FlaskTestCaseMixin
 
 
 class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
-
     def create_app(self):
         """
         Create instance of Flask application for testing.
@@ -22,6 +22,8 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         app.config['TESTING'] = True
         app.config['COMBINED_INDEX'] = 'ocd_test_combined_index'
         app.config['RESOLVER_URL_INDEX'] = 'ocd_test_resolver'
+        app.config['USAGE_LOGGING_INDEX'] = 'ocd_test_usage_logging_index'
+        app.config['USAGE_LOGGING_ENABLED'] = False
 
         self.es_client = app.es.es
         self.PWD = os.path.dirname(__file__)
@@ -30,9 +32,12 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
 
     def setUp(self):
         # Elasticsearch should be running for the tests
-        self.assertTrue(self.es_client.ping(), msg='Elasticsearch cluster is not '
-                                              'running')
-        indices = ['ocd_test_combined_index'] #, 'ocd_testindex', 'ocd_test_resolver']
+        self.assertTrue(self.es_client.ping(), msg='Elasticsearch cluster is '
+                                                   'not running')
+        indices = [
+            'ocd_test_combined_index',
+            'ocd_test_usage_logging_index'
+        ]
         self.add_indices(indices)
 
         doc_files = glob.glob(os.path.join(self.PWD, 'test_data/test_combined/*.json'))
@@ -70,7 +75,6 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de'}))
         self.assert_ok_json(response)
-        # import ipdb; ipdb.set_trace()
 
     def test_missing_query(self):
         """'query' is a required search parameter"""
@@ -220,7 +224,7 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
             'date': {
                 'date_histogram': {
                     'field': 'date',
-                    'interval': 'millenium'
+                    'interval': 'millennium'
                 }
             }
         }
@@ -273,3 +277,45 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de', 'size': -1}))
         self.assert_bad_request_json(response)
+
+    @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
+    def test_search_logging_called_if_enabled(self, mocked_event_log_task):
+        self.app.config['USAGE_LOGGING_ENABLED'] = True
+
+        mocked_event_log_task.return_value = lambda *args, **kwargs: None
+
+        url = url_for('api.search')
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'query': 'de'}))
+        self.assertTrue(mocked_event_log_task.called)
+
+    @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
+    def test_search_logging_called_if_enabled(self, mocked_event_log_task):
+        self.app.config['USAGE_LOGGING_ENABLED'] = True
+
+        mocked_event_log_task.return_value = lambda *args, **kwargs: None
+
+        url = url_for('api.search')
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'query': 'de'}))
+        self.assertTrue(mocked_event_log_task.called)
+
+    @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
+    def test_sources_logging_called_if_enabled(self, mocked_event_log_task):
+        self.app.config['USAGE_LOGGING_ENABLED'] = True
+
+        mocked_event_log_task.return_value = lambda *args, **kwargs: None
+
+        url = url_for('api.list_sources')
+        response = self.get(url)
+        self.assertTrue(mocked_event_log_task.called)
+
+    @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
+    def test_get_obj_logging_called_if_enabled(self, mocked_event_log_task):
+        self.app.config['USAGE_LOGGING_ENABLED'] = True
+
+        mocked_event_log_task.return_value = lambda *args, **kwargs: None
+
+        url = url_for('api.list_sources')
+        response = self.get(url)
+        self.assertTrue(mocked_event_log_task.called)
