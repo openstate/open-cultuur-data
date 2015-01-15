@@ -8,5 +8,8 @@ class ElasticsearchService(object):
     def search(self, *args, **kwargs):
         return self.es.search(*args, **kwargs)
 
+    def create(self, *args, **kwargs):
+        return self.es.create(*args, **kwargs)
+
     def get(self, *args, **kwargs):
         return self.es.get(*args, **kwargs)
