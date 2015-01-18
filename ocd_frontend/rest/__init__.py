@@ -59,17 +59,8 @@ def decode_json_post_data(fn):
             except:
                 raise OcdApiError('Unable to parse POSTed JSON', 400)
 
-            if not data:
-                raise OcdApiError('Recieved empty JSON document', 400)
-
             request.data = data
 
         return fn(*args, **kwargs)
 
     return wrapped_function
-
-
-def request_wants_json():
-    best = request.accept_mimetypes.best_match(['application/json', 'text/html'])
-    return best == 'application/json' and \
-        request.accept_mimetypes[best] > request.accept_mimetypes['text/html']

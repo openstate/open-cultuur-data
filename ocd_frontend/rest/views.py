@@ -5,8 +5,7 @@ from flask import (Blueprint, current_app, request, jsonify, redirect, url_for,)
 from elasticsearch import NotFoundError
 from urlparse import urljoin
 
-from ocd_frontend.rest import (OcdApiError, decode_json_post_data,
-                               request_wants_json)
+from ocd_frontend.rest import OcdApiError, decode_json_post_data
 from ocd_frontend.rest import tasks
 
 bp = Blueprint('api', __name__)
@@ -494,8 +493,6 @@ def similar(object_id, source_id=None):
     else:
         index_name = current_app.config['COMBINED_INDEX']
 
-    print index_name
-
     excluded_fields = validate_included_fields(
         include_fields=search_params['include_fields'],
         excluded_fields=['all_text', 'source_data', 'media_urls.original_url',
@@ -580,9 +577,10 @@ def resolve(url_id):
         resp = current_app.es.get(index=current_app.config['RESOLVER_URL_INDEX'],
                                   doc_type='url', id=url_id)
     except NotFoundError:
-        if request_wants_json():
+        if request.mimetype == 'application/json':
             raise OcdApiError('URL is not available; the source may no longer '
                               'be available', 404)
+
         return '<html><body>There is no original url available. You may '\
                'have an outdated URL, or the resolve id is incorrect.</body>'\
                '</html>', 404
@@ -596,7 +594,6 @@ def resolve(url_id):
             created_at=datetime.utcnow(),
             event_type='resolve',
             url_id=url_id,
-            query_time_ms=resp['took']
         )
 
     return redirect(resp['_source']['original_url'])

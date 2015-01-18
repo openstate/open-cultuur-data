@@ -7,108 +7,68 @@ import random
 from flask import url_for, current_app
 from flask.ext.testing import TestCase
 
-import ocd_frontend
 from ocd_frontend import rest
-from .mixins import FlaskTestCaseMixin
+from .mixins import OcdRestTestCaseMixin
 
 
-class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
-    def create_app(self):
-        """
-        Create instance of Flask application for testing.
-        :return:
-        """
-        app = ocd_frontend.rest.create_app()
-        app.config['TESTING'] = True
-        app.config['COMBINED_INDEX'] = 'ocd_test_combined_index'
-        app.config['RESOLVER_URL_INDEX'] = 'ocd_test_resolver'
-        app.config['USAGE_LOGGING_INDEX'] = 'ocd_test_usage_logging_index'
-        app.config['USAGE_LOGGING_ENABLED'] = False
+class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
+    endpoint_url = 'api.search'
+    endpoint_url_args = {}
+    required_indexes = [
+        'ocd_test_combined_index'
+    ]
 
-        self.es_client = app.es.es
-        self.PWD = os.path.dirname(__file__)
-
-        return app
-
-    def setUp(self):
-        # Elasticsearch should be running for the tests
-        self.assertTrue(self.es_client.ping(), msg='Elasticsearch cluster is '
-                                                   'not running')
-        indices = [
-            'ocd_test_combined_index',
-            'ocd_test_usage_logging_index'
-        ]
-        self.add_indices(indices)
-
-        doc_files = glob.glob(os.path.join(self.PWD, 'test_data/test_combined/*.json'))
-        # Index some test data
-        for f in doc_files:
-            with open(f, 'rb') as doc_file:
-                doc = json.load(doc_file)
-                # Explicitly refresh index, as the upcoming count request can
-                # be faster to execute than the refresh rate of the ES instance
-                self.es_client.index(index='ocd_test_combined_index', body=doc,
-                                     doc_type='item', refresh=True)
-
-        # Check if every test document is actually indexed
-        self.assertEqual(
-            self.es_client.count(index='ocd_test_combined_index').get('count'),
-            len(doc_files)
-        )
-        # TODO: We should have a better way of generating test data
-
-    def add_indices(self, indices):
-        """
-        Add indices specified in ``self.indices``, and register cleanup method
-        for each one.
-        """
-        for index in indices:
-            if not self.es_client.indices.exists(index):
-                self.es_client.indices.create(index)
-                self.addCleanup(self.remove_index, index)
-
-    def remove_index(self, index_name):
-        self.es_client.indices.delete(index_name)
-
-    def test_search(self):
-        url = url_for('api.search')
+    def test_valid_search(self):
+        """Tests if a valid search request responds with a JSON and
+        status 200 OK."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de'}))
         self.assert_ok_json(response)
 
     def test_missing_query(self):
-        """'query' is a required search parameter"""
-        url = url_for('api.search')
+        """Tests if a 400 response is returned when the required
+        ``query`` attribute is missing."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'not-a-query': 'de'}))
         self.assert_bad_request_json(response)
 
-    def test_sort_query(self):
-        url = url_for('api.search')
+    def test_sort_option_is_accepted(self):
+        """Tests if valid use of the ``sort`` option results in a
+        JSON response with a 200 OK."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         sort_field = random.choice(current_app.config['SORTABLE_FIELDS'])
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de',
                                               'sort': sort_field}))
         self.assert_ok_json(response)
 
-    def test_sort_query_order(self):
-        url = url_for('api.search')
+    def test_sort_order_option_is_accepted(self):
+        """Test if valid use of the ``sort`` and ``order`` options
+        result in a JSON response with a 200 OK."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         sort_field = random.choice(current_app.config['SORTABLE_FIELDS'])
         sort_order = random.choice(['asc', 'desc'])
         response = self.post(url, content_type='application/json',
-                             data=json.dumps({'query': 'de', 'order': sort_order,
+                             data=json.dumps({'query': 'de',
+                                              'order': sort_order,
                                               'sort': sort_field}))
         self.assert_ok_json(response)
 
-    def test_sort_query_with_invalid_sort_field(self):
-        url = url_for('api.search')
+    def test_sort_option_with_invalid_field(self):
+        """Tests if sorting on an invalid field results in a response
+        with status code 400."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de',
                                               'sort': 'not-a-sort-field'}))
         self.assert_bad_request_json(response)
 
-    def test_sort_query_nonexisting_order(self):
-        url = url_for('api.search')
+    def test_sort_option_with_invalid_order(self):
+        """Test if supplying an invalid order option results in a
+        response with status code 400."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         sort_field = random.choice(current_app.config['SORTABLE_FIELDS'])
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de',
@@ -117,7 +77,9 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         self.assert_bad_request_json(response)
 
     def test_facets(self):
-        url = url_for('api.search')
+        """Test if requesting facets results in a 200 OK, and if the
+        facets are actually present in the response."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
 
         available_facets = current_app.config['AVAILABLE_FACETS']
         facet_keys = random.sample(available_facets.keys(), 3)
@@ -133,13 +95,14 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
             self.assertIn(fk, response.json.get('facets', {}))
 
     def test_not_available_facet(self):
-        url = url_for('api.search')
+        """Tests if requesting a facet that is not available results
+        in a response with status code 400."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
 
         facets = {
             'rights-that-are-not-a-facet': {
                 'terms': {
-                    'field': 'meta.rights',
-                    'size': 10
+                    'field': 'meta.rights'
                 }
             }
         }
@@ -150,7 +113,9 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         self.assert_bad_request_json(response)
 
     def test_facet_size(self):
-        url = url_for('api.search')
+        """Tests if valid use of the facet ``size`` attribute results in
+        a 200 OK JSON response."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
 
         facets = {
             'rights': {
@@ -167,7 +132,9 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         self.assert_ok_json(response)
 
     def test_invalid_facet_size(self):
-        url = url_for('api.search')
+        """Tests if supplying an invalid facet ``size`` value results in
+        a response with status code 400."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
 
         facets = {
             'rights': {
@@ -184,7 +151,9 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         self.assert_bad_request_json(response)
 
     def test_datetime_facet(self):
-        url = url_for('api.search')
+        """Tests if valid use of the ``date`` facet results in a 200 OK
+        JSON response."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
 
         facets = {
             'date': {
@@ -199,9 +168,13 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
                              data=json.dumps({'query': 'de',
                                               'facets': facets}))
         self.assert_ok_json(response)
+        self.assertEqual(response.json['facets']['date']['_type'],
+                         'date_histogram')
 
     def test_datetime_facet_interval_not_string(self):
-        url = url_for('api.search')
+        """Test if supplying an invalid interval type (i.e. integer)
+        results in a response with status code 400."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
 
         facets = {
             'date': {
@@ -218,7 +191,9 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         self.assert_bad_request_json(response)
 
     def test_datetime_facet_interval_not_allowed(self):
-        url = url_for('api.search')
+        """Tests if supplying an invalid interval size results in
+        a response with a status code 400."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
 
         facets = {
             'date': {
@@ -235,7 +210,9 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         self.assert_bad_request_json(response)
 
     def test_facet_should_be_dict(self):
-        url = url_for('api.search')
+        """Tests if supplying a list as facet request description
+        results in a response with status code 400."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         facets = ['some facet']
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de',
@@ -243,79 +220,660 @@ class FrontEndTestCase(FlaskTestCaseMixin, TestCase):
         self.assert_bad_request_json(response)
 
     def test_from(self):
-        url = url_for('api.search')
+        """Test if setting the ``from`` attribute responds with JSON
+        and status 200 OK."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de', 'from': 10}))
         self.assert_ok_json(response)
 
     def test_invalid_value_from(self):
-        url = url_for('api.search')
+        """Tests if supplying an invalid data type for the ``from``
+        attribute results in a response with status code 400."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de', 'from': 'abc'}))
         self.assert_bad_request_json(response)
 
     def test_negative_value_from(self):
-        url = url_for('api.search')
+        """Test if supplying a negative value for the ``from`` attribute
+        results in a response with status code 400."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de', 'from': -1}))
         self.assert_bad_request_json(response)
 
     def test_size(self):
-        url = url_for('api.search')
+        """Test if supplying a valid value for the ``size`` attribute
+        results in a 200 OK JSON response."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de', 'size': 10}))
         self.assert_ok_json(response)
 
     def test_invalid_value_size(self):
-        url = url_for('api.search')
+        """Test if supplying an invalid type for the ``size`` attribute
+        results in a response with status code 400."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de', 'size': 'abc'}))
         self.assert_bad_request_json(response)
 
     def test_negative_value_size(self):
-        url = url_for('api.search')
+        """Test if supplying a negative value for the ``size`` attribute
+        results in a response with status code 400."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de', 'size': -1}))
         self.assert_bad_request_json(response)
 
     @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
-    def test_search_logging_called_if_enabled(self, mocked_event_log_task):
+    def test_search_logging_called_if_enabled(self, mocked_log_task):
+        """Test if the event log storage function is called when usage
+        logging is enabled."""
+        # Enable usage logging for this test
         self.app.config['USAGE_LOGGING_ENABLED'] = True
 
-        mocked_event_log_task.return_value = lambda *args, **kwargs: None
+        # Make sure the Celery task doesn't get executed
+        mocked_log_task.return_value = lambda *args, **kwargs: None
 
-        url = url_for('api.search')
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de'}))
-        self.assertTrue(mocked_event_log_task.called)
+        self.assertTrue(mocked_log_task.called)
 
     @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
-    def test_search_logging_called_if_enabled(self, mocked_event_log_task):
-        self.app.config['USAGE_LOGGING_ENABLED'] = True
+    def test_search_logging_not_called_if_disabled(self, mocked_log_task):
+        """Test if the event log storage function is not called when
+        usage logging is disabled."""
+        # Make sure usage logging is disabled
+        self.app.config['USAGE_LOGGING_ENABLED'] = False
 
-        mocked_event_log_task.return_value = lambda *args, **kwargs: None
+        # Make sure the Celery task doesn't get executed
+        mocked_log_task.return_value = lambda *args, **kwargs: None
 
-        url = url_for('api.search')
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
         response = self.post(url, content_type='application/json',
                              data=json.dumps({'query': 'de'}))
-        self.assertTrue(mocked_event_log_task.called)
+        self.assertFalse(mocked_log_task.called)
+
+
+class RestApiSearchSourceTestCase(RestApiSearchTestCase):
+    endpoint_url = 'api.search_source'
+    endpoint_url_args = {'source_id': 'test_collection_index'}
+    required_indexes = [
+        'ocd_test_collection_index'
+    ]
+
+    def test_nonexistent_source_id(self):
+        """Test if supplying a nonexistent ``source_id`` returns a 404
+        JSON response."""
+
+        url = url_for(self.endpoint_url, source_id='i-do-not-exist')
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'query': 'de'}))
+        self.assert_not_found_request_json(response)
+
+
+class RestApiSearchSimilarTestCase(OcdRestTestCaseMixin, TestCase):
+    required_indexes = [
+        'ocd_test_combined_index',
+        'ocd_test_collection_index'
+    ]
+
+    def test_valid_search(self):
+        """Tests if a valid search request responds with a JSON and
+        status 200 OK."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({}))
+
+        self.assert_ok_json(response)
+
+    def test_valid_search_source(self):
+        doc_id = self.doc_ids['ocd_test_collection_index']['item'][0]
+        url = url_for('api.similar', source_id='test_collection_index',
+                      object_id=doc_id)
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({}))
+
+        self.assert_ok_json(response)
+
+    def test_search_nonexistent_source(self):
+        """Test if finding similar objects within a source index that
+        doesn't  exist returns a 404 JSON response (with the appropriate
+        error message)."""
+        source_id = 'i-do-not-exist'
+        doc_id = self.doc_ids['ocd_test_collection_index']['item'][0]
+        url = url_for('api.get_object', source_id=source_id, object_id=doc_id)
+        response = self.get(url)
+
+        self.assert_not_found_request_json(response)
+        self.assertEqual(response.json['error'],
+                         'Source \'%s\' does not exist' % source_id)
+
+    def test_sort_option_is_accepted(self):
+        """Tests if valid use of the ``sort`` option results in a
+        JSON response with a 200 OK."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        sort_field = random.choice(current_app.config['SORTABLE_FIELDS'])
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'sort': sort_field}))
+        self.assert_ok_json(response)
+
+    def test_sort_order_option_is_accepted(self):
+        """Test if valid use of the ``sort`` and ``order`` options
+        result in a JSON response with a 200 OK."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        sort_field = random.choice(current_app.config['SORTABLE_FIELDS'])
+        sort_order = random.choice(['asc', 'desc'])
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'order': sort_order,
+                                              'sort': sort_field}))
+        self.assert_ok_json(response)
+
+    def test_sort_option_with_invalid_field(self):
+        """Tests if sorting on an invalid field results in a response
+        with status code 400."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'sort': 'not-a-sort-field'}))
+        self.assert_bad_request_json(response)
+
+    def test_sort_option_with_invalid_order(self):
+        """Test if supplying an invalid order option results in a
+        response with status code 400."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        sort_field = random.choice(current_app.config['SORTABLE_FIELDS'])
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'order': 'upsidedown',
+                                              'sort': sort_field}))
+        self.assert_bad_request_json(response)
+
+    def test_facets(self):
+        """Test if requesting facets results in a 200 OK, and if the
+        facets are actually present in the response."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+
+        available_facets = current_app.config['AVAILABLE_FACETS']
+        facet_keys = random.sample(available_facets.keys(), 3)
+        facets = {fk: available_facets[fk] for fk in facet_keys}
+
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'facets': facets}))
+
+        self.assert_ok_json(response)
+        self.assertIn('facets', response.json)
+        for fk in facet_keys:
+            self.assertIn(fk, response.json.get('facets', {}))
+
+    def test_not_available_facet(self):
+        """Tests if requesting a facet that is not available results
+        in a response with status code 400."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+
+        facets = {
+            'rights-that-are-not-a-facet': {
+                'terms': {
+                    'field': 'meta.rights'
+                }
+            }
+        }
+
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'facets': facets}))
+        self.assert_bad_request_json(response)
+
+    def test_facet_size(self):
+        """Tests if valid use of the facet ``size`` attribute results in
+        a 200 OK JSON response."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+
+        facets = {
+            'rights': {
+                'terms': {
+                    'field': 'meta.rights',
+                    'size': 10
+                }
+            }
+        }
+
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'facets': facets}))
+        self.assert_ok_json(response)
+
+    def test_invalid_facet_size(self):
+        """Tests if supplying an invalid facet ``size`` value results in
+        a response with status code 400."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+
+        facets = {
+            'rights': {
+                'terms': {
+                    'field': 'meta.rights',
+                    'size': 'abc'
+                }
+            }
+        }
+
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'facets': facets}))
+        self.assert_bad_request_json(response)
+
+    def test_datetime_facet(self):
+        """Tests if valid use of the ``date`` facet results in a 200 OK
+        JSON response."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+
+        facets = {
+            'date': {
+                'date_histogram': {
+                    'field': 'date',
+                    'interval': 'month'
+                }
+            }
+        }
+
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'facets': facets}))
+        self.assert_ok_json(response)
+        self.assertEqual(response.json['facets']['date']['_type'],
+                         'date_histogram')
+
+    def test_datetime_facet_interval_not_string(self):
+        """Test if supplying an invalid interval type (i.e. integer)
+        results in a response with status code 400."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+
+        facets = {
+            'date': {
+                'date_histogram': {
+                    'field': 'date',
+                    'interval': 123
+                }
+            }
+        }
+
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'facets': facets}))
+        self.assert_bad_request_json(response)
+
+    def test_datetime_facet_interval_not_allowed(self):
+        """Tests if supplying an invalid interval size results in
+        a response with a status code 400."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+
+        facets = {
+            'date': {
+                'date_histogram': {
+                    'field': 'date',
+                    'interval': 'millennium'
+                }
+            }
+        }
+
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'facets': facets}))
+        self.assert_bad_request_json(response)
+
+    def test_facet_should_be_dict(self):
+        """Tests if supplying a list as facet request description
+        results in a response with status code 400."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        facets = ['some facet']
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'facets': facets}))
+        self.assert_bad_request_json(response)
+
+    def test_from(self):
+        """Test if setting the ``from`` attribute responds with JSON
+        and status 200 OK."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'from': 10}))
+        self.assert_ok_json(response)
+
+    def test_invalid_value_from(self):
+        """Tests if supplying an invalid data type for the ``from``
+        attribute results in a response with status code 400."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'from': 'abc'}))
+        self.assert_bad_request_json(response)
+
+    def test_negative_value_from(self):
+        """Test if supplying a negative value for the ``from`` attribute
+        results in a response with status code 400."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'from': -1}))
+        self.assert_bad_request_json(response)
+
+    def test_size(self):
+        """Test if supplying a valid value for the ``size`` attribute
+        results in a 200 OK JSON response."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'size': 10}))
+        self.assert_ok_json(response)
+
+    def test_invalid_value_size(self):
+        """Test if supplying an invalid type for the ``size`` attribute
+        results in a response with status code 400."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'size': 'abc'}))
+        self.assert_bad_request_json(response)
+
+    def test_negative_value_size(self):
+        """Test if supplying a negative value for the ``size`` attribute
+        results in a response with status code 400."""
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'size': -1}))
+        self.assert_bad_request_json(response)
 
     @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
-    def test_sources_logging_called_if_enabled(self, mocked_event_log_task):
+    def test_search_logging_called_if_enabled(self, mocked_log_task):
+        """Test if the event log storage function is called when usage
+        logging is enabled."""
+        # Enable usage logging for this test
         self.app.config['USAGE_LOGGING_ENABLED'] = True
 
-        mocked_event_log_task.return_value = lambda *args, **kwargs: None
+        # Make sure the Celery task doesn't get executed
+        mocked_log_task.return_value = lambda *args, **kwargs: None
+
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({}))
+        self.assertTrue(mocked_log_task.called)
+
+    @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
+    def test_search_logging_not_called_if_disabled(self, mocked_log_task):
+        """Test if the event log storage function is not called when
+        usage logging is disabled."""
+        # Make sure usage logging is disabled
+        self.app.config['USAGE_LOGGING_ENABLED'] = False
+
+        # Make sure the Celery task doesn't get executed
+        mocked_log_task.return_value = lambda *args, **kwargs: None
+
+        doc_id = self.doc_ids['ocd_test_combined_index']['item'][0]
+        url = url_for('api.similar', object_id=doc_id)
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({}))
+        self.assertFalse(mocked_log_task.called)
+
+class RestApiSourcesTestCase(OcdRestTestCaseMixin, TestCase):
+    required_indexes = [
+        'ocd_test_combined_index'
+    ]
+
+    def test_response_format(self):
+        url = url_for('api.list_sources')
+        response = self.get(url)
+
+        self.assert_ok_json(response)
+
+        self.assertIn('sources', response.json)
+
+        source_attrs = response.json['sources'][0].keys()
+        self.assertIn('id', source_attrs)
+        self.assertIn('name', source_attrs)
+        self.assertIn('count', source_attrs)
+
+    @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
+    def test_logging_called_if_enabled(self, mocked_log_task):
+        """Test if the event log storage function is called when usage
+        logging is enabled."""
+        # Enable usage logging for this test
+        self.app.config['USAGE_LOGGING_ENABLED'] = True
+
+        # Make sure the Celery task doesn't get executed
+        mocked_log_task.return_value = lambda *args, **kwargs: None
 
         url = url_for('api.list_sources')
         response = self.get(url)
-        self.assertTrue(mocked_event_log_task.called)
+        self.assertTrue(mocked_log_task.called)
 
     @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
-    def test_get_obj_logging_called_if_enabled(self, mocked_event_log_task):
-        self.app.config['USAGE_LOGGING_ENABLED'] = True
+    def test_logging_not_called_if_disabled(self, mocked_log_task):
+        """Test if the event log storage function is not called when
+        usage logging is disabled."""
+        # Make sure usage logging is disabled
+        self.app.config['USAGE_LOGGING_ENABLED'] = False
 
-        mocked_event_log_task.return_value = lambda *args, **kwargs: None
+        # Make sure the Celery task doesn't get executed
+        mocked_log_task.return_value = lambda *args, **kwargs: None
 
         url = url_for('api.list_sources')
         response = self.get(url)
-        self.assertTrue(mocked_event_log_task.called)
+        self.assertFalse(mocked_log_task.called)
+
+
+class RestApiGetObjectTestCase(OcdRestTestCaseMixin, TestCase):
+    required_indexes = [
+        'ocd_test_collection_index'
+    ]
+
+    def test_get_existing_object(self):
+        """Test getting an index document."""
+        doc_id = self.doc_ids['ocd_test_collection_index']['item'][0]
+        url = url_for('api.get_object', source_id='test_collection_index',
+                      object_id=doc_id)
+        response = self.get(url)
+
+        self.assert_ok_json(response)
+
+    def test_get_nonexistent_object(self):
+        """Test if getting an object that doesn't exist returns a 404
+        JSON response (with the appropriate error message)."""
+        url = url_for('api.get_object', source_id='test_collection_index',
+                      object_id='i-do-not-exist')
+        response = self.get(url)
+
+        self.assert_not_found_request_json(response)
+        self.assertEqual(response.json['error'], 'Document not found.')
+
+    def test_get_nonexistent_source(self):
+        """Test if getting an object from a source index that doesn't
+        exist returns a 404 JSON response (with the appropriate error
+        message)."""
+        source_id = 'i-do-not-exist'
+        url = url_for('api.get_object', source_id=source_id,
+                      object_id='i-do-not-exist')
+        response = self.get(url)
+
+        self.assert_not_found_request_json(response)
+        self.assertEqual(response.json['error'],
+                         'Source \'%s\' does not exist' % source_id)
+
+    @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
+    def test_logging_called_if_enabled(self, mocked_log_task):
+        """Test if the event log storage function is called when usage
+        logging is enabled."""
+        # Enable usage logging for this test
+        self.app.config['USAGE_LOGGING_ENABLED'] = True
+
+        # Make sure the Celery task doesn't get executed
+        mocked_log_task.return_value = lambda *args, **kwargs: None
+
+        doc_id = self.doc_ids['ocd_test_collection_index']['item'][0]
+        url = url_for('api.get_object', source_id='test_collection_index',
+                      object_id=doc_id)
+        response = self.get(url)
+        self.assertTrue(mocked_log_task.called)
+
+    @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
+    def test_search_logging_not_called_if_disabled(self, mocked_log_task):
+        """Test if the event log storage function is not called when
+        usage logging is disabled."""
+        # Make sure usage logging is disabled
+        self.app.config['USAGE_LOGGING_ENABLED'] = False
+
+        # Make sure the Celery task doesn't get executed
+        mocked_log_task.return_value = lambda *args, **kwargs: None
+
+        doc_id = self.doc_ids['ocd_test_collection_index']['item'][0]
+        url = url_for('api.get_object', source_id='test_collection_index',
+                      object_id=doc_id)
+        self.assertFalse(mocked_log_task.called)
+
+
+class RestApiGetObjectSourceTestCase(OcdRestTestCaseMixin, TestCase):
+    required_indexes = [
+        'ocd_test_collection_index'
+    ]
+
+    def test_get_existing_object(self):
+        """Test getting an index document."""
+        doc_id = self.doc_ids['ocd_test_collection_index']['item'][0]
+        url = url_for('api.get_object_source',
+                      source_id='test_collection_index', object_id=doc_id)
+        response = self.get(url)
+
+        self.assert_ok_json(response)
+
+    def test_get_nonexistent_object(self):
+        """Test if getting an object that doesn't exist returns a 404
+        JSON response (with the appropriate error message)."""
+        url = url_for('api.get_object_source',
+                      source_id='test_collection_index',
+                      object_id='i-do-not-exist')
+        response = self.get(url)
+
+        self.assert_not_found_request_json(response)
+        self.assertEqual(response.json['error'], 'Document not found.')
+
+    def test_get_nonexistent_source(self):
+        """Test if getting an object from a source index that doesn't
+        exist returns a 404 JSON response (with the appropriate error
+        message)."""
+        source_id = 'i-do-not-exist'
+        url = url_for('api.get_object_source', source_id=source_id,
+                      object_id='i-do-not-exist')
+        response = self.get(url)
+
+        self.assert_not_found_request_json(response)
+        self.assertEqual(response.json['error'],
+                         'Source \'%s\' does not exist' % source_id)
+
+    @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
+    def test_logging_called_if_enabled(self, mocked_log_task):
+        """Test if the event log storage function is called when usage
+        logging is enabled."""
+        # Enable usage logging for this test
+        self.app.config['USAGE_LOGGING_ENABLED'] = True
+
+        # Make sure the Celery task doesn't get executed
+        mocked_log_task.return_value = lambda *args, **kwargs: None
+
+        doc_id = self.doc_ids['ocd_test_collection_index']['item'][0]
+        url = url_for('api.get_object_source',
+                      source_id='test_collection_index', object_id=doc_id)
+        response = self.get(url)
+        self.assertTrue(mocked_log_task.called)
+
+    @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
+    def test_search_logging_not_called_if_disabled(self, mocked_log_task):
+        """Test if the event log storage function is not called when
+        usage logging is disabled."""
+        # Make sure usage logging is disabled
+        self.app.config['USAGE_LOGGING_ENABLED'] = False
+
+        # Make sure the Celery task doesn't get executed
+        mocked_log_task.return_value = lambda *args, **kwargs: None
+
+        doc_id = self.doc_ids['ocd_test_collection_index']['item'][0]
+        url = url_for('api.get_object_source',
+                      source_id='test_collection_index', object_id=doc_id)
+        response = self.get(url)
+        self.assertFalse(mocked_log_task.called)
+
+
+class RestApiResolveTestCase(OcdRestTestCaseMixin, TestCase):
+    required_indexes = [
+        'ocd_test_resolver_index'
+    ]
+
+    def test_succesfull_resolve(self):
+        """Test if a valid URL resolves and returns a redirect with the
+        correct status, location and content type."""
+        doc_id = self.doc_ids['ocd_test_resolver_index']['url'][0]
+        url = url_for('api.resolve', url_id=doc_id)
+
+        response = self.get(url, follow_redirects=False)
+
+        self.assert_status_code(response, 302)
+        self.assert_content_type(response, 'text/html; charset=utf-8')
+        self.assertIn('location', response.headers)
+        self.assertTrue(response.headers['location'].startswith('http://'))
+
+    def test_invalid_resolve_json(self):
+        """Tests if a request to resolve an invalid URL results in a
+        404 response with the proper content type."""
+        url = url_for('api.resolve', url_id='i-do-not-exist')
+        response = self.get(url, follow_redirects=False,
+                            content_type='application/json')
+        self.assert_not_found_request_json(response)
+
+    def test_invalid_resolve_html(self):
+        """Tests if a request to resolve an invalid URL results in a
+        404 response with the proper content type."""
+        url = url_for('api.resolve', url_id='i-do-not-exist')
+        response = self.get(url, follow_redirects=False,
+                            content_type='text/html')
+
+        self.assert_status_code(response, 404)
+        self.assert_content_type(response, 'text/html; charset=utf-8')
+
+    @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
+    def test_logging_called_if_enabled(self, mocked_log_task):
+        """Test if the event log storage function is called when usage
+        logging is enabled."""
+        # Enable usage logging for this test
+        self.app.config['USAGE_LOGGING_ENABLED'] = True
+
+        # Make sure the Celery task doesn't get executed
+        mocked_log_task.return_value = lambda *args, **kwargs: None
+
+        doc_id = self.doc_ids['ocd_test_resolver_index']['url'][0]
+        url = url_for('api.resolve', url_id=doc_id)
+        response = self.get(url, follow_redirects=False)
+
+        self.assertTrue(mocked_log_task.called)
+
+    @mock.patch('ocd_frontend.rest.tasks.log_event.delay')
+    def test_search_logging_not_called_if_disabled(self, mocked_log_task):
+        """Test if the event log storage function is not called when
+        usage logging is disabled."""
+        # Make sure usage logging is disabled
+        self.app.config['USAGE_LOGGING_ENABLED'] = False
+
+        # Make sure the Celery task doesn't get executed
+        mocked_log_task.return_value = lambda *args, **kwargs: None
+
+        doc_id = self.doc_ids['ocd_test_resolver_index']['url'][0]
+        url = url_for('api.resolve', url_id=doc_id)
+        response = self.get(url,  follow_redirects=False)
+        self.assertFalse(mocked_log_task.called)
