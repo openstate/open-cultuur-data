@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from datetime import datetime
 import json
 from glob import glob
@@ -12,7 +11,11 @@ import time
 from urlparse import urljoin
 
 import click
+from click.core import Command
+from click.decorators import _make_command
+
 from elasticsearch import helpers as es_helpers
+from elasticsearch.exceptions import RequestError
 from werkzeug.serving import run_simple
 
 from ocd_backend.es import elasticsearch as es
@@ -23,8 +26,6 @@ from ocd_frontend.settings import DUMPS_DIR, API_URL, LOCAL_DUMPS_DIR
 from ocd_frontend.wsgi import application
 
 
-from click.core import Command
-from click.decorators import _make_command
 def command(name=None, cls=None, **attrs):
     """
     Wrapper for click Commands, to replace the click.Command docstring with the
@@ -233,7 +234,10 @@ def create_indexes(mapping_dir):
 
     for mapping_file_path in glob('%s/ocd_mapping_*.json' % mapping_dir):
         # Extract the index name from the filename
-        index_name = '%s_%s' % (DEFAULT_INDEX_PREFIX, mapping_file_path.split('.')[0].split('_')[-1])
+        index_name = DEFAULT_INDEX_PREFIX
+        mapping_file = os.path.split(mapping_file_path)[-1].split('.')[0]
+        index_name = '%s_%s' % (DEFAULT_INDEX_PREFIX,
+                                '_'.join(mapping_file.rsplit('_')[2:]))
 
         click.echo('Creating ES index %s' % index_name)
 
@@ -241,7 +245,13 @@ def create_indexes(mapping_dir):
         mapping = json.load(mapping_file)
         mapping_file.close()
 
-        es.indices.create(index=index_name, body=mapping)
+        try:
+            es.indices.create(index=index_name, body=mapping)
+        except RequestError as e:
+            error_msg = click.style('Failed to create index %s due to ES '
+                                    'error: %s' % (index_name, e.error),
+                                    fg='red')
+            click.echo(error_msg)
 
 
 @command('delete_indexes')
