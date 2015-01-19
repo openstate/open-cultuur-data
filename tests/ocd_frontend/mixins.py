@@ -21,7 +21,7 @@ class OcdRestTestCaseMixin(object):
         app.config['USAGE_LOGGING_INDEX'] = 'ocd_test_usage_logging_index'
         app.config['USAGE_LOGGING_ENABLED'] = False
 
-        self.es_client = app.es.es
+        self.es_client = app.es._es
         self.PWD = os.path.dirname(__file__)
 
         return app

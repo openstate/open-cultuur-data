@@ -479,6 +479,97 @@ def get_object_source(source_id, object_id):
     return resp
 
 
+@bp.route('/<source_id>/<object_id>/stats')
+def get_object_stats(source_id, object_id):
+    index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'],
+                            source_id)
+
+    object_exists = current_app.es.exists(index=index_name, id=object_id)
+    if not object_exists:
+        raise OcdApiError('Document or source not found.', 404)
+
+    queries = [
+        (
+            'n_appeared_in_search_results',
+            'search',
+            {
+                "query": {
+                    "constant_score": {
+                        "filter": {
+                            "term": {
+                                "event_properties.hits.object_id": object_id
+                            }
+                        }
+                    }
+                }
+            }
+        ),
+        (
+            'n_appeared_in_similar_results',
+            'similar',
+            {
+                "query": {
+                    "constant_score": {
+                        "filter": {
+                            "term": {
+                                "event_properties.hits.object_id": object_id
+                            }
+                        }
+                    }
+                }
+            }
+        ),
+        (
+            'n_get',
+            'get_object',
+            {
+                "query": {
+                    "constant_score": {
+                        "filter": {
+                            "term": {
+                                "event_properties.object_id": object_id
+                            }
+                        }
+                    }
+                }
+            }
+        ),
+        (
+            'n_get_source',
+            'get_object_source',
+            {
+                "query": {
+                    "constant_score": {
+                        "filter": {
+                            "term": {
+                                "event_properties.object_id": object_id
+                            }
+                        }
+                    }
+                }
+            }
+        )
+    ]
+
+    search_body = []
+
+    for query in queries:
+        search_body.append({
+            'index': current_app.config['USAGE_LOGGING_INDEX'],
+            'type': query[1],
+            'search_type': 'count'
+        })
+        search_body.append(query[2])
+
+    es_r = current_app.es.msearch(search_body)
+
+    stats = {}
+    for query_i, result in enumerate(es_r['responses']):
+        stats[queries[query_i][0]] = result['hits']['total']
+
+    return jsonify(stats)
+
+
 @bp.route('/<source_id>/similar/<object_id>', methods=['POST'])
 @bp.route('/similar/<object_id>', methods=['POST'])
 @decode_json_post_data

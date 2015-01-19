@@ -3,11 +3,13 @@ import json
 import mock
 import os.path
 import random
+from unittest import TestCase as UnittestTestCase
 
 from flask import url_for, current_app
 from flask.ext.testing import TestCase
 
 from ocd_frontend import rest
+from ocd_frontend.rest import tasks
 from .mixins import OcdRestTestCaseMixin
 
 
@@ -811,6 +813,41 @@ class RestApiGetObjectSourceTestCase(OcdRestTestCaseMixin, TestCase):
         self.assertFalse(mocked_log_task.called)
 
 
+class RestApiGetObjectStatsTestCaste(OcdRestTestCaseMixin, TestCase):
+    required_indexes = [
+        'ocd_test_usage_logging_index',
+        'ocd_test_collection_index'
+    ]
+
+    def test_get_existing_object(self):
+        """Test getting the stats of an indexed document."""
+        doc_id = self.doc_ids['ocd_test_collection_index']['item'][0]
+        url = url_for('api.get_object_stats',
+                      source_id='test_collection_index', object_id=doc_id)
+        response = self.get(url)
+
+        self.assert_ok_json(response)
+
+    def test_get_nonexistent_object(self):
+        """Test if getting an object that doesn't exist returns a 404
+        JSON response."""
+        url = url_for('api.get_object_source',
+                      source_id='test_collection_index',
+                      object_id='i-do-not-exist')
+        response = self.get(url)
+
+        self.assert_not_found_request_json(response)
+
+    def test_get_nonexistent_source(self):
+        """Test if getting an object from a source index that doesn't
+        exist returns a 404 JSON response."""
+        url = url_for('api.get_object_stats', source_id='i-do-not-exist',
+                      object_id='i-do-not-exist')
+        response = self.get(url)
+
+        self.assert_not_found_request_json(response)
+
+
 class RestApiResolveTestCase(OcdRestTestCaseMixin, TestCase):
     required_indexes = [
         'ocd_test_resolver_index'
@@ -877,3 +914,18 @@ class RestApiResolveTestCase(OcdRestTestCaseMixin, TestCase):
         url = url_for('api.resolve', url_id=doc_id)
         response = self.get(url,  follow_redirects=False)
         self.assertFalse(mocked_log_task.called)
+
+
+class LogEventTaskTestCase(UnittestTestCase):
+    default_args = {
+        'user_agent': 'abc',
+        'referer': 'def',
+        'user_ip': '127.0.0.1',
+        'created_at': '2015-01-01',
+        'event_type': 'get_object'
+    }
+
+    def test_unknown_event_raises_exception(self):
+        task_args = self.default_args
+        task_args['event_type'] = 'unknown-test-event'
+        self.assertRaises(ValueError, tasks.log_event, **task_args)
