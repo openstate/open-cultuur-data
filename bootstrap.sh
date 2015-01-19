@@ -15,13 +15,15 @@ wget -q https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticse
 sudo dpkg -i elasticsearch-1.4.2.deb > /dev/null
 sudo service elasticsearch start
 
-sudo apt-get install -y libxml2-dev libxslt1-dev libssl-dev libffi-dev python-dev python-setuptools python-virtualenv git > /dev/null
+echo "Installing Elasticsearch head plugin"
+sudo /usr/share/elasticsearch/bin/plugin --install mobz/elasticsearch-head
+
+sudo apt-get install -y make libxml2-dev libxslt1-dev libssl-dev libffi-dev python-dev python-setuptools python-virtualenv git > /dev/null
 sudo easy_install -q pip
+
 virtualenv -q ocd
-
 chown -R vagrant:vagrant ocd
-
-cp /vagrant/bashrc ~/.bashrc
+echo "source /home/vagrant/ocd/bin/activate; cd /vagrant;" >> ~/.bashrc
 
 echo "Installing requirements"
 source ocd/bin/activate
@@ -29,6 +31,7 @@ cd /vagrant
 pip install -q -r requirements.txt
 
 echo "Starting"
+./manage.py elasticsearch create_indexes /vagrant/es_mappings/
 ./manage.py elasticsearch put_template
 
 
