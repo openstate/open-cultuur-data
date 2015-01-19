@@ -22,7 +22,7 @@ SORTABLE_FIELDS = (
     'date', 'date_granularity', 'authors', '_score'
 )
 
-# Defenition of the ES facets (and filters) that are accassible through
+# Definition of the ES facets (and filters) that are accessible through
 # the REST API
 AVAILABLE_FACETS = {
     # 'retrieved_at': {
