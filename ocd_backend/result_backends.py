@@ -30,6 +30,10 @@ class OCDBackendMixin(object):
         """Set `key` to `value`"""
         raise NotImplementedError('Subclass should implement `get` method')
 
+    def remove(self, key):
+        """Remove `key`"""
+        raise NotImplementedError('Subclass should implement `remove` method')
+
     def add_value_to_set(self, set_name, value):
         """Add `value` to `set_name`"""
         raise NotImplementedError('Subclass should implement `add_to_set` '
@@ -52,10 +56,13 @@ class OCDRedisBackend(RedisBackend, OCDBackendMixin):
         self.client.sadd(set_name, value)
 
     def remove_value_from_set(self, set_name, value):
-        self.client.srem(set_name. value)
+        self.client.srem(set_name, value)
 
     def get_set_cardinality(self, set_name):
         return self.client.scard(set_name)
 
     def get_set_members(self, set_name):
         return self.client.smembers(set_name)
+
+    def remove(self, key):
+        return self.client.delete(key)

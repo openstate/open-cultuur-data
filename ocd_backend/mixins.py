@@ -1,4 +1,3 @@
-from ocd_backend import celery_app
 from ocd_backend.exceptions import NoChainIDAvailable
 
 
@@ -9,11 +8,13 @@ class OCDBackendTaskMixin(object):
     have finished.
     """
     def on_failure(self, exc, task_id, args, kwargs, einfo):
-        if not kwargs.get('chain_id'):
-            raise NoChainIDAvailable
-
-        if not kwargs.get('run_identifier'):
-            raise NoRunIDAvailable
-
-        celery_app.backend.remove_value_from_set('{}_chains'.format(kwargs.get('run_identifier')), kwargs.get('chain_id'))
+        self._remove_chain('{}_chains'.format(kwargs.get('run_identifier')),
+                           kwargs.get('chain_id'))
         self.AsyncResult(task_id=task_id).forget()
+
+    def _remove_chain(self, run_identifier, value):
+        self.backend.remove_value_from_set(run_identifier, value)
+
+        # If we've removed the last value, remove the set key as well
+        if self.backend.get_set_cardinality(run_identifier) < 1:
+            self.backend.remove(run_identifier)
