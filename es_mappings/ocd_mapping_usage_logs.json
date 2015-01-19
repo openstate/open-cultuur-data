@@ -182,7 +182,6 @@
         },
         "resolve": {
             "properties": {
-                "type": "object",
                 "event_properties": {
                     "type": "object",
                     "properties": {
