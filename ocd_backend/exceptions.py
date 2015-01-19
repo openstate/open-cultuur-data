@@ -16,6 +16,16 @@ class NoDeserializerAvailable(Exception):
     content-type of an."""
 
 
+class NoChainIDAvailable(Exception):
+    """Thrown when an OCD task tries to clean up it's chain id, and it is not
+    available"""
+
+
+class NoRunIDAvailable(Exception):
+    """Thrown when an OCD task tries to clean up it's chain id, and the run
+    identifier is not available"""
+
+
 class FieldNotAvailable(Exception):
     """Exception thrown when a field could not be found."""
     def __init__(self, field):
