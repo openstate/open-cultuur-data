@@ -1,9 +1,10 @@
-from celery import chain, chord, group
 from datetime import datetime
+from uuid import uuid4
+
 from elasticsearch.exceptions import NotFoundError
 
 from ocd_backend.es import elasticsearch as es
-from ocd_backend import settings
+from ocd_backend import settings, celery_app
 from ocd_backend.tasks import UpdateAlias
 from ocd_backend.utils.misc import load_object
 from .exceptions import ConfigurationError
@@ -40,12 +41,26 @@ def setup_pipeline(source_definition):
     transformer = load_object(source_definition['transformer'])()
     loader = load_object(source_definition['loader'])()
 
-    update_alias = UpdateAlias()
+    # update_alias = UpdateAlias()
 
-    tasks = []
-    for item in extractor.run():
-        tasks.append(chain(transformer.si(*item, source_definition=source_definition), loader.s(source_definition=source_definition, index_name=new_index_name)))
+    # Parameters that are passed to each task in the chain
+    params = {
+        'run_identifier': 'pipeline_{}'.format(uuid4().hex),
+        'current_index_name': current_index_name,
+        'index_name': new_index_name
+    }
+    celery_app.backend.set(params['run_identifier'], 1)
 
-    chord(group(tasks))(update_alias.s(current_index_name=current_index_name,
-                                       new_index_name=new_index_name,
-                                       alias=index_alias))
+    for i, item in enumerate(extractor.run()):
+        # Generate an identifier for each chain, and record that in {}_chains,
+        # so that we can know for sure when all tasks from an extractor have
+        # finished
+        params['chain_id']= uuid4().hex
+        celery_app.backend.add_value_to_set(set_name='{}_chains'.format(params['run_identifier']), value=params['chain_id'])
+
+        (transformer.s(*item, source_definition=source_definition, **params) | loader.s(source_definition=source_definition, **params)).delay()
+        break
+
+    # chord(group(tasks))(update_alias.s(current_index_name=current_index_name,
+    #                                    new_index_name=new_index_name,
+    #                                    alias=index_alias))
