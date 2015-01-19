@@ -7,10 +7,11 @@ from ocd_backend import settings
 from ocd_backend.es import elasticsearch
 from ocd_backend.exceptions import ConfigurationError
 from ocd_backend.log import get_source_logger
+from ocd_backend.mixins import OCDBackendTaskMixin
 
 log = get_source_logger('loader')
 
-class BaseLoader(Task):
+class BaseLoader(OCDBackendTaskMixin, Task):
     """The base class that other loaders should inherit."""
 
     ignore_result = False
@@ -30,17 +31,16 @@ class BaseLoader(Task):
         """
         self.source_definition = kwargs['source_definition']
 
-        object_id, combined_index_doc, doc, transformer_task_id = args[0]
+        object_id, combined_index_doc, doc = args[0]
 
         # Add the 'processing.finished' datetime to the documents
         finished = datetime.now()
         combined_index_doc['meta']['processing_finished'] = finished
         doc['meta']['processing_finished'] = finished
 
-        return self.load_item(object_id, combined_index_doc, doc,
-                              transformer_task_id)
+        return self.load_item(object_id, combined_index_doc, doc)
 
-    def load_item(self, object_id, combined_index_doc, doc, transformer_task_id):
+    def load_item(self, object_id, combined_index_doc, doc):
         raise NotImplemented
 
 
@@ -55,6 +55,7 @@ class ElasticsearchLoader(BaseLoader):
     ``RESOLVER_URL_INDEX`` (if it doesn't already exist).
     """
     def run(self, *args, **kwargs):
+        print kwargs
         self.index_name = kwargs.get('index_name')
 
         if not self.index_name:
@@ -62,7 +63,7 @@ class ElasticsearchLoader(BaseLoader):
 
         return super(ElasticsearchLoader, self).run(*args, **kwargs)
 
-    def load_item(self, object_id, combined_index_doc, doc, transformer_task_id):
+    def load_item(self, object_id, combined_index_doc, doc):
         log.info('Indexing documents...')
         elasticsearch.index(index=settings.COMBINED_INDEX, doc_type='item',
                             id=object_id, body=combined_index_doc)
@@ -90,7 +91,6 @@ class ElasticsearchLoader(BaseLoader):
         return {
             'item_id': object_id,
             'task_id': self.request.id,
-            'transformer_task_id': transformer_task_id
         }
 
 
