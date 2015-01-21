@@ -60,8 +60,6 @@ def setup_pipeline(source_definition):
         celery_app.backend.add_value_to_set(set_name=run_identifier_chains, value=params['chain_id'])
 
         (transformer.s(*item, source_definition=source_definition, **params) | loader.s(source_definition=source_definition, **params)).delay()
-        if i + 1 == 15:
-            break
 
     celery_app.backend.delete(params['run_identifier'])
 
