@@ -1,6 +1,3 @@
-from ocd_backend.exceptions import NoChainIDAvailable
-
-
 class OCDBackendTaskMixin(object):
     """
     Mixin for `Tasks` using the backend, which makes sure the Task cleans up
