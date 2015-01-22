@@ -17,7 +17,8 @@ def setup_pipeline(source_definition):
     # index_name is an alias of the current version of the index
     index_alias = '{prefix}_{index_name}'.format(
         prefix=settings.DEFAULT_INDEX_PREFIX,
-        index_name=source_definition.get('index_name')
+        index_name=source_definition.get('index_name',
+                                         source_definition.get('id'))
     )
 
     if not es.indices.exists(index_alias):
