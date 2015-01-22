@@ -2,14 +2,14 @@ import os
 
 from lxml import etree
 
-from ocd_backend.items.gemeente_ede import GemeenteEdeItem
+from ocd_backend.items.museum_rotterdam import MuseumRotterdamItem
 
 from . import ItemTestCase
 
 
 class MuseumRotterdamItemTestCase(ItemTestCase):
     def setUp(self):
-        super(GemeenteEdeItemTestCase, self).setUp()
+        super(MuseumRotterdamItemTestCase, self).setUp()
         self.PWD = os.path.dirname(__file__)
         self.source_definition = {
             'id': 'test_definition',
@@ -20,7 +20,30 @@ class MuseumRotterdamItemTestCase(ItemTestCase):
             'transformer': 'ocd_backend.transformers.BaseTransformer',
             'item': 'ocd_backend.items.museum_rotterdam.MuseumRotterdamItem',
             'loader': 'ocd_backend.loaders.ElasticsearchLoader',
-            'file_url': ''
+            "file_url": (
+                "http://static.opencultuurdata.nl/museum_rotterdam/"
+                "MuseumRotterdamCollectie19082014.xml"),
+            "item_xpath": "//cb3:record",
+            "default_namespace": "cb3",
+            "cb3_mapping": {
+                "inventarisnummer": 1,
+                "extensie": 5,
+                "titel": 48,
+                "objecttrefwoorden": 2,
+                "materiaal": 14,
+                "afmetingen": 15,
+                "datering_beginjaar": 18,
+                "datering_eindjaar": 19,
+                "plaats_vervaardiging": 20,
+                "technieken": 21,
+                "vervaardiger": 22,
+                "beschrijving": 3,
+                "opschrift_merken": 17,
+                "trefwoorden": 51,
+                "associatie": 23,
+                "herkomst": 40,
+                "licentie": 85
+            }
         }
 
         with open(os.path.abspath(os.path.join(
@@ -33,11 +56,11 @@ class MuseumRotterdamItemTestCase(ItemTestCase):
         self.rights = u'https://creativecommons.org/publicdomain/mark/1.0/'
         self.original_object_id = u'4'
         self.original_object_urls = {
-            u'html': u'http://collectie.museumrotterdam.nl/objecten/4'
+            u'html': u'http://museumrotterdam.nl/collectie/item/4'
         }
         self.media_urls = [{
             'original_url': (
-                'http://collectie.museumrotterdam.nl/beelden/4'),
+                u'http://museumrotterdam.nl/cache/lowres/4_1_700_700.jpg'),
             'content_type': 'image/jpeg'}]
 
     def _instantiate_item(self):

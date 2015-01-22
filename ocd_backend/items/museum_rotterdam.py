@@ -55,21 +55,34 @@ class MuseumRotterdamItem(BaseItem):
     def get_original_object_id(self):
         return unicode(self._get_field('INVENTARISNUMMER'))
 
-    def _get_permalink(self, for_image=False):
-        main_path = 'objecten' if for_image else 'beelden'
+    def _get_permalink(self):
         orig_id = self.get_original_object_id()
         extension = self._get_field('EXTENSIE')
+        base_url = u'http://museumrotterdam.nl/collectie/item'
 
         if extension is not None:
-            html_link = 'http://collectie.museumrotterdam.nl/%s/%s-%s' % (
-                main_path, orig_id,  extension,
-            )
+            html_link = u'%s/%s-%s' % (
+                base_url, orig_id,  extension)
         else:
-            html_link = 'http://collectie.museumrotterdam.nl/%s/%s' % (
-                main_path, orig_id,
-            )
+            html_link = u'%s/%s' % (
+                base_url, orig_id)
 
         return html_link
+
+    def _get_image(self):
+        orig_id = self.get_original_object_id()
+        extension = self._get_field('EXTENSIE')
+        base_url = u'http://museumrotterdam.nl/cache/lowres'
+
+        if extension is not None:
+            image_link = u'%s/%s-%s' % (
+                base_url, orig_id,  extension)
+        else:
+            image_link = u'%s/%s' % (
+                base_url, orig_id)
+        image_link = image_link + u'_1_700_700.jpg'
+
+        return image_link
 
     def get_original_object_urls(self):
         return {
@@ -112,9 +125,11 @@ class MuseumRotterdamItem(BaseItem):
 
         # get jpeg images
         index_data['media_urls'] = [{
-            'original_url': self._get_permalink(True),
+            'original_url': self._get_image(),
             'content_type': 'image/jpeg'
         }]
+
+        index_data['all_text'] = self.get_all_text()
 
         return index_data
 
