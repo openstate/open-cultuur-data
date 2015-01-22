@@ -364,7 +364,7 @@ Visserijmuseum Zoutkamp index
 TextielMuseum
 -------------
 
-This dataset contains images  from the `TextielMuseum <http://www.textielmuseum/>`_.
+This dataset contains images  from the `TextielMuseum <http://www.textielmuseum.nl/>`_.
 Content is harvested by using the `Adlib API <http://api.adlibsoft.com/site/>`_.
 
 Combined index
