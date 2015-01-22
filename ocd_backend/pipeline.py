@@ -6,7 +6,6 @@ from elasticsearch.exceptions import NotFoundError
 from ocd_backend.es import elasticsearch as es
 from ocd_backend import settings, celery_app
 from ocd_backend.log import get_source_logger
-from ocd_backend.tasks import UpdateAlias
 from ocd_backend.utils.misc import load_object
 from ocd_backend.exceptions import ConfigurationError
 
@@ -58,13 +57,15 @@ def setup_pipeline(source_definition):
 
     try:
         for i, item in enumerate(extractor.run()):
-            # Generate an identifier for each chain, and record that in {}_chains,
-            # so that we can know for sure when all tasks from an extractor have
-            # finished
+            # Generate an identifier for each chain, and record that in
+            # {}_chains, so that we can know for sure when all tasks from an
+            # extractor have finished
             params['chain_id']= uuid4().hex
-            celery_app.backend.add_value_to_set(set_name=run_identifier_chains, value=params['chain_id'])
+            celery_app.backend.add_value_to_set(set_name=run_identifier_chains,
+                                                value=params['chain_id'])
 
-            (transformer.s(*item, source_definition=source_definition, **params) | loader.s(source_definition=source_definition, **params)).delay()
+            (transformer.s(*item, source_definition=source_definition, **params)
+             | loader.s(source_definition=source_definition, **params)).delay()
     except:
         logger.error('An exception has occured in the "{extractor}" extractor. '
                      'Deleting index "{index}" and setting status of run '
