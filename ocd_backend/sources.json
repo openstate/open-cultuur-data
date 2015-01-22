@@ -5,7 +5,8 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.rijksmuseum.RijksmuseumItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
-        "rijksmuseum_api_key": ""
+        "rijksmuseum_api_key": "",
+        "index_name": "rijksmuseum"
     },
     {
         "id": "openbeelden",
@@ -14,7 +15,8 @@
         "item": "ocd_backend.items.openbeelden.OpenbeeldenItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "oai_base_url": "http://www.openbeelden.nl/feeds/oai/",
-        "oai_metadata_prefix": "oai_oi"
+        "oai_metadata_prefix": "oai_oi",
+        "index_name": "open-beelden"
     },
     {
         "id": "amsterdammuseum",
@@ -23,7 +25,8 @@
         "item": "ocd_backend.items.amsterdammuseum.AmsterdamMuseumItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "oai_base_url": "http://ahm.adlibsoft.com/oaix/oai.ashx",
-        "oai_metadata_prefix": "oai_dc"
+        "oai_metadata_prefix": "oai_dc",
+        "index_name": "amsterdam-museum"
     },
     {
         "id": "nationaal_archief_beeldbank",
@@ -32,7 +35,8 @@
         "item": "ocd_backend.items.nabeeldbank.NationaalArchiefBeeldbankItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "opensearch_url": "http://www.gahetna.nl/beeldbank-api/opensearch/",
-        "opensearch_query": "\"*:*\""
+        "opensearch_query": "\"*:*\"",
+        "index_name": "nationaal-archief-beeldbank"
     },
     {
         "id": "centraal_museum_utrecht",
@@ -41,7 +45,8 @@
         "item": "ocd_backend.items.cmutrecht.CentraalMuseumUtrechtItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "file_url": "http://static.opencultuurdata.nl/centraal_museum_utrecht/cmu.xml",
-        "item_xpath": "//record"
+        "item_xpath": "//record",
+        "index_name": "centraal-museum-utrecht"
     },
     {
         "id": "openarchieven",
@@ -50,7 +55,8 @@
         "item": "ocd_backend.items.openarchieven.OpenArchievenItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "oai_base_url": "http://api.openarch.nl/oai-pmh/",
-        "oai_metadata_prefix": "oai_a2a"
+        "oai_metadata_prefix": "oai_a2a",
+        "index_name": "open-archieven"
     },
     {
         "id": "erfgoed_leiden_beeldbank",
@@ -59,7 +65,8 @@
         "item": "ocd_backend.items.elobeeldbank.ErfgoedLeidenBeeldbankItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "opensearch_url": "http://www.archiefleiden.nl/api/opensearch/",
-        "opensearch_query": "\"*:*\""
+        "opensearch_query": "\"*:*\"",
+        "index_name": "beeldbank-erfgoed-leiden"
     },
     {
         "id": "kb_byvanckb",
@@ -69,7 +76,8 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "oai_base_url": "http://services.kb.nl/mdo/oai",
         "oai_metadata_prefix": "dcx",
-        "oai_set": "ByvanckB"
+        "oai_set": "ByvanckB",
+        "index_name": "byvanckb-koninklijke-bibliotheek"
     },
     {
         "id": "uukaarten",
@@ -79,7 +87,8 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "oai_base_url": "http://dspace.library.uu.nl/oai/request",
         "oai_metadata_prefix": "oai_dc",
-        "oai_set": "col_1874_213366"
+        "oai_set": "col_1874_213366",
+        "index_name": "kaarten-universiteitsbibliotheek-utrecht"
     },
     {
         "id": "zoutkamp",
@@ -89,7 +98,8 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "adlib_base_url": "http://mmr.adlibhosting.com/madigopacx/wwwopac.ashx",
         "adlib_database": "ChoiceMardig",
-        "adlib_query": "museum=0011"
+        "adlib_query": "museum=0011",
+        "index_name": "visserijmuseum-zoutkamp"
     },
     {
         "id": "textielmuseum",
@@ -98,7 +108,8 @@
         "item": "ocd_backend.items.textielmuseum.TextielMuseumItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "adlib_base_url": "http://37.17.215.121:85/opendata/wwwopac.ashx",
-        "adlib_database": "collect"
+        "adlib_database": "collect",
+        "index_name": "textielmuseum"
     },
     {
         "id": "tropenmuseum",
@@ -107,7 +118,8 @@
         "item": "ocd_backend.items.tropenmuseum.TropenMuseumItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "wikimedia_base_url": "http://commons.wikimedia.org/w/api.php",
-        "wikimedia_category": "Category:Images_from_the_Tropenmuseum"
+        "wikimedia_category": "Category:Images_from_the_Tropenmuseum",
+        "index_name": "tropenmuseum",
     },
     {
         "id": "fries_museum",
@@ -116,7 +128,8 @@
         "item": "ocd_backend.items.friesmuseum.FriesMuseumItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "file_url": "http://static.opencultuurdata.nl/fries_museum/20120616_Textiel_Hack_FM.xml",
-        "item_xpath": "//adlibXML/recordList/record"
+        "item_xpath": "//adlibXML/recordList/record",
+        "index_name": "mode-fries-museum"
     },
     {
         "id": "museum_rotterdam",
@@ -145,23 +158,26 @@
             "associatie":23,
             "herkomst":40,
             "licentie":85
-        }
+        },
+        "index_name": "museum-rotterdam"
     },
     {
-      "id": "ra_tilburg",
-      "extractor": "ocd_backend.extractors.oai.OaiExtractor",
-      "transformer": "ocd_backend.transformers.BaseTransformer",
-      "item": "ocd_backend.items.ra_tilburg.RegionaalArchiefTilburgItem",
-      "loader": "ocd_backend.loaders.ElasticsearchLoader",
-      "oai_base_url": "http://api.memorix-maior.nl/collectiebeheer/a2a/key/42de466c-8cb5-11e3-9b8b-00155d012a18/tenant/tlb",
-      "oai_metadata_prefix": "oai_a2a"
+        "id": "ra_tilburg",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.ra_tilburg.RegionaalArchiefTilburgItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "oai_base_url": "http://api.memorix-maior.nl/collectiebeheer/a2a/key/42de466c-8cb5-11e3-9b8b-00155d012a18/tenant/tlb",
+        "oai_metadata_prefix": "oai_a2a",
+        "index_name": "regionaal-archief-tilburg"
     },
     {
-      "id": "gemeente_ede",
-      "extractor": "ocd_backend.extractors.staticfile.StaticJSONExtractor",
-      "transformer": "ocd_backend.transformers.BaseTransformer",
-      "item": "ocd_backend.items.gemeente_ede.GemeenteEdeItem",
-      "loader": "ocd_backend.loaders.ElasticsearchLoader",
-      "file_url": "http://static.opencultuurdata.nl/gemeente_ede/2014OpenData_ABWigman_CSV_06-12.json"
+        "id": "gemeente_ede",
+        "extractor": "ocd_backend.extractors.staticfile.StaticJSONExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.gemeente_ede.GemeenteEdeItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "file_url": "http://static.opencultuurdata.nl/gemeente_ede/2014OpenData_ABWigman_CSV_06-12.json",
+        "index_name": "gemeente-ede"
     }
 ]
