@@ -26,9 +26,14 @@ class BaseLoader(OCDBackendTaskMixin, Task):
         run_identifier_chains = '{}_chains'.format(run_identifier)
         self._remove_chain(run_identifier_chains, kwargs.get('chain_id'))
 
-        if self.backend.get_set_cardinality(run_identifier_chains) < 1 and not self.backend.get(run_identifier):
+        if self.backend.get_set_cardinality(run_identifier_chains) < 1 and self.backend.get(run_identifier) == 'done':
             self.backend.remove(run_identifier_chains)
             self.run_finished(run_identifier_chains)
+        else:
+            # If the extractor is still running, extend the lifetime of the
+            # identifier
+            self.backend.update_ttl(run_identifier, settings.CELERY_CONFIG
+                                    .get('CELERY_TASK_RESULT_EXPIRES', 1800))
 
         # Call any superclass after_return implementation, in order to stay
         # compatible with chord implementations:
