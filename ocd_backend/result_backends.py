@@ -49,6 +49,9 @@ class OCDBackendMixin(object):
         raise NotImplementedError('Subclass should implement `get_set_cardinal'
                                   'ity` method')
 
+    def update_ttl(self, key, ttl=300):
+        """Extend the TTL of `key` with `ttl` seconds"""
+
 
 class OCDRedisBackend(RedisBackend, OCDBackendMixin):
 
@@ -66,3 +69,6 @@ class OCDRedisBackend(RedisBackend, OCDBackendMixin):
 
     def remove(self, key):
         return self.client.delete(key)
+
+    def update_ttl(self, key, ttl=300):
+        return self.client.expire(key, ttl)
