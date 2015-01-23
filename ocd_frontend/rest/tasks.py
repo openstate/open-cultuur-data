@@ -10,7 +10,7 @@ celery = create_celery_app()
 
 @celery.task(ignore_result=True)
 def log_event(user_agent, referer, user_ip, created_at, event_type, **kwargs):
-    """Log user activity events to the specified 'usage loggin'
+    """Log user activity events to the specified 'usage logging'
     ElasticSearch index.
 
     :param user_agent: the user's raw user agent string
