@@ -6,11 +6,11 @@ from celery import Task
 
 from ocd_backend import settings
 from ocd_backend.exceptions import NoDeserializerAvailable
-from ocd_backend.mixins import OCDBackendTaskMixin
+from ocd_backend.mixins import OCDBackendTaskFailureMixin
 from ocd_backend.utils.misc import load_object
 
 
-class BaseTransformer(OCDBackendTaskMixin, Task):
+class BaseTransformer(OCDBackendTaskFailureMixin, Task):
 
     ignore_result = False
 

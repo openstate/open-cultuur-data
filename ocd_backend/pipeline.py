@@ -56,14 +56,13 @@ def setup_pipeline(source_definition):
     run_identifier_chains = '{}_chains'.format(params['run_identifier'])
 
     try:
-        for i, item in enumerate(extractor.run()):
+        for item in extractor.run():
             # Generate an identifier for each chain, and record that in
             # {}_chains, so that we can know for sure when all tasks from an
             # extractor have finished
             params['chain_id']= uuid4().hex
             celery_app.backend.add_value_to_set(set_name=run_identifier_chains,
                                                 value=params['chain_id'])
-
             (transformer.s(*item, source_definition=source_definition, **params)
              | loader.s(source_definition=source_definition, **params)).delay()
     except:

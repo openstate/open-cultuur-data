@@ -7,45 +7,14 @@ from ocd_backend import settings
 from ocd_backend.es import elasticsearch
 from ocd_backend.exceptions import ConfigurationError
 from ocd_backend.log import get_source_logger
-from ocd_backend.mixins import OCDBackendTaskMixin
-from ocd_backend.tasks import UpdateAlias
+from ocd_backend.mixins import (OCDBackendTaskSuccessMixin,
+                                OCDBackendTaskFailureMixin)
 
 log = get_source_logger('loader')
 
 
-class BaseLoader(OCDBackendTaskMixin, Task):
+class BaseLoader(OCDBackendTaskSuccessMixin, OCDBackendTaskFailureMixin, Task):
     """The base class that other loaders should inherit."""
-
-    def after_return(self, status, retval, task_id, args, kwargs, einfo):
-        """Remove the chain_id from the set of IDs available for this run.
-        After that, if no more chains are running, or no more tasks are in the
-        process of being added, remove the ID of this run, and call a hook that
-        should be implemented in the actual loader"""
-
-        run_identifier = kwargs.get('run_identifier')
-        run_identifier_chains = '{}_chains'.format(run_identifier)
-        self._remove_chain(run_identifier_chains, kwargs.get('chain_id'))
-
-        if self.backend.get_set_cardinality(run_identifier_chains) < 1 and self.backend.get(run_identifier) == 'done':
-            self.backend.remove(run_identifier_chains)
-            self.run_finished(run_identifier_chains)
-        else:
-            # If the extractor is still running, extend the lifetime of the
-            # identifier
-            self.backend.update_ttl(run_identifier, settings.CELERY_CONFIG
-                                    .get('CELERY_TASK_RESULT_EXPIRES', 1800))
-
-        # Call any superclass after_return implementation, in order to stay
-        # compatible with chord implementations:
-        # http://docs.celeryproject.org/en/latest/userguide/canvas.html#chords
-        super(OCDBackendTaskMixin, self).after_return(status, retval, task_id,
-                                                      args, kwargs, einfo)
-
-
-    def run_finished(self, run_identifier):
-        raise NotImplementedError('You should define a method that is called '
-                                  'when a run is finished')
-
 
     def run(self, *args, **kwargs):
         """Start loading of a single item.
@@ -94,19 +63,6 @@ class ElasticsearchLoader(BaseLoader):
             raise ConfigurationError('The name of the index is not provided')
 
         return super(ElasticsearchLoader, self).run(*args, **kwargs)
-
-    def after_return(self, status, retval, task_id, args, kwargs, einfo):
-        super(ElasticsearchLoader, self).after_return(status, retval, task_id,
-                                                      args, kwargs, einfo)
-
-
-    def run_finished(self, run_identifier):
-        log.info('Finished run {}. Updating alias "{}" to "{}"'
-                 .format(run_identifier, self.alias, self.index_name))
-        update_alias = UpdateAlias()
-        update_alias.delay(current_index_name=self.current_index_name,
-                           new_index_name=self.index_name,
-                           alias=self.alias)
 
     def load_item(self, object_id, combined_index_doc, doc):
         log.info('Indexing documents...')

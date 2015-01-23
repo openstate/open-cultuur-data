@@ -1,17 +1,30 @@
+from ocd_backend.utils.misc import load_object
+
+
 class OCDBackendTaskMixin(object):
     """
-    Mixin for `Tasks` using the backend, which makes sure the Task cleans up
-    bookkeeping that is happening in the result backend to know when all tasks
-    have finished.
+    This Mixin provides a cleanup method that is called from the classes that
+    inherit from it: this way, we can provide cleanup behaviour that is either
+    executed when a task fails (for instance, when it is somewhere in the middle
+    of a chain), or when a task is successfully executed (for instance, when a
+    loader successfully inserted its data into the storage system.
+
+    It loads a `Task` that is defined by a dotted path in `sources.json`.
     """
+    def cleanup(self, **kwargs):
+        cleanup_task = load_object(self.source_definition.get('cleanup'))()
+        cleanup_task.delay(**kwargs)
+
+
+class OCDBackendTaskFailureMixin(OCDBackendTaskMixin):
+    """Add this mixin to a task that should execute `self.cleanup` when the
+    Task fails."""
     def on_failure(self, exc, task_id, args, kwargs, einfo):
-        self._remove_chain('{}_chains'.format(kwargs.get('run_identifier')),
-                           kwargs.get('chain_id'))
-        self.AsyncResult(task_id=task_id).forget()
+        self.cleanup(**kwargs)
 
-    def _remove_chain(self, run_identifier, value):
-        self.backend.remove_value_from_set(run_identifier, value)
 
-        # If we've removed the last value, remove the set key as well
-        if self.backend.get_set_cardinality(run_identifier) < 1:
-            self.backend.remove(run_identifier)
+class OCDBackendTaskSuccessMixin(OCDBackendTaskMixin):
+    """Add this mixin to a task that should execute `self.cleanup` when the
+    Task succeeds."""
+    def after_return(self, status, retval, task_id, args, kwargs, einfo):
+        self.cleanup(**kwargs)
