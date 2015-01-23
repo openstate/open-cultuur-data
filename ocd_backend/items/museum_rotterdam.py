@@ -6,7 +6,6 @@ from ocd_backend.items import BaseItem
 from ocd_backend.utils.misc import try_convert, parse_date, parse_date_span
 
 
-
 class MuseumRotterdamItem(BaseItem):
     def _get_namespaces(self):
         try:
@@ -25,7 +24,7 @@ class MuseumRotterdamItem(BaseItem):
         try:
             return self._mapping
         except AttributeError, e:
-            pass # we need to build it
+            pass  # we need to build it
 
         self._mapping = self.source_definition['cb3_mapping']
         return self._mapping
@@ -45,7 +44,7 @@ class MuseumRotterdamItem(BaseItem):
             res = self.original_item.xpath(
                 xpath_query, namespaces=namespaces
             )
-            
+
             if len(res) > 0:
                 return u''.join(res[0].xpath('.//text()'))
             else:
@@ -56,21 +55,34 @@ class MuseumRotterdamItem(BaseItem):
     def get_original_object_id(self):
         return unicode(self._get_field('INVENTARISNUMMER'))
 
-    def _get_permalink(self, for_image=False):
-        main_path = 'objecten' if for_image else 'beelden'
+    def _get_permalink(self):
         orig_id = self.get_original_object_id()
         extension = self._get_field('EXTENSIE')
+        base_url = u'http://museumrotterdam.nl/collectie/item'
 
         if extension is not None:
-            html_link = 'http://collectie.museumrotterdam.nl/%s/%s-%s' % (
-                main_path, orig_id,  extension,
-            )
+            html_link = u'%s/%s-%s' % (
+                base_url, orig_id,  extension)
         else:
-            html_link = 'http://collectie.museumrotterdam.nl/%s/%s' % (
-                main_path, orig_id,
-            )
+            html_link = u'%s/%s' % (
+                base_url, orig_id)
 
         return html_link
+
+    def _get_image(self):
+        orig_id = self.get_original_object_id()
+        extension = self._get_field('EXTENSIE')
+        base_url = u'http://museumrotterdam.nl/cache/lowres'
+
+        if extension is not None:
+            image_link = u'%s/%s-%s' % (
+                base_url, orig_id,  extension)
+        else:
+            image_link = u'%s/%s' % (
+                base_url, orig_id)
+        image_link = image_link + u'_1_700_700.jpg'
+
+        return image_link
 
     def get_original_object_urls(self):
         return {
@@ -82,17 +94,17 @@ class MuseumRotterdamItem(BaseItem):
 
     def get_rights(self):
         # rights are defined for the whole collection.
-        return u'No Rights Reserved / Public Domain'
+        return self._get_field('LICENTIE')
 
     def get_combined_index_data(self):
         index_data = {}
-        
+
         title = self._get_field('TITEL')
-        if title != None:
+        if title is not None:
             index_data['title'] = unicode(title)
 
         gran = 4
-        
+
         try:
             date = datetime.datetime(
                 int(self._get_field('DATERING_BEGINJAAR')), 1, 1
@@ -105,7 +117,7 @@ class MuseumRotterdamItem(BaseItem):
             index_data['date'] = date
 
         description = self._get_field('BESCHRIJVING')
-        if description != None:
+        if description is not None:
             index_data['description'] = unicode(description)
 
         # author is optional
@@ -113,9 +125,11 @@ class MuseumRotterdamItem(BaseItem):
 
         # get jpeg images
         index_data['media_urls'] = [{
-            'original_url': self._get_permalink(True),
+            'original_url': self._get_image(),
             'content_type': 'image/jpeg'
         }]
+
+        index_data['all_text'] = self.get_all_text()
 
         return index_data
 
