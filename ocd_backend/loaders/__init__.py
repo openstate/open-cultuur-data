@@ -7,13 +7,14 @@ from ocd_backend import settings
 from ocd_backend.es import elasticsearch
 from ocd_backend.exceptions import ConfigurationError
 from ocd_backend.log import get_source_logger
+from ocd_backend.mixins import (OCDBackendTaskSuccessMixin,
+                                OCDBackendTaskFailureMixin)
 
 log = get_source_logger('loader')
 
-class BaseLoader(Task):
-    """The base class that other loaders should inherit."""
 
-    ignore_result = False
+class BaseLoader(OCDBackendTaskSuccessMixin, OCDBackendTaskFailureMixin, Task):
+    """The base class that other loaders should inherit."""
 
     def run(self, *args, **kwargs):
         """Start loading of a single item.
@@ -30,17 +31,16 @@ class BaseLoader(Task):
         """
         self.source_definition = kwargs['source_definition']
 
-        object_id, combined_index_doc, doc, transformer_task_id = args[0]
+        object_id, combined_index_doc, doc = args[0]
 
         # Add the 'processing.finished' datetime to the documents
         finished = datetime.now()
         combined_index_doc['meta']['processing_finished'] = finished
         doc['meta']['processing_finished'] = finished
 
-        return self.load_item(object_id, combined_index_doc, doc,
-                              transformer_task_id)
+        return self.load_item(object_id, combined_index_doc, doc)
 
-    def load_item(self, object_id, combined_index_doc, doc, transformer_task_id):
+    def load_item(self, object_id, combined_index_doc, doc):
         raise NotImplemented
 
 
@@ -55,14 +55,16 @@ class ElasticsearchLoader(BaseLoader):
     ``RESOLVER_URL_INDEX`` (if it doesn't already exist).
     """
     def run(self, *args, **kwargs):
-        self.index_name = kwargs.get('index_name')
+        self.current_index_name = kwargs.get('current_index_name')
+        self.index_name = kwargs.get('new_index_name')
+        self.alias = kwargs.get('index_alias')
 
         if not self.index_name:
             raise ConfigurationError('The name of the index is not provided')
 
         return super(ElasticsearchLoader, self).run(*args, **kwargs)
 
-    def load_item(self, object_id, combined_index_doc, doc, transformer_task_id):
+    def load_item(self, object_id, combined_index_doc, doc):
         log.info('Indexing documents...')
         elasticsearch.index(index=settings.COMBINED_INDEX, doc_type='item',
                             id=object_id, body=combined_index_doc)
@@ -87,12 +89,6 @@ class ElasticsearchLoader(BaseLoader):
                 except ConflictError:
                     log.debug('Resolver document %s already exists' % url_hash)
 
-        return {
-            'item_id': object_id,
-            'task_id': self.request.id,
-            'transformer_task_id': transformer_task_id
-        }
-
 
 class DummyLoader(BaseLoader):
     """
@@ -106,3 +102,10 @@ class DummyLoader(BaseLoader):
         print '%s %s %s' % ('-' * 20, 'doc', '-' * 25)
         print doc
         print '=' * 50
+
+    def run_finished(self, run_identifier):
+        print '*' * 50
+        print
+        print 'Finished run {}'.format(run_identifier)
+        print
+        print '*' * 50

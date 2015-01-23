@@ -37,8 +37,7 @@ class BaseTransformerTestCase(TransformerTestCase):
     def test_run(self):
         # This implicitly tests item functionality too. Perhaps we want to mock
         # this?
-        object_id, combi_doc, doc, task_id = self.transformer.run(*self.item, source_definition=self.source_definition)
+        object_id, combi_doc, doc = self.transformer.run(*self.item, source_definition=self.source_definition)
         self.assertIsNotNone(object_id)
         self.assertIsNotNone(combi_doc)
         self.assertIsNotNone(doc)
-        self.assertIsNone(task_id)
