@@ -72,7 +72,7 @@ def setup_pipeline(source_definition):
                      .format(index=new_index_name,
                              run_identifier=params['run_identifier'],
                              extractor=source_definition['extractor']))
-        es.indices.delete(new_index_name)
+        
         celery_app.backend.set(params['run_identifier'], 'error')
         raise
 
