@@ -1,6 +1,11 @@
 import os.path
 
 DEBUG = True
+
+# Celery settings
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/1'
+
+# Elasticsearch
 ELASTICSEARCH_HOST = '127.0.0.1'
 ELASTICSEARCH_PORT = 9200
 
@@ -78,7 +83,13 @@ AVAILABLE_FACETS = {
 # requested via the REST API
 ALLOWED_DATE_INTERVALS = ('day', 'week', 'month', 'quarter', 'year')
 
+# Name of the Elasticsearch index used to store URL resolve documnts
 RESOLVER_URL_INDEX = 'ocd_resolver'
+
+# Determines if API usage events should be logged
+USAGE_LOGGING_ENABLED = True
+# Name of the Elasticsearch index used to store logged events
+USAGE_LOGGING_INDEX = 'ocd_usage_logs'
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 DUMPS_DIR = os.path.join(os.path.dirname(ROOT_PATH), 'dumps')

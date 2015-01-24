@@ -1,10 +1,12 @@
 import glob
+from datetime import datetime
+
 from flask import (Blueprint, current_app, request, jsonify, redirect, url_for,)
 from elasticsearch import NotFoundError
 from urlparse import urljoin
 
-from ocd_frontend.rest import (OcdApiError, decode_json_post_data,
-                               request_wants_json)
+from ocd_frontend.rest import OcdApiError, decode_json_post_data
+from ocd_frontend.rest import tasks
 
 bp = Blueprint('api', __name__)
 
@@ -73,7 +75,8 @@ def parse_search_request(data, mlt=False):
             if 'size' in facet_opts.get(f_type, {}):
                 size = facet_opts[f_type]['size']
                 if type(size) is not int:
-                    raise OcdApiError('\'facets.%s.size\' should be an integer' % facet, 400)
+                    raise OcdApiError('\'facets.%s.size\' should be an '
+                                      'integer' % facet, 400)
 
                 facets[facet][f_type]['size'] = size
 
@@ -81,11 +84,13 @@ def parse_search_request(data, mlt=False):
             if 'interval' in facet_opts.get(f_type, {}):
                 interval = facet_opts[f_type]['interval']
                 if type(interval) is not unicode:
-                    raise OcdApiError('\'facets.%s.interval\' should be a string' % facet, 400)
+                    raise OcdApiError('\'facets.%s.interval\' should be '
+                                      'a string' % facet, 400)
 
                 if interval not in current_app.config['ALLOWED_DATE_INTERVALS']:
                     raise OcdApiError('\'%s\' is an invalid interval for '
-                                      '\'facets.%s.interval\'' % (interval, facet), 400)
+                                      '\'facets.%s.interval\''
+                                      % (interval, facet), 400)
 
                 facets[facet][f_type]['interval'] = interval
 
@@ -107,12 +112,15 @@ def parse_search_request(data, mlt=False):
                 raise OcdApiError('Missing \'filters.%s.terms\'' % r_filter, 400)
 
             if type(filter_opts['terms']) is not list:
-                raise OcdApiError('\'filters.%s.terms\' should be an array' % r_filter, 400)
+                raise OcdApiError('\'filters.%s.terms\' should be an array'
+                                  % r_filter, 400)
 
             # Check the type of each item in the list
             for term in filter_opts['terms']:
                 if type(term) is not unicode and type(term) is not int:
-                    raise OcdApiError('\'filters.%s.terms\' should only contain strings and integers' % r_filter, 400)
+                    raise OcdApiError('\'filters.%s.terms\' should only '
+                                      'contain strings and integers'
+                                      % r_filter, 400)
 
             filters.append({
                 'terms': {
@@ -121,7 +129,8 @@ def parse_search_request(data, mlt=False):
             })
         elif f_type == 'date_histogram':
             if type(filter_opts) is not dict:
-                raise OcdApiError('\'filters.%s\' should be an object' % r_filter, 400)
+                raise OcdApiError('\'filters.%s\' should be an object'
+                                  % r_filter, 400)
 
             field = available_facets[r_filter]['date_histogram']['field']
             r_filter = {'range': {field: {}}}
@@ -163,7 +172,8 @@ def format_search_results(results):
     return results
 
 
-def validate_included_fields(include_fields, excluded_fields, allowed_to_include):
+def validate_included_fields(include_fields, excluded_fields,
+                             allowed_to_include):
     """
     Utility method that determines if the requested fields that the user wants
     to see included may actually be included.
@@ -177,6 +187,7 @@ def validate_included_fields(include_fields, excluded_fields, allowed_to_include
         if field and field in excluded_fields and field in allowed_to_include:
             excluded_fields.remove(field)
     return excluded_fields
+
 
 def format_sources_results(results):
     sources = []
@@ -217,7 +228,19 @@ def list_sources():
         "size": 0
     }
 
-    es_r = current_app.es.search(body=es_q, index=current_app.config['COMBINED_INDEX'])
+    es_r = current_app.es.search(body=es_q,
+                                 index=current_app.config['COMBINED_INDEX'])
+
+    # Log a 'sources' event if usage logging is enabled
+    if current_app.config['USAGE_LOGGING_ENABLED']:
+        tasks.log_event.delay(
+            user_agent=request.user_agent.string,
+            referer=request.headers.get('Referer', None),
+            user_ip=request.remote_addr,
+            created_at=datetime.utcnow(),
+            event_type='sources',
+            query_time_ms=es_r['took']
+        )
 
     return jsonify(format_sources_results(es_r))
 
@@ -269,7 +292,30 @@ def search():
             'bool': {'must': search_req['filters']}
         }
 
-    es_r = current_app.es.search(body=es_q, index=current_app.config['COMBINED_INDEX'])
+    es_r = current_app.es.search(body=es_q,
+                                 index=current_app.config['COMBINED_INDEX'])
+
+    # Log a 'search' event if usage logging is enabled
+    if current_app.config['USAGE_LOGGING_ENABLED']:
+        hit_log = []
+        for hit in es_r['hits']['hits']:
+            hit_log.append({
+                'source_id': hit['_source']['meta']['source_id'],
+                'object_id': hit['_id'],
+                'score': hit['_score']
+            })
+
+        tasks.log_event.delay(
+            user_agent=request.user_agent.string,
+            referer=request.headers.get('Referer', None),
+            user_ip=request.remote_addr,
+            created_at=datetime.utcnow(),
+            event_type='search',
+            query=search_req,
+            hits=hit_log,
+            n_total_hits=es_r['hits']['total'],
+            query_time_ms=es_r['took']
+        )
 
     return jsonify(format_search_results(es_r))
 
@@ -333,12 +379,36 @@ def search_source(source_id):
     except NotFoundError:
         raise OcdApiError('Source \'%s\' does not exist' % source_id, 404)
 
+    # Log a 'search' event if usage logging is enabled
+    if current_app.config['USAGE_LOGGING_ENABLED']:
+        hit_log = []
+        for hit in es_r['hits']['hits']:
+            hit_log.append({
+                'source_id': hit['_source']['meta']['source_id'],
+                'object_id': hit['_id'],
+                'score': hit['_score']
+            })
+
+        tasks.log_event.delay(
+            user_agent=request.user_agent.string,
+            referer=request.headers.get('Referer', None),
+            user_ip=request.remote_addr,
+            created_at=datetime.utcnow(),
+            event_type='search',
+            source_id=source_id,
+            query=search_req,
+            hits=hit_log,
+            n_total_hits=es_r['hits']['total'],
+            query_time_ms=es_r['took']
+        )
+
     return jsonify(format_search_results(es_r))
 
 
 @bp.route('/<source_id>/<object_id>', methods=['GET'])
 def get_object(source_id, object_id):
-    index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'], source_id)
+    index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'],
+                            source_id)
 
     include_fields = [f.strip() for f in request.args.get('include_fields', '').split(',') if f.strip()]
 
@@ -360,12 +430,25 @@ def get_object(source_id, object_id):
 
         raise OcdApiError(message, 404)
 
+    # Log a 'get_object' event if usage logging is enabled
+    if current_app.config['USAGE_LOGGING_ENABLED']:
+        tasks.log_event.delay(
+            user_agent=request.user_agent.string,
+            referer=request.headers.get('Referer', None),
+            user_ip=request.remote_addr,
+            created_at=datetime.utcnow(),
+            event_type='get_object',
+            source_id=source_id,
+            object_id=object_id
+        )
+
     return jsonify(obj['_source'])
 
 
 @bp.route('/<source_id>/<object_id>/source')
 def get_object_source(source_id, object_id):
-    index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'], source_id)
+    index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'],
+                            source_id)
 
     try:
         obj = current_app.es.get(index=index_name, id=object_id,
@@ -381,7 +464,110 @@ def get_object_source(source_id, object_id):
     resp = current_app.make_response(obj['_source']['source_data']['data'])
     resp.mimetype = obj['_source']['source_data']['content_type']
 
+    # Log a 'get_object_source' event if usage logging is enabled
+    if current_app.config['USAGE_LOGGING_ENABLED']:
+        tasks.log_event.delay(
+            user_agent=request.user_agent.string,
+            referer=request.headers.get('Referer', None),
+            user_ip=request.remote_addr,
+            created_at=datetime.utcnow(),
+            event_type='get_object_source',
+            source_id=source_id,
+            object_id=object_id
+        )
+
     return resp
+
+
+@bp.route('/<source_id>/<object_id>/stats')
+def get_object_stats(source_id, object_id):
+    index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'],
+                            source_id)
+
+    object_exists = current_app.es.exists(index=index_name, id=object_id)
+    if not object_exists:
+        raise OcdApiError('Document or source not found.', 404)
+
+    queries = [
+        (
+            'n_appeared_in_search_results',
+            'search',
+            {
+                "query": {
+                    "constant_score": {
+                        "filter": {
+                            "term": {
+                                "event_properties.hits.object_id": object_id
+                            }
+                        }
+                    }
+                }
+            }
+        ),
+        (
+            'n_appeared_in_similar_results',
+            'similar',
+            {
+                "query": {
+                    "constant_score": {
+                        "filter": {
+                            "term": {
+                                "event_properties.hits.object_id": object_id
+                            }
+                        }
+                    }
+                }
+            }
+        ),
+        (
+            'n_get',
+            'get_object',
+            {
+                "query": {
+                    "constant_score": {
+                        "filter": {
+                            "term": {
+                                "event_properties.object_id": object_id
+                            }
+                        }
+                    }
+                }
+            }
+        ),
+        (
+            'n_get_source',
+            'get_object_source',
+            {
+                "query": {
+                    "constant_score": {
+                        "filter": {
+                            "term": {
+                                "event_properties.object_id": object_id
+                            }
+                        }
+                    }
+                }
+            }
+        )
+    ]
+
+    search_body = []
+
+    for query in queries:
+        search_body.append({
+            'index': current_app.config['USAGE_LOGGING_INDEX'],
+            'type': query[1],
+            'search_type': 'count'
+        })
+        search_body.append(query[2])
+
+    es_r = current_app.es.msearch(search_body)
+
+    stats = {}
+    for query_i, result in enumerate(es_r['responses']):
+        stats[queries[query_i][0]] = result['hits']['total']
+
+    return jsonify(stats)
 
 
 @bp.route('/<source_id>/similar/<object_id>', methods=['POST'])
@@ -393,14 +579,16 @@ def similar(object_id, source_id=None):
     search_params.pop('query')
 
     if source_id:
-        index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'], source_id)
+        index_name = '%s_%s' % (current_app.config['DEFAULT_INDEX_PREFIX'],
+                                source_id)
     else:
         index_name = current_app.config['COMBINED_INDEX']
 
     excluded_fields = validate_included_fields(
-        include_fields=include_fields,
-        excluded_fields=['all_text'],
-        allowed_to_include=['all_text']
+        include_fields=search_params['include_fields'],
+        excluded_fields=['all_text', 'source_data', 'media_urls.original_url',
+                         'combined_index_data'],
+        allowed_to_include=['all_text', 'source_data']
     )
 
     es_q = {
@@ -414,9 +602,9 @@ def similar(object_id, source_id=None):
                             '_id': object_id
                         }],
                         'fields': [
-                            'title^3',
-                            'authors^2',
-                            'description^2',
+                            'title',
+                            'authors',
+                            'description',
                             'meta.original_object_id',
                             'all_text'
                         ]
@@ -441,8 +629,35 @@ def similar(object_id, source_id=None):
             'bool': {'must': search_params['filters']}
         }
 
-    es_r = current_app.es.search(body=es_q, index=index_name,
-                                 _source_exclude=['media_urls.original_url'])
+    try:
+        es_r = current_app.es.search(body=es_q, index=index_name,
+                                     _source_exclude=excluded_fields)
+    except NotFoundError:
+        raise OcdApiError('Source \'%s\' does not exist' % source_id, 404)
+
+    # Log a 'search_similar' event if usage logging is enabled
+    if current_app.config['USAGE_LOGGING_ENABLED']:
+        hit_log = []
+        for hit in es_r['hits']['hits']:
+            hit_log.append({
+                'source_id': hit['_source']['meta']['source_id'],
+                'object_id': hit['_id'],
+                'score': hit['_score']
+            })
+
+        tasks.log_event.delay(
+            user_agent=request.user_agent.string,
+            referer=request.headers.get('Referer', None),
+            user_ip=request.remote_addr,
+            created_at=datetime.utcnow(),
+            event_type='search_similar',
+            similar_to_source_id=source_id,
+            similar_to_object_id=object_id,
+            query=search_params,
+            hits=hit_log,
+            n_total_hits=es_r['hits']['total'],
+            query_time_ms=es_r['took']
+        )
 
     return jsonify(format_search_results(es_r))
 
@@ -452,14 +667,27 @@ def resolve(url_id):
     try:
         resp = current_app.es.get(index=current_app.config['RESOLVER_URL_INDEX'],
                                   doc_type='url', id=url_id)
-        return redirect(resp['_source']['original_url'])
     except NotFoundError:
-        if request_wants_json():
+        if request.mimetype == 'application/json':
             raise OcdApiError('URL is not available; the source may no longer '
                               'be available', 404)
+
         return '<html><body>There is no original url available. You may '\
                'have an outdated URL, or the resolve id is incorrect.</body>'\
                '</html>', 404
+
+    # Log a 'resolve' event if usage logging is enabled
+    if current_app.config['USAGE_LOGGING_ENABLED']:
+        tasks.log_event.delay(
+            user_agent=request.user_agent.string,
+            referer=request.headers.get('Referer', None),
+            user_ip=request.remote_addr,
+            created_at=datetime.utcnow(),
+            event_type='resolve',
+            url_id=url_id,
+        )
+
+    return redirect(resp['_source']['original_url'])
 
 
 @bp.route('/dumps', methods=['GET'])

@@ -22,14 +22,6 @@ Using the Open Cultuur Data API
    user/api
    user/datasets
 
-Backup and restore
-------------------
-
-.. toctree::
-   :maxdepth: 2
-
-   backup_and_restore
-
 Contributing to the Open Cultuur Data API
 -----------------------------------------
 .. toctree::
@@ -38,5 +30,6 @@ Contributing to the Open Cultuur Data API
    dev/getting_started
    dev/tech_overview
    dev/first_dataset
+   dev/backup_and_restore
    dev/api
 
