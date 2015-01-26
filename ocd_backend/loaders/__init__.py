@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from elasticsearch import ConflictError
-from celery import Task
+from ocd_backend import celery_app
 
 from ocd_backend import settings
 from ocd_backend.es import elasticsearch
@@ -13,7 +13,8 @@ from ocd_backend.mixins import (OCDBackendTaskSuccessMixin,
 log = get_source_logger('loader')
 
 
-class BaseLoader(OCDBackendTaskSuccessMixin, OCDBackendTaskFailureMixin, Task):
+class BaseLoader(OCDBackendTaskSuccessMixin, OCDBackendTaskFailureMixin,
+                 celery_app.Task):
     """The base class that other loaders should inherit."""
 
     def run(self, *args, **kwargs):
