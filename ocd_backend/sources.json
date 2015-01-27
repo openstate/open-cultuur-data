@@ -96,7 +96,8 @@
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "oai_base_url": "http://dspace.library.uu.nl/oai/request",
         "oai_metadata_prefix": "oai_dc",
-        "oai_set": "col_1874_213366"
+        "oai_set": "col_1874_213366",
+        "index_name": "kaarten-universiteitsbibliotheek-utrecht"
     },
     {
         "id": "rce",
@@ -107,7 +108,8 @@
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "oai_base_url": "http://cultureelerfgoed.adlibsoft.com/oaiapi/oai.ashx",
         "oai_metadata_prefix": "oai_dc",
-        "oai_set": "fotos"
+        "oai_set": "fotos",
+        "index_name": "rijkscultureel-erfgoed-beeldbank"
     },
     {
         "id": "zoutkamp",
