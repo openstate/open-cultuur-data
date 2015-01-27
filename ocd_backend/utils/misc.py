@@ -1,3 +1,4 @@
+import datetime
 import json
 import re
 
@@ -90,3 +91,17 @@ def parse_date_span(regexen, date1_str, date2_str):
             return 2, date1
     else:
         return date1_gran, date1
+
+
+class DatetimeJSONEncoder(json.JSONEncoder):
+    """
+    JSONEncoder that can handle ``datetime.datetime``, ``datetime.date`` and
+    ``datetime.timedelta`` objects.
+    """
+    def default(self, o):
+        if isinstance(o, datetime.datetime) or isinstance(o, datetime.date):
+            return o.isoformat()
+        elif isinstance(o, datetime.timedelta):
+            return (datetime.datetime.min + o).time().isoformat()
+        else:
+            return super(DatetimeJSONEncoder, self).default(o)

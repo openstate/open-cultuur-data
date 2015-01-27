@@ -6,7 +6,7 @@ from ocd_backend.log import get_source_logger
 log = get_source_logger('extractor')
 
 class BaseExtractor(object):
-    """The base class that other extractors should inhert."""
+    """The base class that other extractors should inherit."""
 
     def __init__(self, source_definition):
         """
@@ -19,10 +19,10 @@ class BaseExtractor(object):
     def run(self):
         """Starts the extraction process.
 
-        This method must be implmented by the class that inherits the
+        This method must be implemented by the class that inherits the
         :py:class:`BaseExtractor` and should return a generator that
         yields one item per value. Items should be formatted as tuples
-        containging the following elements (in this order):
+        containing the following elements (in this order):
 
         - the content-type of the data retrieved from the source (e.g.
           ``application/json``)

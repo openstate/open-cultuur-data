@@ -5,7 +5,9 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.rijksmuseum.RijksmuseumItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
-        "rijksmuseum_api_key": ""
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "rijksmuseum_api_key": "",
+        "index_name": "rijksmuseum"
     },
     {
         "id": "openbeelden",
@@ -13,8 +15,10 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.openbeelden.OpenbeeldenItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "oai_base_url": "http://www.openbeelden.nl/feeds/oai/",
-        "oai_metadata_prefix": "oai_oi"
+        "oai_metadata_prefix": "oai_oi",
+        "index_name": "open-beelden"
     },
     {
         "id": "amsterdammuseum",
@@ -22,8 +26,10 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.amsterdammuseum.AmsterdamMuseumItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "oai_base_url": "http://ahm.adlibsoft.com/oaix/oai.ashx",
-        "oai_metadata_prefix": "oai_dc"
+        "oai_metadata_prefix": "oai_dc",
+        "index_name": "amsterdam-museum"
     },
     {
         "id": "nationaal_archief_beeldbank",
@@ -31,16 +37,21 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.nabeeldbank.NationaalArchiefBeeldbankItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "opensearch_url": "http://www.gahetna.nl/beeldbank-api/opensearch/",
-        "opensearch_query": "\"*:*\""
+        "opensearch_query": "\"*:*\"",
+        "index_name": "nationaal-archief-beeldbank"
     },
     {
         "id": "centraal_museum_utrecht",
-        "extractor": "ocd_backend.extractors.cmutrecht.CentraalMuseumUtrechtExtractor",
+        "extractor": "ocd_backend.extractors.staticfile.StaticXmlExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.cmutrecht.CentraalMuseumUtrechtItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
-        "file_url": "http://static.opencultuurdata.nl/centraal_museum_utrecht/cmu.xml"
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "file_url": "http://static.opencultuurdata.nl/centraal_museum_utrecht/cmu.xml",
+        "item_xpath": "//record",
+        "index_name": "centraal-museum-utrecht"
     },
     {
         "id": "openarchieven",
@@ -48,8 +59,10 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.openarchieven.OpenArchievenItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "oai_base_url": "http://api.openarch.nl/oai-pmh/",
-        "oai_metadata_prefix": "oai_a2a"
+        "oai_metadata_prefix": "oai_a2a",
+        "index_name": "open-archieven"
     },
     {
         "id": "erfgoed_leiden_beeldbank",
@@ -57,8 +70,10 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.elobeeldbank.ErfgoedLeidenBeeldbankItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "opensearch_url": "http://www.archiefleiden.nl/api/opensearch/",
-        "opensearch_query": "\"*:*\""
+        "opensearch_query": "\"*:*\"",
+        "index_name": "beeldbank-erfgoed-leiden"
     },
     {
         "id": "kb_byvanckb",
@@ -66,9 +81,11 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.byvanckb.ByvanckBItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "oai_base_url": "http://services.kb.nl/mdo/oai",
         "oai_metadata_prefix": "dcx",
-        "oai_set": "ByvanckB"
+        "oai_set": "ByvanckB",
+        "index_name": "byvanckb-koninklijke-bibliotheek"
     },
     {
         "id": "uukaarten",
@@ -76,9 +93,11 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.uukaarten.UUKaartenItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "oai_base_url": "http://dspace.library.uu.nl/oai/request",
         "oai_metadata_prefix": "oai_dc",
-        "oai_set": "col_1874_213366"
+        "oai_set": "col_1874_213366",
+        "index_name": "kaarten-universiteitsbibliotheek-utrecht"
     },
     {
         "id": "sgd",
@@ -86,9 +105,108 @@
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.sgd.SGDItem",
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "oai_base_url": "http://services.kb.nl/mdo/oai",
         "oai_metadata_prefix": "dcx",
-        "oai_set": "SGD"
+        "oai_set": "SGD",
+        "index_name": "staten-generaal-digitaal"
+    },
+    {
+        "id": "zoutkamp",
+        "extractor": "ocd_backend.extractors.adlib.AdlibExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.zoutkamp.ZoutkampItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "adlib_base_url": "http://mmr.adlibhosting.com/madigopacx/wwwopac.ashx",
+        "adlib_database": "ChoiceMardig",
+        "adlib_query": "museum=0011",
+        "index_name": "visserijmuseum-zoutkamp"
+    },
+    {
+        "id": "textielmuseum",
+        "extractor": "ocd_backend.extractors.adlib.AdlibExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.textielmuseum.TextielMuseumItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "adlib_base_url": "http://37.17.215.121:85/opendata/wwwopac.ashx",
+        "adlib_database": "collect",
+        "index_name": "textielmuseum"
+    },
+    {
+        "id": "tropenmuseum",
+        "extractor": "ocd_backend.extractors.wikimedia.WikimediaCommonsExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.tropenmuseum.TropenMuseumItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "wikimedia_base_url": "http://commons.wikimedia.org/w/api.php",
+        "wikimedia_category": "Category:Images_from_the_Tropenmuseum",
+        "index_name": "tropenmuseum",
+    },
+    {
+        "id": "fries_museum",
+        "extractor": "ocd_backend.extractors.staticfile.StaticXmlExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.friesmuseum.FriesMuseumItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "file_url": "http://static.opencultuurdata.nl/fries_museum/20120616_Textiel_Hack_FM.xml",
+        "item_xpath": "//adlibXML/recordList/record",
+        "index_name": "mode-fries-museum"
+    },
+    {
+        "id": "museum_rotterdam",
+        "extractor": "ocd_backend.extractors.staticfile.StaticXmlExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.museum_rotterdam.MuseumRotterdamItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "file_url": "http://static.opencultuurdata.nl/museum_rotterdam/MuseumRotterdamCollectie19082014.xml",
+        "item_xpath": "//cb3:record",
+        "default_namespace": "cb3",
+        "cb3_mapping": {
+            "inventarisnummer":1,
+            "extensie":5,
+            "titel":48,
+            "objecttrefwoorden":2,
+            "materiaal":14,
+            "afmetingen":15,
+            "datering_beginjaar":18,
+            "datering_eindjaar":19,
+            "plaats_vervaardiging":20,
+            "technieken":21,
+            "vervaardiger":22,
+            "beschrijving":3,
+            "opschrift_merken":17,
+            "trefwoorden":51,
+            "associatie":23,
+            "herkomst":40,
+            "licentie":85
+        },
+        "index_name": "museum-rotterdam"
+    },
+    {
+        "id": "ra_tilburg",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.ra_tilburg.RegionaalArchiefTilburgItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "oai_base_url": "http://api.memorix-maior.nl/collectiebeheer/a2a/key/42de466c-8cb5-11e3-9b8b-00155d012a18/tenant/tlb",
+        "oai_metadata_prefix": "oai_a2a",
+        "index_name": "regionaal-archief-tilburg"
+    },
+    {
+        "id": "gemeente_ede",
+        "extractor": "ocd_backend.extractors.staticfile.StaticJSONExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.gemeente_ede.GemeenteEdeItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "file_url": "http://static.opencultuurdata.nl/gemeente_ede/2014OpenData_ABWigman_CSV_06-12.json",
+        "index_name": "gemeente-ede"
     }
 
 ]

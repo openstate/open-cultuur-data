@@ -6,6 +6,7 @@ celery_app = Celery('ocd_backend', include=[
     'ocd_backend.extractors',
     'ocd_backend.transformers',
     'ocd_backend.loaders',
+    'ocd_backend.tasks'
 ])
 
 celery_app.conf.update(**CELERY_CONFIG)

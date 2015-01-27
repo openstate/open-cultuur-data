@@ -33,7 +33,7 @@ We really like to receive good pull requests for patches, new features or improv
 
 Our advice is to first discuss changes, before you start working on a large pull-request (for instance, when implementing new features or significant refactoring of the code). Otherwise you risk spending time on something that won't be (directly) merged into the project.
 
-Please adhere to the :ref:`dev_coding_conventions` used throughout the project.
+Please adhere to the :ref:`dev_coding_conventions` used throughout the project. Make sure that your pull request includes proper tests (and that they pass) and documentation.
 
 To submit a pull request, follow this process:
 
@@ -56,7 +56,11 @@ To submit a pull request, follow this process:
 
    $ git push origin <topic-branch-name>
 
-5. Open a `Pull Request <https://help.github.com/articles/using-pull-requests/>`_ with a clear title and description against the master branch.
+5. When you've finished writing your awesome additions to the OpenCultuurData API, please make sure you merge with the `upstream dev` branch before you submit your pull request, in order to prevent us from running into massive merge conflict resolutions::
+
+   $ git pull upstream dev
+
+6. Open a `Pull Request <https://help.github.com/articles/using-pull-requests/>`_ with a clear title and description against the `dev` branch.
 
 .. _dev_coding_conventions:
 
