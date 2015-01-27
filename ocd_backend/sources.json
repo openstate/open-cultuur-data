@@ -205,6 +205,5 @@
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "file_url": "http://static.opencultuurdata.nl/gemeente_ede/2014OpenData_ABWigman_CSV_06-12.json",
         "index_name": "gemeente-ede"
->>>>>>> dev
     }
 ]
