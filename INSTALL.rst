@@ -19,7 +19,7 @@ Using `Vagrant <http://www.vagrantup.com/>`_ is by far the easiest way to spin u
 
    $ vagrant up && vagrant ssh
 
-Vagrant will automatically sync your project directory (the directory with the Vagrantfile) between the host and guest machine. In the guest, the project directory can be found under ``/vagrant``. For more information, see the Vagrant documentation on `Synced Folders <http://docs.vagrantup.com/v2/synced-folders/index.html>`_.
+Vagrant will automatically sync your project directory (the directory with the Vagrantfile) between the host and guest machine. Also, it will run a bootstrap script that will take care of installing project dependencies. In the guest, the project directory can be found under ``/vagrant``. For more information, see the Vagrant documentation on `Synced Folders <http://docs.vagrantup.com/v2/synced-folders/index.html>`_.
 
 Manual setup
 ============
@@ -50,12 +50,12 @@ Installation
 
 3. Install Elasticsearch::
    
-   $ wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.2.0.deb
-   $ sudo dpkg -i elasticsearch-1.2.0.deb
+   $ wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.deb
+   $ sudo dpkg -i elasticsearch-1.4.2.deb
 
-4. Install liblxml, libxslt and python-dev::
+4. Install liblxml, libxslt, libssl, libffi and python-dev::
 
-   $ sudo apt-get install libxml2-dev libxslt1-dev python-dev
+   $ sudo apt-get install libxml2-dev libxslt1-dev libssl-dev libffi-dev python-dev
 
 5. Install pip and virtualenv::
 

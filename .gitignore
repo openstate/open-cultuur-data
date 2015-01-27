@@ -39,3 +39,16 @@ docs/_build/
 
 # Vagrant box dir
 .vagrant
+
+# Coverage state file
+.coverage
+
+# Dumps
+dumps/
+local_dumps/
+
+# IDE/editor
+.idea
+
+dumps/*
+local_dumps/*
