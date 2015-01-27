@@ -2,6 +2,7 @@ from datetime import datetime
 
 from ocd_backend.items import BaseItem
 
+
 class RCEItem(BaseItem):
     namespaces = {
         'oai': 'http://www.openarchives.org/OAI/2.0/',
@@ -21,11 +22,12 @@ class RCEItem(BaseItem):
         'mpeg': 'video/mpeg',
         'mpg': 'video/mpeg',
         'png': 'image/png',
-        'jpg': 'image/jpg',
+        'jpg': 'image/jpeg',
     }
 
     def _get_text_or_none(self, xpath_expression):
-        node = self.original_item.find(xpath_expression, namespaces=self.namespaces)
+        node = self.original_item.find(
+            xpath_expression, namespaces=self.namespaces)
         if node is not None and node.text is not None:
             return unicode(node.text)
 
@@ -38,19 +40,19 @@ class RCEItem(BaseItem):
         original_id = self.get_original_object_id()
         return {
             'html': self._get_text_or_none('.//dc:identifier'),
-            'xml': 'http://cultureelerfgoed.adlibsoft.com/oaiapi/oai.ashx?verb=GetRecord&identifier=%s&metadataPrefix=oai_dc' % original_id
-        }
+            'xml': (
+                'http://cultureelerfgoed.adlibsoft.com/oaiapi/oai.ashx?verb='
+                'GetRecord&identifier=%s&metadataPrefix=oai_dc' % original_id)}
 
     def get_collection(self):
         return u'Rijkscultureel Erfgoed Beeldbank'
 
     def get_rights(self):
         rights = self.original_item.find(
-            './/dcterms:rights', namespaces=self.namespaces
-        )
+            './/dcterms:rights', namespaces=self.namespaces)
         return unicode(
-            rights.attrib['{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource']
-        )
+            rights.attrib[
+                '{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource'])
 
     def get_combined_index_data(self):
         combined_index_data = {}
@@ -67,9 +69,7 @@ class RCEItem(BaseItem):
             try_for_year = True
             try:
                 combined_index_data['date'] = datetime.strptime(
-                    self._get_text_or_none('.//dc:date'),
-                    '%Y-%m'
-                )
+                    self._get_text_or_none('.//dc:date'), '%Y-%m')
                 combined_index_data['date_granularity'] = 6
                 try_for_year = False
             except ValueError:
@@ -77,9 +77,7 @@ class RCEItem(BaseItem):
             if try_for_year:
                 try:
                     combined_index_data['date'] = datetime.strptime(
-                        self._get_text_or_none('.//dc:date'),
-                        '%Y'
-                    )
+                        self._get_text_or_none('.//dc:date'), '%Y')
                     combined_index_data['date_granularity'] = 4
                 except ValueError:
                     combined_index_data['date'] = None
@@ -89,17 +87,17 @@ class RCEItem(BaseItem):
         if authors:
             combined_index_data['authors'] = [authors]
 
-        mediums = self.original_item.findall('.//dc:image',
-                                              namespaces=self.namespaces) # always jpg
+        mediums = self.original_item.findall(
+            './/dc:image', namespaces=self.namespaces)  # always jpg
 
         if mediums is not None:
             combined_index_data['media_urls'] = []
 
             for medium in mediums:
                 combined_index_data['media_urls'].append({
-                    'original_url': medium.text,
-                    'content_type': self.media_mime_types[medium.text.split('.')[-1]]
-                })
+                    'original_url': unicode(medium.text.strip()),
+                    'content_type': self.media_mime_types[
+                        unicode(medium.text).strip().split('.')[-1]]})
 
         return combined_index_data
 
