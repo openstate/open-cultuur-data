@@ -14,3 +14,12 @@ class UnableToGenerateObjectId(Exception):
 class NoDeserializerAvailable(Exception):
     """Thrown when there is no deserializer available for the
     content-type of an."""
+
+
+class FieldNotAvailable(Exception):
+    """Exception thrown when a field could not be found."""
+    def __init__(self, field):
+        self.field = field
+
+    def __str__(self):
+        return repr(self.field)
