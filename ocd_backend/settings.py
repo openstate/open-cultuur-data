@@ -13,7 +13,7 @@ CELERY_CONFIG = {
     'CELERY_ACCEPT_CONTENT': ['ocd_serializer'],
     'CELERY_TASK_SERIALIZER': 'ocd_serializer',
     'CELERY_RESULT_SERIALIZER': 'ocd_serializer',
-    'CELERY_RESULT_BACKEND': 'redis://127.0.0.1:6379/0',
+    'CELERY_RESULT_BACKEND': 'ocd_backend.result_backends:OCDRedisBackend+redis://127.0.0.1:6379/0',
     'CELERY_IGNORE_RESULT': True,
     'CELERY_DISABLE_RATE_LIMITS': True,
     # Expire results after 30 minutes; otherwise Redis will keep claiming memory
