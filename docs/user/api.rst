@@ -57,6 +57,8 @@ Collection overview and statistics
          ]
       }
 
+   :statuscode 200: OK, no errors.
+
 .. _rest_search:
 
 Searching within multiple collections
@@ -484,6 +486,36 @@ Retrieving a single object
       <OAI-PMH xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.openarchives.org/OAI/2.0/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
         ... snip ...
       </OAI-PMH>
+
+   :statuscode 200: OK, no errors.
+   :statuscode 404: The requested source and/or object does not exist.
+
+
+.. http:get:: /(source_id)/(object_id)/stats
+
+   Retrieves statistics about the usage of the object within the Open Cultuur Data API. Currently these statistics are very basic, however, we do collect a lot more detailed information. I you wish to see additional stats here, please let us know. There's also a :ref:`more detailed description available <dev_tech_logging>` on how usage of the API is being logged.
+
+   **Example request**
+
+   .. sourcecode:: http
+
+      $ curl -i 'http://api.opencultuurdata.nl/v0/openbeelden/4558763df1b233a57f0176839dc572e9e8726a02/stats'
+
+   **Example response**
+
+   .. sourcecode:: http
+
+      HTTP/1.0 200 OK
+      Content-Type: application/json; charset=utf-8
+      Content-Length: 116
+      Date: Mon, 19 Jan 2015 09:14:19 GMT
+
+      {
+        "n_appeared_in_search_results": 4, 
+        "n_appeared_in_similar_results": 0, 
+        "n_get": 12, 
+        "n_get_source": 0
+      }
 
    :statuscode 200: OK, no errors.
    :statuscode 404: The requested source and/or object does not exist.
