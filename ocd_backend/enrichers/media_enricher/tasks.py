@@ -1,5 +1,7 @@
 from PIL import Image
 
+from ocd_backend.exceptions import UnsupportedContentType
+
 
 class BaseMediaEnrichmentTask(object):
     """The base class that media enrichment tasks should inherit."""
@@ -10,7 +12,7 @@ class BaseMediaEnrichmentTask(object):
     def __init__(self, media_item, content_type, file_object, enrichment_data,
                  object_id, combined_index_doc, doc):
         if content_type.lower() not in self.content_types:
-            raise TypeError
+            raise UnsupportedContentType()
 
         return self.enrich_item(media_item, content_type, file_object,
                                 enrichment_data, object_id, combined_index_doc,

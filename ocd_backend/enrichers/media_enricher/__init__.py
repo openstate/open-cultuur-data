@@ -1,11 +1,13 @@
 import os
 from tempfile import SpooledTemporaryFile
 
-import requests
+from requests import Session
+from requests.packages.urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
 
-from ocd_backend import settings
+from ocd_backend.settings import TEMP_DIR_PATH, USER_AGENT
 from ocd_backend.enrichers import BaseEnricher
-from ocd_backend.exceptions import SkipEnrichment
+from ocd_backend.exceptions import SkipEnrichment, UnsupportedContentType
 from ocd_backend.log import get_source_logger
 
 from .tasks import ImageMetadata
@@ -30,6 +32,25 @@ class MediaEnricher(BaseEnricher):
         'image_metdata': ImageMetadata
     }
 
+    http_session = None
+
+    def setup_http_session(self):
+        if self.http_session:
+            self.http_session.close()
+
+        self.http_session = Session()
+        self.http_session.headers['User-Agent'] = USER_AGENT
+
+        http_retry = Retry(total=5, status_forcelist=[500, 503],
+                           backoff_factor=.5)
+        http_adapter = HTTPAdapter(max_retries=http_retry)
+        self.http_session.mount('http://', http_adapter)
+
+        http_retry = Retry(total=5, status_forcelist=[500, 503],
+                           backoff_factor=.5)
+        http_adapter = HTTPAdapter(max_retries=http_retry)
+        self.http_session.mount('https://', http_adapter)
+
     def fetch_media(self, url):
         """Retrieves a given media object from a remote (HTTP) location
         and returns the content-type and a file-like object containing
@@ -45,19 +66,20 @@ class MediaEnricher(BaseEnricher):
             containing the media content.
         """
 
-        http_resp = requests.get(url, stream=True)
+        http_resp = self.http_session.get(url, stream=True, timeout=(60, 120))
+        http_resp.raise_for_status()
 
-        if not os.path.exists(settings.TEMP_DIR_PATH):
-            log.debug('Creating temp directory %s' % settings.TEMP_DIR_PATH)
-            os.makedirs(settings.TEMP_DIR_PATH)
+        if not os.path.exists(TEMP_DIR_PATH):
+            log.debug('Creating temp directory %s' % TEMP_DIR_PATH)
+            os.makedirs(TEMP_DIR_PATH)
 
         # Create a temporary file to store the media item, write the file
         # to disk if it is larger than 1 MB.
-        media_file = SpooledTemporaryFile(max_size=1024*1024, prefix='ocd_m',
-                                          suffix='tmp',
-                                          dir=settings.TEMP_DIR_PATH)
+        media_file = SpooledTemporaryFile(max_size=1024*1024, prefix='ocd_m_',
+                                          suffix='.tmp',
+                                          dir=TEMP_DIR_PATH)
 
-        for chunk in http_resp.iter_content(chunk_size=1024):
+        for chunk in http_resp.iter_content(chunk_size=512*1024):
             if chunk:  # filter out keep-alive chunks
                 media_file.write(chunk)
 
@@ -78,6 +100,8 @@ class MediaEnricher(BaseEnricher):
         if not doc.get('media_urls', []):
             raise SkipEnrichment('No "media_urls" in document.')
 
+        self.setup_http_session()
+
         media_urls_enrichments = []
         for media_item in doc['media_urls']:
             media_item_enrichment = {}
@@ -86,9 +110,18 @@ class MediaEnricher(BaseEnricher):
             for task in self.enricher_settings['tasks']:
                 # Seek to the beginning of the file before starting a task
                 media_file.seek(0)
-                self.available_tasks[task](media_item, content_type,
-                                           media_file, media_item_enrichment,
-                                           object_id, combined_index_doc, doc)
+                try:
+                    self.available_tasks[task](media_item, content_type,
+                                               media_file,
+                                               media_item_enrichment,
+                                               object_id, combined_index_doc,
+                                               doc)
+                except UnsupportedContentType:
+                    log.debug('Skipping media enrichment task %s, '
+                              'content-type %s (object_id: %s, url %s) is not '
+                              'supported.' % (task, content_type, object_id,
+                                              media_item['original_url']))
+                    continue
 
             media_item_enrichment['url'] = media_item['url']
             media_item_enrichment['original_url'] = media_item['original_url']

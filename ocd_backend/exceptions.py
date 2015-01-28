@@ -28,3 +28,8 @@ class FieldNotAvailable(Exception):
 class SkipEnrichment(Exception):
     """Exception thrown from within an enrichment task to indicate that
     there is a valid reason for skipping the enrichemnt."""
+
+
+class UnsupportedContentType(Exception):
+    """Exception thrown when a media enrichemnt task is asked to process
+    media content that is doesn't understand."""
