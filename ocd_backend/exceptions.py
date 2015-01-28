@@ -23,3 +23,8 @@ class FieldNotAvailable(Exception):
 
     def __str__(self):
         return repr(self.field)
+
+
+class SkipEnrichment(Exception):
+    """Exception thrown from within an enrichment task to indicate that
+    there is a valid reason for skipping the enrichemnt."""

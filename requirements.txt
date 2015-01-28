@@ -16,3 +16,4 @@ Sphinx==1.2.2
 sphinxcontrib-httpdomain==1.2.1
 sphinx-rtd-theme==0.1.6
 BeautifulSoup==3.2.1
+Pillow==2.7.0

@@ -4,6 +4,14 @@
         "extractor": "ocd_backend.extractors.rijksmuseum.RijksmuseumExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
         "item": "ocd_backend.items.rijksmuseum.RijksmuseumItem",
+        "enrichers": [
+            [
+                "ocd_backend.enrichers.media_enricher.MediaEnricher",
+                {
+                    "tasks": ["image_metdata"]
+                }
+            ]     
+        ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "rijksmuseum_api_key": "",
