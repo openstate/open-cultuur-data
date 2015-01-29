@@ -195,5 +195,35 @@
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "file_url": "http://static.opencultuurdata.nl/gemeente_ede/2014OpenData_ABWigman_CSV_06-12.json",
         "index_name": "gemeente-ede"
+    },
+    {
+        "id": "ra_nijmegen_grinten",
+        "extractor": "ocd_backend.extractors.staticfile.StaticJSONExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.ra_nijmegen.NijmegenGrintenItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "file_url": "http://static.opencultuurdata.nl/ra_nijmegen/VanderGrinten_opendata.json",
+        "index_name": "regionaal-archief-nijmegen-van-der-grinten"
+    },
+    {
+        "id": "ra_nijmegen_doornroosje",
+        "extractor": "ocd_backend.extractors.staticfile.StaticJSONExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.ra_nijmegen.NijmegenDoornroosjeItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "file_url": "http://static.opencultuurdata.nl/ra_nijmegen/open_dataset_affiches_doornroosje.json",
+        "index_name": "regionaal-archief-nijmegen-affiches-doornroosje"
+    },
+    {
+        "id": "ra_nijmegen_vierdaagse",
+        "extractor": "ocd_backend.extractors.staticfile.StaticJSONExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.ra_nijmegen.NijmegenVierdaagseItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "file_url": "http://static.opencultuurdata.nl/ra_nijmegen/open_dataset_vierdaagse.json",
+        "index_name": "regionaal-archief-nijmegen-vierdaagse"
     }
-]
+  ]
