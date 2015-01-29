@@ -29,5 +29,6 @@ from .gemeente_ede import GemeenteEdeItemTestCase
 from .nabeeldbank import NationaalArchiefBeeldbankItemTestCase
 from .ra_nijmegen import (
     NijmegenGrintenItemTestCase,
-    # NijmegenDoornroosjeItem, NijmegenVierdaagseItem
+    NijmegenDoornroosjeItemTestCase,
+    # NijmegenVierdaagseItem
 )
