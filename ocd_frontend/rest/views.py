@@ -1,8 +1,10 @@
 import glob
 from flask import (Blueprint, current_app, request, jsonify, redirect, url_for,)
 from elasticsearch import NotFoundError
+import os
 from urlparse import urljoin
 
+from ocd_frontend import thumbnails
 from ocd_frontend.rest import (OcdApiError, decode_json_post_data,
                                request_wants_json)
 
@@ -449,10 +451,39 @@ def similar(object_id, source_id=None):
 
 @bp.route('/resolve/<url_id>', methods=['GET'])
 def resolve(url_id):
+
     try:
         resp = current_app.es.get(index=current_app.config['RESOLVER_URL_INDEX'],
                                   doc_type='url', id=url_id)
-        return redirect(resp['_source']['original_url'])
+
+        # If the media item is not "thumbnailable" (e.g. it's a video), just
+        # return the original url directly
+        if resp['_source'].get('content_type', 'image/jpeg') not in current_app.config['THUMBNAILS_MEDIA_TYPES']:
+            return redirect(resp['_source']['original_url'])
+
+        size = request.args.get('size', 'large')
+        if size not in current_app.config['THUMBNAIL_SIZES']:
+            available_formats = "', '".join(sorted(current_app.config['THUMBNAIL_SIZES'].keys()))
+            msg = 'You did not provide an appropriate thumbnail size. Available ' \
+                  'options are \'{}\''
+            err_msg = msg.format(available_formats)
+
+            if request_wants_json():
+                raise OcdApiError(err_msg, 400)
+            return '<html><body>{}</body></html>'.format(err_msg), 400
+
+        thumbnail_path = thumbnails.get_thumbnail_path(url_id, size)
+        if not os.path.exists(thumbnail_path):
+            # Thumbnail does not exist yet, check of we've downloaded the
+            # original already
+            original = thumbnails.get_thumbnail_path(url_id, 'original')
+            if not os.path.exists(original):
+                thumbnails.fetch_original(resp['_source']['original_url'], url_id)
+
+            thumbnails.create_thumbnail(original, url_id, size)
+
+        return jsonify({'size': size, 'resp': thumbnails.get_thumbnail_path(url_id, size)})
+
     except NotFoundError:
         if request_wants_json():
             raise OcdApiError('URL is not available; the source may no longer '
@@ -476,6 +507,4 @@ def list_dumps():
         dumps[index_name].append(urljoin(current_app.config['DUMP_URL'],
                                          dump_file))
 
-    return jsonify({
-        'dumps': dumps
-    })
+    return jsonify({'dumps': dumps})
