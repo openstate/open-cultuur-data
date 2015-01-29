@@ -30,5 +30,5 @@ from .nabeeldbank import NationaalArchiefBeeldbankItemTestCase
 from .ra_nijmegen import (
     NijmegenGrintenItemTestCase,
     NijmegenDoornroosjeItemTestCase,
-    # NijmegenVierdaagseItem
+    NijmegenVierdaagseItemTestCase
 )

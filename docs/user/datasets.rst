@@ -538,3 +538,25 @@ Regionaal Archief Nijmegen Affichecollectie Doornroosje
 
 Regionaal Archief Nijmegen Affichecollectie Doornroosje index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Fotocollectie Regionaal Archief Nijmegen - Vierdaagsefeesten
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``Beschrijving``                     | Only if available                      |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``Beschrijving``                     | Only if available                      |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``Vroegst mogelijke datering`        |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``Auteur``                           |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``Identificatie``                    | Each ``media_url`` entry contains an   |
+|                        |                                      | object for the image link. The link is |
+|                        |                                      | constructed using the object id.       |
++------------------------+--------------------------------------+----------------------------------------+
+
+Fotocollectie Regionaal Archief Nijmegen - Vierdaagsefeesten index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
