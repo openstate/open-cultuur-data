@@ -23,6 +23,11 @@ def get_thumbnail_path(identifier, thumbnail_size='large'):
                         '{}_{}.jpg'.format(identifier[2:], thumbnail_size))
 
 
+def get_thumbnail_url(identifier, thumbnail_size='large'):
+    return os.path.join(settings.THUMBNAIL_URL, identifier[:2],
+                        '{}_{}.jpg'.format(identifier[2:], thumbnail_size))
+
+
 def fetch_original(url, identifier):
     with SpooledTemporaryFile(max_size=1024*1024, prefix='ocd_thumb_',
                               suffix='.tmp', dir=settings.THUMBNAILS_TEMP_DIR) as tempfile:
