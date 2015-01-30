@@ -52,4 +52,4 @@ local_dumps/
 
 dumps/*
 local_dumps/*
-.thumbnail-cache/*
+ocd_frontend/.thumbnail-cache/*
