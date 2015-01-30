@@ -29,7 +29,7 @@ class MediaEnricher(BaseEnricher):
     #: combination of the configuration in ``sources.json`` and the
     #: returned ``content-type``.
     available_tasks = {
-        'image_metdata': ImageMetadata
+        'image_metadata': ImageMetadata
     }
 
     http_session = None

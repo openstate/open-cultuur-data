@@ -8,7 +8,7 @@
             [
                 "ocd_backend.enrichers.media_enricher.MediaEnricher",
                 {
-                    "tasks": ["image_metdata"]
+                    "tasks": ["image_metadata"]
                 }
             ]     
         ],
@@ -26,7 +26,7 @@
             [
                 "ocd_backend.enrichers.media_enricher.MediaEnricher",
                 {
-                    "tasks": ["image_metdata"],
+                    "tasks": ["image_metadata"],
                     "partial_media_fetch": true
                 }
             ]     
