@@ -4,6 +4,9 @@ import requests
 from tempfile import SpooledTemporaryFile
 
 from ocd_frontend import settings
+from ocd_frontend.log import get_source_log
+
+log = get_source_log('thumbnails')
 
 
 class CannotSaveOriginal(Exception):
@@ -32,6 +35,7 @@ def fetch_original(url, identifier):
     with SpooledTemporaryFile(max_size=1024*1024, prefix='ocd_thumb_',
                               suffix='.tmp', dir=settings.THUMBNAILS_TEMP_DIR) as tempfile:
 
+        log.info('Fetching original ({})'.format(url))
         r = requests.get(url, stream=True)
 
         for chunk in r.iter_content(chunk_size=512*1024):
@@ -50,9 +54,11 @@ def fetch_original(url, identifier):
             os.makedirs(os.path.dirname(thumb_path))
 
         try:
+            log.info('Saving {} to cache'.format(url))
             im.save(get_thumbnail_path(identifier, 'original'), 'JPEG',
                     quality=90)
         except IOError:
+            log.exception('Could not save {} to cache'.format(url))
             raise CannotSaveOriginal
 
 
@@ -60,14 +66,18 @@ def create_thumbnail(source, identifier, size='large'):
     _size = settings.THUMBNAIL_SIZES.get(size)
 
     if not _size:
+        log.exception('Invalid thumbnail size provided')
         raise InvalidThumbnailSize
     try:
         im = Image.open(source)
         if _size.get('type') == 'crop':
+            log.info('Cropping {}'.format(source))
             imc = ImageOps.fit(im, _size.get('size'), Image.ANTIALIAS)
             imc.save(get_thumbnail_path(identifier, size), 'JPEG', quality=90)
         else:
+            log.info('Resizing {}'.format(source))
             im.thumbnail(_size.get('size'), Image.ANTIALIAS)
             im.save(get_thumbnail_path(identifier, size), 'JPEG', quality=90)
     except IOError:
+        log.exception('Could not create thumbnail of {}'.format(source))
         raise CannotSaveThumbnail
