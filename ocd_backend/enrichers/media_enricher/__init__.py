@@ -51,7 +51,7 @@ class MediaEnricher(BaseEnricher):
         http_adapter = HTTPAdapter(max_retries=http_retry)
         self.http_session.mount('https://', http_adapter)
 
-    def fetch_media(self, url):
+    def fetch_media(self, url, partial_fetch=False):
         """Retrieves a given media object from a remote (HTTP) location
         and returns the content-type and a file-like object containing
         the media content.
@@ -62,8 +62,16 @@ class MediaEnricher(BaseEnricher):
 
         :param url: the URL of the media asset.
         :type url: str.
-        :returns: a tuple with the ``content-type`` and a file-like object
-            containing the media content.
+        :param partial_fetch: determines if the the complete file should
+            be fetched, or if only the first 2 MB should be retrieved.
+            This feature is used to prevent complete retrieval of large
+            a/v material.
+        :type partial_fetch: bool.
+        :returns: a tuple with the ``content-type``, ``content-lenght``
+            and a file-like object containing the media content. The
+            value of ``content-length`` will be ``None`` in case
+            a partial fetch is requested and ``content-length`` is not
+            returned by the remote server.
         """
 
         http_resp = self.http_session.get(url, stream=True, timeout=(60, 120))
@@ -79,13 +87,37 @@ class MediaEnricher(BaseEnricher):
                                           suffix='.tmp',
                                           dir=TEMP_DIR_PATH)
 
+        # When a partial fetch is requested, request up to two MB
+        partial_target_size = 1024*1024*2
+        content_length = http_resp.headers.get('content-length')
+        if content_length and int(content_length) < partial_target_size:
+            partial_target_size = int(content_length)
+
+        retrieved_bytes = 0
         for chunk in http_resp.iter_content(chunk_size=512*1024):
             if chunk:  # filter out keep-alive chunks
                 media_file.write(chunk)
+                retrieved_bytes += len(chunk)
+
+            if partial_fetch and retrieved_bytes >= partial_target_size:
+                break
 
         media_file.flush()
+        log.debug('Fetched media item %s [%s/%s]' % (url, retrieved_bytes,
+                                                     content_length))
 
-        return http_resp.headers.get('content-type'), media_file
+        # If the server doens't provide a content-length and this isn't
+        # a partial fetch, determine the size by looking at the retrieved
+        # content
+        if not content_length and not partial_fetch:
+            media_file.seek(0, 2)
+            content_length = media_file.tell()
+
+        return (
+            http_resp.headers.get('content-type'),
+            content_length,
+            media_file
+        )
 
     def enrich_item(self, enrichments, object_id, combined_index_doc, doc):
         """Enriches the media objects referenced in a single item.
@@ -102,11 +134,18 @@ class MediaEnricher(BaseEnricher):
 
         self.setup_http_session()
 
+        # Check the settings to see if media should by fetch partially
+        partial_fetch = self.enricher_settings.get('partial_media_fetch', False)
+
         media_urls_enrichments = []
         for media_item in doc['media_urls']:
             media_item_enrichment = {}
-            content_type, media_file = self.fetch_media(media_item['original_url'])
 
+            content_type, content_length, media_file = self.fetch_media(
+                media_item['original_url'],
+                partial_fetch
+            )
+            print content_type
             for task in self.enricher_settings['tasks']:
                 # Seek to the beginning of the file before starting a task
                 media_file.seek(0)
@@ -126,11 +165,7 @@ class MediaEnricher(BaseEnricher):
             media_item_enrichment['url'] = media_item['url']
             media_item_enrichment['original_url'] = media_item['original_url']
             media_item_enrichment['content_type'] = content_type
-
-            # Move to the end of the file in order to determine it's
-            # total size
-            media_file.seek(0, 2)
-            media_item_enrichment['size_in_bytes'] = media_file.tell()
+            media_item_enrichment['size_in_bytes'] = content_length
 
             media_file.close()
 
