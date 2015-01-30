@@ -131,7 +131,7 @@ LOGGING = {
 
 THUMBNAILS_TEMP_DIR = '/tmp'
 
-THUMBNAILS_MEDIA_TYPES = {'image/jpeg', 'image/png'}
+THUMBNAILS_MEDIA_TYPES = {'image/jpeg', 'image/png', 'image/tiff'}
 THUMBNAILS_DIR = os.path.join(ROOT_PATH, '.thumbnail-cache')
 
 THUMBNAIL_SMALL = 250
