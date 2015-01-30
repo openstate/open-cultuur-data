@@ -35,10 +35,10 @@ def fetch_original(url, identifier):
     with SpooledTemporaryFile(max_size=1024*1024, prefix='ocd_thumb_',
                               suffix='.tmp', dir=settings.THUMBNAILS_TEMP_DIR) as tempfile:
 
-        log.info('Fetching original ({})'.format(url))
+        log.debug('Fetching original ({})'.format(url))
         # Set connect and read timeout ridiculously high, as we may need to
         # fetch very large files
-        r = requests.get(url, stream=True, timeout=(60, 120))
+        r = requests.get(url, stream=True, timeout=120)
         r.raise_for_status()
 
         for chunk in r.iter_content(chunk_size=512*1024):
@@ -57,7 +57,7 @@ def fetch_original(url, identifier):
             os.makedirs(os.path.dirname(thumb_path))
 
         try:
-            log.info('Saving {} to cache'.format(url))
+            log.debug('Saving {} to cache'.format(url))
             im.save(get_thumbnail_path(identifier, 'original'), 'JPEG',
                     quality=90)
         except IOError:
@@ -74,11 +74,11 @@ def create_thumbnail(source, identifier, size='large'):
     try:
         im = Image.open(source)
         if _size.get('type') == 'crop':
-            log.info('Cropping {}'.format(source))
+            log.debug('Cropping {}'.format(source))
             imc = ImageOps.fit(im, _size.get('size'), Image.ANTIALIAS)
             imc.save(get_thumbnail_path(identifier, size), 'JPEG', quality=90)
         else:
-            log.info('Resizing {}'.format(source))
+            log.debug('Resizing {}'.format(source))
             im.thumbnail(_size.get('size'), Image.ANTIALIAS)
             im.save(get_thumbnail_path(identifier, size), 'JPEG', quality=90)
     except IOError:
