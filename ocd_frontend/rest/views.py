@@ -456,9 +456,9 @@ def resolve(url_id):
         resp = current_app.es.get(index=current_app.config['RESOLVER_URL_INDEX'],
                                   doc_type='url', id=url_id)
 
-        # If the media item is not "thumbnailable" (e.g. it's a video), just
-        # return the original url directly
-        if resp['_source'].get('content_type', 'image/jpeg') not in current_app.config['THUMBNAILS_MEDIA_TYPES']:
+        # If the media item is not "thumbnailable" (e.g. it's a video), or if
+        # the user did not provide a content type, redirect to original source
+        if resp['_source'].get('content_type', 'original') not in current_app.config['THUMBNAILS_MEDIA_TYPES']:
             return redirect(resp['_source']['original_url'])
 
         size = request.args.get('size', 'large')
@@ -478,8 +478,12 @@ def resolve(url_id):
             # original already
             original = thumbnails.get_thumbnail_path(url_id, 'original')
             if not os.path.exists(original):
+                # If we don't, fetch a copy of the original and store it in the
+                # thumbnail cache, so we can use it as a source for thumbnails
                 thumbnails.fetch_original(resp['_source']['original_url'], url_id)
 
+            # Create the thumbnail with the requested size, and save it to the
+            # thumbnail cache
             thumbnails.create_thumbnail(original, url_id, size)
 
         return redirect(thumbnails.get_thumbnail_url(url_id, size))

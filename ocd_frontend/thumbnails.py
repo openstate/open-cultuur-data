@@ -36,7 +36,10 @@ def fetch_original(url, identifier):
                               suffix='.tmp', dir=settings.THUMBNAILS_TEMP_DIR) as tempfile:
 
         log.info('Fetching original ({})'.format(url))
-        r = requests.get(url, stream=True)
+        # Set connect and read timeout ridiculously high, as we may need to
+        # fetch very large files
+        r = requests.get(url, stream=True, timeout=(60, 120))
+        r.raise_for_status()
 
         for chunk in r.iter_content(chunk_size=512*1024):
             if chunk:
