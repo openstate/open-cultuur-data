@@ -94,6 +94,30 @@ API_URL = 'http://api.opencultuurdata.nl/v0/'
 # to dumps in the /dumps endpoint
 DUMP_URL = 'http://dumps.opencultuurdata.nl/'
 
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'console': {
+            'format': '[%(asctime)s] [%(name)s] [%(levelname)s] - %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'console'
+        },
+    },
+    'loggers': {
+        'ocd_frontend': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        }
+    }
+}
+
 THUMBNAILS_TEMP_DIR = '/tmp'
 
 THUMBNAILS_MEDIA_TYPES = {'image/jpeg', 'image/png'}

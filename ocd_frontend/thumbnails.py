@@ -4,9 +4,9 @@ import requests
 from tempfile import SpooledTemporaryFile
 
 from ocd_frontend import settings
-from ocd_frontend.log import get_source_log
+from ocd_frontend.log import get_source_logger
 
-log = get_source_log('thumbnails')
+log = get_source_logger('thumbnails')
 
 
 class CannotSaveOriginal(Exception):
