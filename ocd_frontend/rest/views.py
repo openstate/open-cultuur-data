@@ -1,3 +1,4 @@
+from datetime import datetime
 import glob
 from flask import (Blueprint, current_app, request, jsonify, redirect, url_for,)
 from elasticsearch import NotFoundError
@@ -5,8 +6,7 @@ import os
 from urlparse import urljoin
 
 from ocd_frontend import thumbnails
-from ocd_frontend.rest import (OcdApiError, decode_json_post_data,
-                               request_wants_json)
+from ocd_frontend.rest import OcdApiError, decode_json_post_data
 from ocd_frontend.rest import tasks
 
 bp = Blueprint('api', __name__)
@@ -672,6 +672,16 @@ def resolve(url_id):
         # If the media item is not "thumbnailable" (e.g. it's a video), or if
         # the user did not provide a content type, redirect to original source
         if resp['_source'].get('content_type', 'original') not in current_app.config['THUMBNAILS_MEDIA_TYPES']:
+            # Log a 'resolve' event if usage logging is enabled
+            if current_app.config['USAGE_LOGGING_ENABLED']:
+                tasks.log_event.delay(
+                    user_agent=request.user_agent.string,
+                    referer=request.headers.get('Referer', None),
+                    user_ip=request.remote_addr,
+                    created_at=datetime.utcnow(),
+                    event_type='resolve',
+                    url_id=url_id,
+                )
             return redirect(resp['_source']['original_url'])
 
         size = request.args.get('size', 'large')
@@ -681,7 +691,7 @@ def resolve(url_id):
                   'options are \'{}\''
             err_msg = msg.format(available_formats)
 
-            if request_wants_json():
+            if request.mimetype == 'application/json':
                 raise OcdApiError(err_msg, 400)
             return '<html><body>{}</body></html>'.format(err_msg), 400
 
@@ -698,16 +708,17 @@ def resolve(url_id):
             # Create the thumbnail with the requested size, and save it to the
             # thumbnail cache
             thumbnails.create_thumbnail(original, url_id, size)
-            
-        # Log a 'resolve' event if usage logging is enabled
+
+        # Log a 'resolve_thumbnail' event if usage logging is enabled
         if current_app.config['USAGE_LOGGING_ENABLED']:
             tasks.log_event.delay(
                 user_agent=request.user_agent.string,
                 referer=request.headers.get('Referer', None),
                 user_ip=request.remote_addr,
                 created_at=datetime.utcnow(),
-                event_type='resolve',
+                event_type='resolve_thumbnail',
                 url_id=url_id,
+                requested_size=size
             )
 
         return redirect(thumbnails.get_thumbnail_url(url_id, size))

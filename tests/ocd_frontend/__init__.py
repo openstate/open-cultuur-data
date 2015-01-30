@@ -853,7 +853,7 @@ class RestApiResolveTestCase(OcdRestTestCaseMixin, TestCase):
         'ocd_test_resolver_index'
     ]
 
-    def test_succesfull_resolve(self):
+    def test_succesful_resolve(self):
         """Test if a valid URL resolves and returns a redirect with the
         correct status, location and content type."""
         doc_id = self.doc_ids['ocd_test_resolver_index']['url'][0]
