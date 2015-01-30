@@ -482,7 +482,7 @@ def resolve(url_id):
 
             thumbnails.create_thumbnail(original, url_id, size)
 
-        return jsonify({'size': size, 'resp': thumbnails.get_thumbnail_path(url_id, size)})
+        return redirect(thumbnails.get_thumbnail_url(url_id, size))
 
     except NotFoundError:
         if request_wants_json():
