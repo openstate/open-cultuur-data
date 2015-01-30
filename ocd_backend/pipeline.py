@@ -1,19 +1,23 @@
-from celery import chain, chord, group
 from datetime import datetime
+from uuid import uuid4
+
 from elasticsearch.exceptions import NotFoundError
 
 from ocd_backend.es import elasticsearch as es
-from ocd_backend import settings
-from ocd_backend.tasks import UpdateAlias
+from ocd_backend import settings, celery_app
+from ocd_backend.log import get_source_logger
 from ocd_backend.utils.misc import load_object
-from .exceptions import ConfigurationError
+from ocd_backend.exceptions import ConfigurationError
+
+logger = get_source_logger('pipeline')
 
 
 def setup_pipeline(source_definition):
     # index_name is an alias of the current version of the index
     index_alias = '{prefix}_{index_name}'.format(
         prefix=settings.DEFAULT_INDEX_PREFIX,
-        index_name=source_definition.get('index_name')
+        index_name=source_definition.get('index_name',
+                                         source_definition.get('id'))
     )
 
     if not es.indices.exists(index_alias):
@@ -40,12 +44,36 @@ def setup_pipeline(source_definition):
     transformer = load_object(source_definition['transformer'])()
     loader = load_object(source_definition['loader'])()
 
-    update_alias = UpdateAlias()
+    # Parameters that are passed to each task in the chain
+    params = {
+        'run_identifier': 'pipeline_{}'.format(uuid4().hex),
+        'current_index_name': current_index_name,
+        'new_index_name': new_index_name,
+        'index_alias': index_alias
+    }
 
-    tasks = []
-    for item in extractor.run():
-        tasks.append(chain(transformer.si(*item, source_definition=source_definition), loader.s(source_definition=source_definition, index_name=new_index_name)))
+    celery_app.backend.set(params['run_identifier'], 'running')
+    run_identifier_chains = '{}_chains'.format(params['run_identifier'])
 
-    chord(group(tasks))(update_alias.s(current_index_name=current_index_name,
-                                       new_index_name=new_index_name,
-                                       alias=index_alias))
+    try:
+        for item in extractor.run():
+            # Generate an identifier for each chain, and record that in
+            # {}_chains, so that we can know for sure when all tasks from an
+            # extractor have finished
+            params['chain_id']= uuid4().hex
+            celery_app.backend.add_value_to_set(set_name=run_identifier_chains,
+                                                value=params['chain_id'])
+            (transformer.s(*item, source_definition=source_definition, **params)
+             | loader.s(source_definition=source_definition, **params)).delay()
+    except:
+        logger.error('An exception has occured in the "{extractor}" extractor. '
+                     'Deleting index "{index}" and setting status of run '
+                     'identifier "{run_identifier}" to "error".'
+                     .format(index=new_index_name,
+                             run_identifier=params['run_identifier'],
+                             extractor=source_definition['extractor']))
+
+        celery_app.backend.set(params['run_identifier'], 'error')
+        raise
+
+    celery_app.backend.set(params['run_identifier'], 'done')
