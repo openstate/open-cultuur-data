@@ -9,6 +9,6 @@ install: "pip install -r requirements.txt"
 script: "./run_tests.sh"
 before_install: 
   - wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.deb && sudo dpkg -i --force-confnew elasticsearch-1.4.2.deb
-  - "./install_pyav_deps.sh"
+  - "sudo ./install_pyav_deps.sh"
 services:
   - elasticsearch
