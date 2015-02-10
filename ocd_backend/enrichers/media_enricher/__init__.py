@@ -10,7 +10,7 @@ from ocd_backend.enrichers import BaseEnricher
 from ocd_backend.exceptions import SkipEnrichment, UnsupportedContentType
 from ocd_backend.log import get_source_logger
 
-from .tasks import ImageMetadata
+from .tasks import ImageMetadata, MediaType
 
 log = get_source_logger('enricher')
 
@@ -29,7 +29,8 @@ class MediaEnricher(BaseEnricher):
     #: combination of the configuration in ``sources.json`` and the
     #: returned ``content-type``.
     available_tasks = {
-        'image_metadata': ImageMetadata
+        'image_metadata': ImageMetadata,
+        'media_type': MediaType
     }
 
     http_session = None
@@ -145,7 +146,7 @@ class MediaEnricher(BaseEnricher):
                 media_item['original_url'],
                 partial_fetch
             )
-            print content_type
+
             for task in self.enricher_settings['tasks']:
                 # Seek to the beginning of the file before starting a task
                 media_file.seek(0)
