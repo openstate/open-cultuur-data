@@ -74,6 +74,13 @@ class ElasticsearchLoader(BaseLoader):
         elasticsearch.index(index=self.index_name, doc_type='item', body=doc,
                             id=object_id)
 
+        m_url_content_types = {}
+        if 'media_urls' in doc['enrichments']:
+            for media_url in doc['enrichments']['media_urls']:
+                if 'content_type' in media_url:
+                    m_url_content_types[media_url['original_url']] = \
+                        media_url['content_type']
+
         # For each media_urls.url, add a resolver document to the
         # RESOLVER_URL_INDEX
         if 'media_urls' in doc:
@@ -82,6 +89,10 @@ class ElasticsearchLoader(BaseLoader):
                 url_doc = {
                     'original_url': media_url['original_url']
                 }
+
+                if media_url['original_url'] in m_url_content_types:
+                    url_doc['content_type'] = \
+                        m_url_content_types[media_url['original_url']]
 
                 try:
                     elasticsearch.create(index=settings.RESOLVER_URL_INDEX,
