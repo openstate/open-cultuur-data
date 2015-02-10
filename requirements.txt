@@ -1,3 +1,4 @@
+-e git://github.com/mikeboers/PyAV.git@40b3cb85f1d1b1823fdb24dd0aaa01c14d005d3c
 celery[redis]==3.1.17
 elasticsearch==1.3.0
 click==2.1
