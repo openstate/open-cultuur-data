@@ -192,6 +192,23 @@
                     }
                 }
             }
+        },
+        "resolve_thumbnail": {
+            "properties": {
+                "event_properties": {
+                    "type": "object",
+                    "properties": {
+                        "url_id": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        },
+                        "requested_size": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        }
+                    }
+                }
+            }
         }
     }
 }

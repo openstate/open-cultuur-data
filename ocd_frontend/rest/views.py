@@ -1,10 +1,11 @@
-import glob
 from datetime import datetime
-
+import glob
 from flask import (Blueprint, current_app, request, jsonify, redirect, url_for,)
 from elasticsearch import NotFoundError
+import os
 from urlparse import urljoin
 
+from ocd_frontend import thumbnails
 from ocd_frontend.rest import OcdApiError, decode_json_post_data
 from ocd_frontend.rest import tasks
 
@@ -667,6 +668,61 @@ def resolve(url_id):
     try:
         resp = current_app.es.get(index=current_app.config['RESOLVER_URL_INDEX'],
                                   doc_type='url', id=url_id)
+
+        # If the media item is not "thumbnailable" (e.g. it's a video), or if
+        # the user did not provide a content type, redirect to original source
+        if resp['_source'].get('content_type', 'original') not in current_app.config['THUMBNAILS_MEDIA_TYPES']:
+            # Log a 'resolve' event if usage logging is enabled
+            if current_app.config['USAGE_LOGGING_ENABLED']:
+                tasks.log_event.delay(
+                    user_agent=request.user_agent.string,
+                    referer=request.headers.get('Referer', None),
+                    user_ip=request.remote_addr,
+                    created_at=datetime.utcnow(),
+                    event_type='resolve',
+                    url_id=url_id,
+                )
+            return redirect(resp['_source']['original_url'])
+
+        size = request.args.get('size', 'large')
+        if size not in current_app.config['THUMBNAIL_SIZES']:
+            available_formats = "', '".join(sorted(current_app.config['THUMBNAIL_SIZES'].keys()))
+            msg = 'You did not provide an appropriate thumbnail size. Available ' \
+                  'options are \'{}\''
+            err_msg = msg.format(available_formats)
+
+            if request.mimetype == 'application/json':
+                raise OcdApiError(err_msg, 400)
+            return '<html><body>{}</body></html>'.format(err_msg), 400
+
+        thumbnail_path = thumbnails.get_thumbnail_path(url_id, size)
+        if not os.path.exists(thumbnail_path):
+            # Thumbnail does not exist yet, check of we've downloaded the
+            # original already
+            original = thumbnails.get_thumbnail_path(url_id, 'original')
+            if not os.path.exists(original):
+                # If we don't, fetch a copy of the original and store it in the
+                # thumbnail cache, so we can use it as a source for thumbnails
+                thumbnails.fetch_original(resp['_source']['original_url'], url_id)
+
+            # Create the thumbnail with the requested size, and save it to the
+            # thumbnail cache
+            thumbnails.create_thumbnail(original, url_id, size)
+
+        # Log a 'resolve_thumbnail' event if usage logging is enabled
+        if current_app.config['USAGE_LOGGING_ENABLED']:
+            tasks.log_event.delay(
+                user_agent=request.user_agent.string,
+                referer=request.headers.get('Referer', None),
+                user_ip=request.remote_addr,
+                created_at=datetime.utcnow(),
+                event_type='resolve_thumbnail',
+                url_id=url_id,
+                requested_size=size
+            )
+
+        return redirect(thumbnails.get_thumbnail_url(url_id, size))
+
     except NotFoundError:
         if request.mimetype == 'application/json':
             raise OcdApiError('URL is not available; the source may no longer '
@@ -675,19 +731,6 @@ def resolve(url_id):
         return '<html><body>There is no original url available. You may '\
                'have an outdated URL, or the resolve id is incorrect.</body>'\
                '</html>', 404
-
-    # Log a 'resolve' event if usage logging is enabled
-    if current_app.config['USAGE_LOGGING_ENABLED']:
-        tasks.log_event.delay(
-            user_agent=request.user_agent.string,
-            referer=request.headers.get('Referer', None),
-            user_ip=request.remote_addr,
-            created_at=datetime.utcnow(),
-            event_type='resolve',
-            url_id=url_id,
-        )
-
-    return redirect(resp['_source']['original_url'])
 
 
 @bp.route('/dumps', methods=['GET'])
@@ -704,6 +747,4 @@ def list_dumps():
         dumps[index_name].append(urljoin(current_app.config['DUMP_URL'],
                                          dump_file))
 
-    return jsonify({
-        'dumps': dumps
-    })
+    return jsonify({'dumps': dumps})
