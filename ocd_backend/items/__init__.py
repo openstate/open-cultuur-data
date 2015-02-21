@@ -159,9 +159,9 @@ class BaseItem(object):
         if not object_id and not urls:
             raise UnableToGenerateObjectId('Both original id and urls missing')
 
-        hash_content = self.source_definition['id'] + object_id + ''.join(sorted(urls.values()))
+        hash_content = self.source_definition['id'] + object_id + u''.join(sorted(urls.values()))
 
-        return sha1(hash_content).hexdigest()
+        return sha1(hash_content.decode('utf8')).hexdigest()
 
     def get_original_object_urls(self):
         """Retrieves the item's original URLs at the source location.
