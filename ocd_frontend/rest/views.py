@@ -69,6 +69,10 @@ def parse_search_request(data, mlt=False):
         if facet not in available_facets:
             raise OcdApiError('\'%s\' is not a valid facet' % facet, 400)
 
+        if type(facet_opts) is not dict:
+            raise OcdApiError('\'facets.%s\' should cotain an object' % facet,
+                              400)
+
         # Take the default facet options from the settings
         facets[facet] = available_facets[facet]
         f_type = facets[facet].keys()[0]

@@ -93,17 +93,27 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
         for fk in facet_keys:
             self.assertIn(fk, response.json.get('facets', {}))
 
+    def test_invalid_facet_option_value(self):
+        """Tests if requesting a facet with invalid value (not dict)
+        results in a response with status code 400."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
+
+        facets = {
+            'rights': []
+        }
+
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'query': 'de',
+                                              'facets': facets}))
+        self.assert_bad_request_json(response)
+
     def test_not_available_facet(self):
         """Tests if requesting a facet that is not available results
         in a response with status code 400."""
         url = url_for(self.endpoint_url, **self.endpoint_url_args)
 
         facets = {
-            'rights-that-are-not-a-facet': {
-                'terms': {
-                    'field': 'meta.rights'
-                }
-            }
+            'rights-that-are-not-a-facet': {}
         }
 
         response = self.post(url, content_type='application/json',
@@ -119,7 +129,6 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
         facets = {
             'rights': {
                 'terms': {
-                    'field': 'meta.rights',
                     'size': 10
                 }
             }
@@ -138,7 +147,6 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
         facets = {
             'rights': {
                 'terms': {
-                    'field': 'meta.rights',
                     'size': 'abc'
                 }
             }
@@ -157,7 +165,6 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
         facets = {
             'date': {
                 'date_histogram': {
-                    'field': 'date',
                     'interval': 'month'
                 }
             }
@@ -178,7 +185,6 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
         facets = {
             'date': {
                 'date_histogram': {
-                    'field': 'date',
                     'interval': 123
                 }
             }
@@ -197,7 +203,6 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
         facets = {
             'date': {
                 'date_histogram': {
-                    'field': 'date',
                     'interval': 'millennium'
                 }
             }
