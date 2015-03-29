@@ -37,8 +37,6 @@ class OaiExtractor(BaseExtractor, HttpRequestMixin):
         if 'resumptionToken' in params:
             if 'set' in params:
                 del params['set']
-            if 'metadataPrefix' in params:
-                del params['metadataPrefix']
 
         log.debug('Getting %s (params: %s)' % (self.oai_base_url, params))
         r = self.http_session.get(self.oai_base_url, params=params)
