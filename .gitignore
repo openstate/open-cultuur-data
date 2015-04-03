@@ -53,3 +53,6 @@ local_dumps/
 dumps/*
 local_dumps/*
 ocd_frontend/.thumbnail-cache/*
+
+*.log
+hardcopy.0

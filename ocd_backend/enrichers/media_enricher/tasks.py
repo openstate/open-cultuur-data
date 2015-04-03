@@ -77,6 +77,26 @@ class ImageMetadata(BaseMediaEnrichmentTask):
             'total_pixels': img.size[0] * img.size[1]
         }
 
+        if img.size[0] > img.size[1]:
+            enrichment_data['orientation'] = 'landscape'
+        else:
+            enrichment_data['orientation'] = 'portrait'
+
+        smallest = min(img.size[0], img.size[1])
+        if smallest > 0 and smallest <= 800:
+            size = 'small'
+        elif smallest > 800 and smallest <= 1600:
+            size = 'normal'
+        elif smallest > 1600 and smallest <= 3200:
+            size = 'big'
+        elif smallest > 3200 and smallest <= 6400:
+            size = 'enormous'
+        elif smallest > 6400 :
+            size = 'poster'
+
+        enrichment_data['size'] = size
+
+
 
 class ViedeoMetadata(BaseMediaEnrichmentTask):
     content_types = [
