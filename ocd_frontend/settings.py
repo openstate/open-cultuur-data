@@ -76,6 +76,18 @@ AVAILABLE_FACETS = {
             'field': 'media_urls.content_type',
             'size': 10
         }
+    },
+    'size': {
+        'terms': {
+            'field': 'enrichments.media_urls.size',
+            'size': 10
+        }
+    },
+    'orientation': {
+        'terms': {
+            'field': 'enrichments.media_urls.orientation',
+            'size': 2
+        }
     }
 }
 
