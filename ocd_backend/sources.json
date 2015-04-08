@@ -199,7 +199,7 @@
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
-        "adlib_base_url": "http://37.17.215.121:85/opendata/wwwopac.ashx",
+        "adlib_base_url": "http://78.108.138.82:85/opendata/wwwopac.ashx",
         "adlib_database": "collect",
         "index_name": "textielmuseum"
     },
@@ -220,7 +220,7 @@
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "wikimedia_base_url": "http://commons.wikimedia.org/w/api.php",
         "wikimedia_category": "Category:Images_from_the_Tropenmuseum",
-        "index_name": "tropenmuseum",
+        "index_name": "tropenmuseum"
     },
     {
         "id": "fries_museum",
