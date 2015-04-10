@@ -187,10 +187,10 @@
                                     "type": "string",
                                     "index": "not_analyzed"
                                 },
-                                "orientation:": {
+                                "orientation": {
                                     "type": "string"
                                 },
-                                "size:": {
+                                "size_indicator": {
                                     "type": "string"
                                 }
                             }

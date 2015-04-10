@@ -77,9 +77,14 @@ AVAILABLE_FACETS = {
             'size': 10
         }
     },
-    'size': {
+    'media_type': {
         'terms': {
-            'field': 'enrichments.media_urls.size',
+            'field': 'enrichments.media_urls.media_type',
+        }
+    },
+    'size_indicator': {
+        'terms': {
+            'field': 'enrichments.media_urls.size_indicator',
             'size': 10
         }
     },

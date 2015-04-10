@@ -3,7 +3,6 @@ import av
 
 from ocd_backend.exceptions import UnsupportedContentType
 
-
 class BaseMediaEnrichmentTask(object):
     """The base class that media enrichment tasks should inherit."""
 
@@ -58,13 +57,36 @@ class MediaType(BaseMediaEnrichmentTask):
 
         enrichment_data['media_type'] = item_media_type
 
-
 class ImageMetadata(BaseMediaEnrichmentTask):
     content_types = [
         'image/jpeg',
         'image/png',
         'image/tiff'
     ]
+    
+    @staticmethod
+    def get_size_indicator(img_size):
+        image_sizes = {
+            'small' :800,
+            'medium':1600,
+            'big':3200,
+            'enormous':6400,
+            'poster':12800
+        }
+
+        smallest = min(img_size[0], img_size[1])
+        if smallest > 0 and smallest <= image_sizes['small']:
+            size_indicator = 'small'
+        elif smallest > image_sizes['small'] and smallest <= mage_sizes['medium']:
+            size_indicator = 'medium'
+        elif smallest > image_sizes['medium'] and smallest <= image_sizes['big']:
+            size_indicator = 'big'
+        elif smallest > image_sizes['big'] and smallest <= image_sizes['enormous']:
+            size_indicator = 'enormous'
+        elif smallest > image_sizes['enormous']:
+            size_indicator = 'poster'
+
+        return size_indicator
 
     def enrich_item(self, media_item, content_type, file_object,
                     enrichment_data, object_id, combined_index_doc, doc):
@@ -81,21 +103,8 @@ class ImageMetadata(BaseMediaEnrichmentTask):
             enrichment_data['orientation'] = 'landscape'
         else:
             enrichment_data['orientation'] = 'portrait'
-
-        smallest = min(img.size[0], img.size[1])
-        if smallest > 0 and smallest <= 800:
-            size = 'small'
-        elif smallest > 800 and smallest <= 1600:
-            size = 'normal'
-        elif smallest > 1600 and smallest <= 3200:
-            size = 'big'
-        elif smallest > 3200 and smallest <= 6400:
-            size = 'enormous'
-        elif smallest > 6400 :
-            size = 'poster'
-
-        enrichment_data['size'] = size
-
+ 
+        enrichment_data['size_indicator'] = self.get_size_indicator(img.size)
 
 
 class ViedeoMetadata(BaseMediaEnrichmentTask):
