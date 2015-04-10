@@ -28,7 +28,7 @@ class TextielMuseumItem(BaseItem, HttpRequestMixin):
     def get_original_object_urls(self):
         original_id = self.get_original_object_id()
         original_urls = {
-            'xml': 'http://37.17.215.121:85/opendata/wwwopac.ashx?database=collect&search=priref=%s&xmltype=unstructured' % original_id
+            'xml': 'http://78.108.138.82:85/opendata/wwwopac.ashx?database=collect&search=priref=%s&xmltype=unstructured' % original_id
         }
 
         object_number = self._get_text_or_none('.//object_number')
