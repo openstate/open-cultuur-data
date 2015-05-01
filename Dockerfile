@@ -43,9 +43,6 @@ RUN apt-get install -y \
 
 RUN easy_install pip
 
-# Clone open-cultuur-data
-#RUN git clone -b dev https://github.com/openstate/open-cultuur-data.git
-
 ##### Install dependencies for pyav #####
 RUN apt-get install -y \
         libfaac-dev \
@@ -61,7 +58,6 @@ RUN apt-get install -y \
         yasm \
         zlib1g-dev
 
-#cd /tmp
 # Temporarily use /tmp as workdir for the pyav dependencies
 WORKDIR /tmp
 
@@ -73,7 +69,6 @@ RUN curl -sSL http://www.tortall.net/projects/yasm/releases/yasm-${YASM_VERSION}
     && make \
     && make install
 
-#cd ..
 #ENV x264_COMMIT 121396c71b4907ca82301d1a529795d98daab5f8
 RUN git clone --depth 1 git://git.videolan.org/x264 \
     && cd x264 \
@@ -87,7 +82,6 @@ RUN git clone --depth 1 git://git.videolan.org/x264 \
         --fstrans=no \
         --default
 
-#cd ..
 ENV FDKAAC_VERSION 0.1.0
 RUN curl -sSL http://downloads.sourceforge.net/opencore-amr/fdk-aac-${FDKAAC_VERSION}.tar.gz | \
         tar -xz \
@@ -102,7 +96,6 @@ RUN curl -sSL http://downloads.sourceforge.net/opencore-amr/fdk-aac-${FDKAAC_VER
         --fstrans=no \
         --default
 
-#cd ..
 #ENV LIBVPX_COMMIT ccc9e1da8d1ef03a471ab227e1049cd55bebd806
 RUN git clone --depth 1 https://chromium.googlesource.com/webm/libvpx \
     && cd libvpx \
@@ -117,7 +110,6 @@ RUN git clone --depth 1 https://chromium.googlesource.com/webm/libvpx \
         --fstrans=no \
         --default
 
-#cd ../x264
 RUN cd x264 \
     && make distclean \
     && ./configure --enable-static --enable-shared --enable-pic \
@@ -130,7 +122,6 @@ RUN cd x264 \
         --fstrans=no \
         --default
 
-#cd ..
 ENV XVIDCORE_VERSION 1.3.2
 RUN curl -sSL http://mirror.ryansanden.com/ffmpeg-d00bc6a8/xvidcore-${XVIDCORE_VERSION}.tar.gz | \
         tar -xz \
@@ -139,7 +130,6 @@ RUN curl -sSL http://mirror.ryansanden.com/ffmpeg-d00bc6a8/xvidcore-${XVIDCORE_V
     && make \
     && make install
 
-#cd ..
 #ENV FFMPEG_COMMIT 580c86925ddf8c85d2e6f57ed55dd75853748b29
 RUN git clone --depth 1 git://source.ffmpeg.org/ffmpeg \
     && cd ffmpeg \
