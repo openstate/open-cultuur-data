@@ -156,27 +156,27 @@ RUN git clone --depth 1 git://source.ffmpeg.org/ffmpeg \
 WORKDIR /opt/ocd
 # Create a virtualenv project
 RUN echo 'ok'
-RUN virtualenv -q /opt/ocd
-RUN echo "source /opt/ocd/bin/activate; cd /opt/ocd;" >> ~/.bashrc
+RUN virtualenv -q /opt
+RUN echo "source /opt/bin/activate; cd /opt/ocd;" >> ~/.bashrc
 
 # Temporarily add all OCD files on the host to the container as it
 # contains files needed to finish the base installation
 ADD . /opt/ocd
 
 # Install Python requirements
-RUN source bin/activate \
+RUN source ../bin/activate \
     && pip install Cython==0.21.2 \
     && pip install -r requirements.txt
 
 # Start
-RUN source bin/activate \
+RUN source ../bin/activate \
     && service elasticsearch start \
     && sleep 10 \
     && ./manage.py elasticsearch create_indexes es_mappings/ \
     && ./manage.py elasticsearch put_template
 
-# Delete all OCD files again, except the `bin` folder used by virtualenv
-RUN shopt -s extglob && rm -rf !(bin)
+# Delete all OCD files again
+RUN find . -delete
 
 # Open up the elasticsearch port to the host
 EXPOSE 9200
