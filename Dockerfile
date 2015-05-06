@@ -176,9 +176,7 @@ RUN source bin/activate \
     && ./manage.py elasticsearch put_template
 
 # Delete all OCD files again, except the `bin` folder used by virtualenv
-shopt -s extglob
-rm -rf !(bin)
-shopt -u extglob
+RUN shopt -s extglob && rm -rf !(bin)
 
 # Open up the elasticsearch port to the host
 EXPOSE 9200
