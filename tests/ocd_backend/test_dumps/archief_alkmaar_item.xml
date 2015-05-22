@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record>
+<header>
+  <identifier>
+  oai:0060d7c8-8496-4061-b624-791171bab9e9:963f7248-a263-11e0-bf4a-bde4fca6c222
+  </identifier>
+  <datestamp>2013-12-18T14:32:44Z</datestamp>
+  <setSpec>963f687a-a263-11e0-bf4a-bde4fca6c222</setSpec>
+  <setSpec>
+  963f687a-a263-11e0-bf4a-bde4fca6c222:963f7248-a263-11e0-bf4a-bde4fca6c222
+  </setSpec>
+  <setSpec>
+  963f687a-a263-11e0-bf4a-bde4fca6c222:963f7248-a263-11e0-bf4a-bde4fca6c222:dfa3751e-74ce-ae5a-20a4-ed8c04a17def
+</setSpec>
+</header>
+<metadata>
+  <europeana:record xmlns:europeana="http://www.europeana.eu/schemas/ese/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <europeana:isShownBy>
+    https://images.memorix.nl/raa/thumb/2000x2000/1837eea2-7db9-481c-a10d-2cfca783805e.jpg
+    </europeana:isShownBy>
+    <dc:description>De Sparrenlaan in de zomer.</dc:description>
+    <dc:date>1926-00-00</dc:date>
+    <dc:identifier>FO1400057</dc:identifier>
+    <dcterms:spatial>Bergen</dcterms:spatial>
+    <dc:creator>Bonda, A.J.</dc:creator>
+  </europeana:record>
+</metadata>
+</record>
