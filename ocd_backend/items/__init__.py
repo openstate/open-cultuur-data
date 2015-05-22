@@ -1,8 +1,11 @@
-from hashlib import sha1
-from datetime import datetime
 from collections import MutableMapping
+from datetime import datetime
+from hashlib import sha1
+import json
 
-from ocd_backend.exceptions import UnableToGenerateObjectId
+from ocd_backend.utils import json_encoder
+from ocd_backend.exceptions import (UnableToGenerateObjectId,
+                                    FieldNotAvailable)
 
 
 class BaseItem(object):
@@ -19,7 +22,7 @@ class BaseItem(object):
     :type data: unicode
     :param item: the deserialized item retrieved from the source.
     :param processing_started: The datetime we started processing this
-        itme. If ``None``, the current datetime is used.
+        item. If ``None``, the current datetime is used.
     :type processing_started: datetime or None
     """
 
@@ -34,7 +37,7 @@ class BaseItem(object):
         'original_object_urls': dict,
     }
 
-    #: Allowed key-value pairs for the document inserted int he 'combined index'
+    #: Allowed key-value pairs for the document inserted in the 'combined index'
     combined_index_fields = {
         'title': unicode,
         'description': unicode,
@@ -87,6 +90,7 @@ class BaseItem(object):
         combined_item = {}
 
         combined_item['meta'] = dict(self.meta)
+        combined_item['enrichments'] = {}
         combined_item.update(dict(self.combined_index_data))
         combined_item['all_text'] = self.get_all_text()
 
@@ -99,14 +103,23 @@ class BaseItem(object):
         :returns: a dict ready for indexing.
         :rtype: dict
         """
-        item =  {}
+        item = {}
 
         item['meta'] = dict(self.meta)
+        item['enrichments'] = {}
         item['source_data'] = {
             'content_type': self.data_content_type,
             'data': self.data
         }
-        item.update(dict(self.combined_index_data))
+
+        combined_index_data = dict(self.combined_index_data)
+        item.update(combined_index_data)
+
+        # Store a string representation of the combined index data on the
+        # collection specific index as well, as we need to be able to
+        # reconstruct the combined index from the individual indices
+        item['combined_index_data'] = json_encoder.encode(self.get_combined_index_doc())
+
         item.update(self.index_data)
 
         return item
@@ -114,7 +127,7 @@ class BaseItem(object):
     def get_original_object_id(self):
         """Retrieves the ID used by the source for identify this item.
 
-        This method should be implmented by the class that inherits from
+        This method should be implemented by the class that inherits from
         :class:`.BaseItem`.
 
         :rtype: unicode.
@@ -146,9 +159,9 @@ class BaseItem(object):
         if not object_id and not urls:
             raise UnableToGenerateObjectId('Both original id and urls missing')
 
-        hash_content = self.source_definition['id'] + object_id + ''.join(sorted(urls.values()))
+        hash_content = self.source_definition['id'] + object_id + u''.join(sorted(urls.values()))
 
-        return sha1(hash_content).hexdigest()
+        return sha1(hash_content.decode('utf8')).hexdigest()
 
     def get_original_object_urls(self):
         """Retrieves the item's original URLs at the source location.
@@ -156,8 +169,8 @@ class BaseItem(object):
         document format to which the value of the dictionary item, the
         URL, points (e.g. ``json``, ``html`` or ``csv``).
 
-        This method should be implmented by the class that inherits from
-        :class:`.BaseItem`.
+        This method should be implemented by the class that inherits
+        from :class:`.BaseItem`.
 
         :rtype: dict.
         """
@@ -166,7 +179,7 @@ class BaseItem(object):
     def get_collection(self):
         """Retrieves the name of the collection the item belongs to.
 
-        This method should be implmented by the class that inherits from
+        This method should be implemented by the class that inherits from
         :class:`.BaseItem`.
 
         :rtype: unicode.
@@ -179,7 +192,7 @@ class BaseItem(object):
         instructions for reuse, etcetera. "Creative Commons Zero" is an
         example of a possible value of rights.
 
-        This method should be implmented by the class that inherits from
+        This method should be implemented by the class that inherits from
         :class:`.BaseItem`.
 
         :rtype: unicode.
@@ -188,19 +201,26 @@ class BaseItem(object):
 
     def get_combined_index_data(self):
         """Returns a dictionary containing the data that is suitable to
-        be indexed in a combined/normalized repository, togehter with
+        be indexed in a combined/normalized repository, together with
         items from other collections. Only keys defined in
         :attr:`.combined_index_fields`
         are allowed.
 
-        This method should be implmented by the class that inherits from
-        :class:`.BaseItem`.
+        This method should be implemented by the class that inherits
+        from :class:`.BaseItem`.
 
         :rtype: dict
         """
         raise NotImplementedError
 
     def get_index_data(self):
+        """Returns a dictionary containing index-specific data that you
+        want to index, but does not belong in the combined index. Can
+        contain whatever fields, and should be handled an validated
+        (with care) in the class that inherits from :class:`.BaseItem`.
+
+        :rtype: dict
+        """
         raise NotImplementedError
 
     def get_all_text(self):
@@ -209,12 +229,81 @@ class BaseItem(object):
         retrieving content that is not included in one of the
         :attr:`.combined_index_fields` fields.
 
-        This method should be implmented by the class that inherits from
-        :class:`.BaseItem`.
+        This method should be implemented by the class that inherits
+        from :class:`.BaseItem`.
 
         :rtype: unicode.
         """
         raise NotImplementedError
+
+
+class LocalDumpItem(BaseItem):
+    """
+    Represents an Item extracted from a local dump
+    """
+    def get_collection(self):
+        collection = self.original_item['_source'].get('meta', {})\
+            .get('collection')
+        if not collection:
+            raise FieldNotAvailable('collection')
+        return collection
+
+    def get_rights(self):
+        rights = self.original_item['_source'].get('meta', {}).get('rights')
+        if not rights:
+            raise FieldNotAvailable('rights')
+        return rights
+
+    def get_original_object_id(self):
+        original_object_id = self.original_item['_source'].get('meta', {})\
+            .get('original_object_id')
+        if not original_object_id:
+            raise FieldNotAvailable('original_object_id')
+        return original_object_id
+
+    def get_original_object_urls(self):
+        original_object_urls = self.original_item['_source'].get('meta', {})\
+            .get('original_object_urls')
+        if not original_object_urls:
+            raise FieldNotAvailable('original_object_urls')
+        return original_object_urls
+
+    def get_combined_index_data(self):
+        combined_index_data = self.original_item['_source']\
+            .get('combined_index_data')
+        if not combined_index_data:
+            raise FieldNotAvailable('combined_index_data')
+
+        data = json.loads(combined_index_data)
+        data.pop('meta')
+        # Cast datetimes
+        for key, value in data.iteritems():
+            if self.combined_index_fields.get(key) == datetime:
+                data[key] = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
+
+        return data
+
+    def get_all_text(self):
+        """
+        Returns the content that is stored in the combined_index_data.all_text
+        field, and raise a `FieldNotAvailable` exception when it is not
+        available.
+
+        :rtype: unicode
+        """
+        combined_index_data = json.loads(self.original_item['_source']
+                                         .get('combined_index_data', {}))
+        all_text = combined_index_data.get('all_text')
+        if not all_text:
+            raise FieldNotAvailable('combined_index_data.all_text')
+        return all_text
+
+    def get_index_data(self):
+        """Restore all fields that are originally indexed.
+
+        :rtype: dict
+        """
+        return self.original_item.get('_source', {})
 
 
 class StrictMappingDict(MutableMapping):

@@ -20,17 +20,44 @@ All API endpoints are designed according to the idea that there is an operation 
 
 Arguments to an endpoint are placed behind the method definition, or supplied as JSON in a POST request. For instance, the :ref:`similar objects endpoint <rest_similar>` can be executed within the context of a collection, and needs an ``object_id`` to execute on.
 
-.. Collection overview and statistics
-.. ----------------------------------
+Collection overview and statistics
+----------------------------------
 
-.. .. http:get:: /collections
+.. http:get:: /sources
 
-..    :statuscode 200: OK, no errors.
+   Get a list of all available sources (collections) with item counts
 
-.. .. http:get:: /stats
+   **Example request**
 
-..    :statuscode 200: OK, no errors.
+   .. sourcecode:: http
 
+      $ curl -i -XGET 'http://api.opencultuurdata.nl/v0/sources'
+
+   **Example response**
+
+    .. sourcecode:: http
+
+      HTTP/1.0 200 OK
+      Content-Type: application/json
+      Content-Length: 1885
+      Date: Mon, 19 May 2014 12:58:43 GMT
+
+      {
+         "sources": [
+             {
+                "count": 562,
+                "id": "zoutkamp",
+                "name": "Visserijmuseum Zoutkamp"
+             },
+             {
+                "count": 207,
+                "id": "textielmuseum",
+                "name": "TextielMuseum"
+             }
+         ]
+      }
+
+   :statuscode 200: OK, no errors.
 
 .. _rest_search:
 
@@ -463,6 +490,36 @@ Retrieving a single object
    :statuscode 200: OK, no errors.
    :statuscode 404: The requested source and/or object does not exist.
 
+
+.. http:get:: /(source_id)/(object_id)/stats
+
+   Retrieves statistics about the usage of the object within the Open Cultuur Data API. Currently these statistics are very basic, however, we do collect a lot more detailed information. I you wish to see additional stats here, please let us know. There's also a :ref:`more detailed description available <dev_tech_logging>` on how usage of the API is being logged.
+
+   **Example request**
+
+   .. sourcecode:: http
+
+      $ curl -i 'http://api.opencultuurdata.nl/v0/openbeelden/4558763df1b233a57f0176839dc572e9e8726a02/stats'
+
+   **Example response**
+
+   .. sourcecode:: http
+
+      HTTP/1.0 200 OK
+      Content-Type: application/json; charset=utf-8
+      Content-Length: 116
+      Date: Mon, 19 Jan 2015 09:14:19 GMT
+
+      {
+        "n_appeared_in_search_results": 4, 
+        "n_appeared_in_similar_results": 0, 
+        "n_get": 12, 
+        "n_get_source": 0
+      }
+
+   :statuscode 200: OK, no errors.
+   :statuscode 404: The requested source and/or object does not exist.
+
 .. _rest_similar:
 
 Similar items
@@ -522,6 +579,19 @@ The OpenCultuurData API provides all (media) urls as :ref:`OpenCultuurData Resol
 
   Resolves the provided URL, and redirects the request with a 302 if it is valid. If it is not, a 404 is returned. Depending on the Accept header in the request, it returns a JSON-encoded response detailing what went wrong, or a HTML-page, allowing for transparent use in websites.
 
+  Additionally, the resolver provides an thumbnailing service as well. By supplying a ``size`` parameter to the requested resolver, the user can obtain a thumbnailed version of the media item, if it is an image. Currently, we support images where the mimetype of the original image is ``image/jpeg``, ``image/png`` or ``image/tiff``. The API will return a thumbnail from a cache if the image has been requested before, or generate and cache it if it has not.
+
+  When successfully requesting a thumbnail, the resolver will return a ``302`` redirect to the cached version of the image. This will considerably speed up the retrieval of images (as some sources do not have the resources to serve their content in a web environment). Also, developers are **strongly** encouraged to use the resolver url of an image over the ``Location`` returned by the server, as that value may change over time (we may move the images to another physical location, change the URL, or use a different caching system. The resolve URL ensures that API users are always redirected to the proper location.
+
+  The API currently provides the following formats:
+
+  * **large**: 1000px; the image will be either 1000px high or wide, depending on the orientation of the image (i.e. *portrait* will be 1000px high, whereas *landscape* will be 1000px wide.
+  * **medium**: 500px; the image will be either 1000px high or wide, depending on the orientation of the image (i.e. *portrait* will be 500px high, whereas *landscape* will be 500px wide.
+  * **small**: 250px; the image will be either 1000px high or wide, depending on the orientation of the image (i.e. *portrait* will be 250px high, whereas *landscape* will be 250px wide.
+  * **large_sq**: 1000x1000px; the image will be cropped from the center to be 1000x1000px
+  * **medium_sq**: 500x500px; the image will be cropped from the center to be 500x500px
+  * **small_sq**: 250x250px; the image will be cropped from the center to be 250x250px
+
     **Example json request**
 
     .. sourcecode:: http
@@ -530,7 +600,15 @@ The OpenCultuurData API provides all (media) urls as :ref:`OpenCultuurData Resol
 
     **Example browser-like request**
 
+    .. sourcecode:: http
+
       $ curl -i -Haccept:text/html -XGET http://api.opencultuurdata.nl/v0/resolve/<url_hash>
+
+    **Example thumbnail json request**
+
+    .. sourcecode:: http
+
+      $ curl -i -Haccept:application/json -XGET http://api.opencultuurdata.nl/v0/resolve/<url_hash>?size=medium_sq
 
     **Example success response**
 
@@ -538,6 +616,11 @@ The OpenCultuurData API provides all (media) urls as :ref:`OpenCultuurData Resol
 
       HTTP/1.0 302 Found
       Location: http://example.com/example.jpg
+
+    .. sourcecode:: http
+
+      HTTP/1.0 302 FOUND
+      Location: http://<STATIC_SUB_DOMAIN>.opencultuurdata.nl/media/<img_name>.jpg"
 
     **Example failed json response**
 

@@ -36,6 +36,18 @@ Transforming items
 .. autoclass:: ocd_backend.items.StrictMappingDict
    :members:
 
+Enriching items
+---------------
+
+.. autoclass:: ocd_backend.enrichers.BaseEnricher
+   :members: run, enrich_item
+
+.. autoclass:: ocd_backend.enrichers.media_enricher.MediaEnricher
+   :members: fetch_media, enrich_item
+
+   .. autoattribute: ocd_backend.enrichers.media_enricher.MediaEnricher.available_tasks
+      :annotation: 
+
 Loading items
 -------------
 
@@ -43,3 +55,50 @@ Loading items
    :members: run, load_item
 
 .. autoclass:: ocd_backend.loaders.ElasticsearchLoader
+
+.. _dev_cli:
+
+Command Line Interface
+----------------------
+
+The OpenCultuurData source code provides a Command Line Interface (CLI) for managing your instance. The CLI is largely self-documented (run ``./manage.py [<COMMAND>] --help`` for further assistance).
+
+.. automodule:: manage
+
+
+Dumps
++++++
+
+.. autofunction:: create_dump
+
+.. autofunction:: download_dumps
+
+.. autofunction:: list_dumps
+
+.. autofunction:: load_dump
+
+Elasticsearch
++++++++++++++
+
+.. autofunction:: es_put_template
+
+.. autofunction:: es_put_mapping
+
+.. autofunction:: create_indexes
+
+.. autofunction:: delete_indexes
+
+.. autofunction:: available_indices
+
+
+Extract
++++++++
+
+.. autofunction:: extract_list_sources
+
+.. autofunction:: extract_start
+
+Frontend
+++++++++
+
+.. autofunction:: frontend_runserver

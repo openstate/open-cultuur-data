@@ -14,3 +14,22 @@ class UnableToGenerateObjectId(Exception):
 class NoDeserializerAvailable(Exception):
     """Thrown when there is no deserializer available for the
     content-type of an."""
+
+
+class FieldNotAvailable(Exception):
+    """Exception thrown when a field could not be found."""
+    def __init__(self, field):
+        self.field = field
+
+    def __str__(self):
+        return repr(self.field)
+
+
+class SkipEnrichment(Exception):
+    """Exception thrown from within an enrichment task to indicate that
+    there is a valid reason for skipping the enrichemnt."""
+
+
+class UnsupportedContentType(Exception):
+    """Exception thrown when a media enrichemnt task is asked to process
+    media content that is doesn't understand."""

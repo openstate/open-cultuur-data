@@ -1,10 +1,12 @@
 import requests
+from requests.packages.urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
 
-from ocd_backend.exceptions import ConfigurationError
 from ocd_backend.settings import USER_AGENT
 from ocd_backend.log import get_source_logger
 
 log = get_source_logger('extractor')
+
 
 class BaseExtractor(object):
     """The base class that other extractors should inherit."""
@@ -48,6 +50,16 @@ class HttpRequestMixin(object):
         if not http_session:
             session = requests.Session()
             session.headers['User-Agent'] = USER_AGENT
+
+            http_retry = Retry(total=5, status_forcelist=[500, 503],
+                               backoff_factor=.5)
+            http_adapter = HTTPAdapter(max_retries=http_retry)
+            session.mount('http://', http_adapter)
+
+            http_retry = Retry(total=5, status_forcelist=[500, 503],
+                               backoff_factor=.5)
+            http_adapter = HTTPAdapter(max_retries=http_retry)
+            session.mount('https://', http_adapter)
 
             self._http_session = session
 

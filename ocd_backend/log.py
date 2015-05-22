@@ -5,6 +5,7 @@ from ocd_backend.settings import LOGGING
 
 logging.config.dictConfig(LOGGING)
 
+
 def get_source_logger(name=None):
     logger = logging.getLogger('ocd_backend')
 
