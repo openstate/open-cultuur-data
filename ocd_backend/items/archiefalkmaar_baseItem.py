@@ -16,14 +16,6 @@ class ArchiefAlkmaarBaseItem(BaseItem):
     }
 
     media_mime_types = {
-        'webm': 'video/webm',
-        'ogv': 'video/ogg',
-        'ogg': 'audio/ogg',
-        'mp4': 'video/mp4',
-        'm3u8': 'application/x-mpegURL',
-        'ts': 'video/MP2T',
-        'mpeg': 'video/mpeg',
-        'mpg': 'video/mpeg',
         'png': 'image/png',
         'jpg': 'image/jpg',
     }
