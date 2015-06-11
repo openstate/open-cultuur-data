@@ -29,7 +29,8 @@ class ArchiefAlkmaarBaseItem(BaseItem):
     }
 
     def _get_text_or_none(self, xpath_expression):
-        node = self.original_item.find(xpath_expression, namespaces=self.namespaces)
+        node = self.original_item.find(
+            xpath_expression, namespaces=self.namespaces)
         if node is not None and node.text is not None:
             return self.cleanup_xml_inner(node)
 
@@ -41,8 +42,13 @@ class ArchiefAlkmaarBaseItem(BaseItem):
     def get_original_object_urls(self):
         original_id = self.get_original_object_id()
         return {
-            'html': 'http://www.regionaalarchiefalkmaar.nl/beeldbank/%s/' % original_id.split(':')[1],
-            'xml': 'https://maior.memorix.nl/api/oai/raa/key/Bonda/?verb=GetRecord&identifier=%s&metadataPrefix=ese' % original_id
+            'html': (
+                u'http://www.regionaalarchiefalkmaar.nl/beeldbank/%s/' % (
+                    original_id.split(':')[1],)),
+            'xml': (
+                u'https://maior.memorix.nl/api/oai/raa/key/Bonda/?'
+                u'verb=GetRecord&identifier=%s&metadataPrefix=ese' % (
+                    original_id,))
         }
 
     def get_rights(self):
@@ -62,20 +68,24 @@ class ArchiefAlkmaarBaseItem(BaseItem):
                                                   namespaces=self.namespaces)
         if descriptions is not None:
             if (len(descriptions) > 0):
-                combined_index_data['title'] = self.cleanup_xml_inner(descriptions[0])
+                combined_index_data['title'] = self.cleanup_xml_inner(
+                    descriptions[0])
 
             if (len(descriptions) > 1):
-                combined_index_data['description'] = self.cleanup_xml_inner(descriptions[1])
+                combined_index_data['description'] = self.cleanup_xml_inner(
+                    descriptions[1])
 
         date = self._get_text_or_none('.//dc:date')
         if date:
             datesplit = date.split('-')
             if (datesplit[1] == '00') or (datesplit[2] == '00'):
                 combined_index_data['date_granularity'] = 4
-                combined_index_data['date'] = datetime.strptime(datesplit[0], '%Y')
+                combined_index_data['date'] = datetime.strptime(
+                    datesplit[0], '%Y')
             else:
                 combined_index_data['date_granularity'] = 8
-                combined_index_data['date'] = datetime.strptime(date, '%Y-%m-%d')
+                combined_index_data['date'] = datetime.strptime(
+                    date, '%Y-%m-%d')
 
         authors = self._get_text_or_none('.//dc:creator')
         if authors:
@@ -86,7 +96,8 @@ class ArchiefAlkmaarBaseItem(BaseItem):
         if media:
             combined_index_data['media_urls'] = [{
                 'original_url': media,          # always jpg
-                'content_type': self.media_mime_types[media.split('.')[-1]].lower()
+                'content_type': self.media_mime_types[
+                    media.split('.')[-1]].lower()
             }]
 
         return combined_index_data
