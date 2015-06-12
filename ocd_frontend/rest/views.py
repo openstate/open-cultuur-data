@@ -209,6 +209,11 @@ def format_sources_results(results):
     }
 
 
+@bp.route('/', methods=['GET'])
+def redirect_to_docs():
+    return redirect(current_app.config['DOCS_URL'])
+
+
 @bp.route('/sources', methods=['GET'])
 def list_sources():
     es_q = {
