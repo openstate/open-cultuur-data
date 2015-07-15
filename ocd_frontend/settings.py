@@ -101,6 +101,10 @@ LOCAL_DUMPS_DIR = os.path.join(os.path.dirname(ROOT_PATH), 'local_dumps')
 # to download dumps from another API instance than the one hosted by OpenState
 API_URL = 'http://api.opencultuurdata.nl/v0/'
 
+# URL of the API documentation. This is used to redirect calls to the base
+# API_URL which would otherwise return a 404.
+DOCS_URL = 'http://docs.opencultuurdata.nl/'
+
 # URL where collection dumps are hosted. This is used for generating full URLs
 # to dumps in the /dumps endpoint
 DUMP_URL = 'http://dumps.opencultuurdata.nl/'

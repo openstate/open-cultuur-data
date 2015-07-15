@@ -27,3 +27,4 @@ from .localdump import LocalDumpItemTestCase
 from .a2a import OpenArchievenTestCase, RegionaalArchiefTilburgTestCase
 from .gemeente_ede import GemeenteEdeItemTestCase
 from .nabeeldbank import NationaalArchiefBeeldbankItemTestCase
+from .archief_alkmaar import ArchiefAlkmaarItemTestCase
