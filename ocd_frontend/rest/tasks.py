@@ -1,9 +1,8 @@
 from datetime import datetime
 
 from flask import current_app
-from ocd_frontend.factory import create_celery_app		
+import celery
 
-celery = create_celery_app()
 
 @celery.task(ignore_result=True)
 def log_event(user_agent, referer, user_ip, created_at, event_type, **kwargs):
