@@ -15,6 +15,9 @@ def register_blueprints(app, package_name, package_path):
     rv = []
 
     for _, name, _ in pkgutil.iter_modules(package_path):
+        if name in ['libnss3']:
+            continue
+        print package_name, package_path, name
         m = importlib.import_module('%s.%s' % (package_name, name))
         for item in dir(m):
             item = getattr(m, item)

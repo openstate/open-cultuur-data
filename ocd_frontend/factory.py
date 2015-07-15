@@ -29,7 +29,7 @@ def create_app_factory(package_name, package_path, settings_override=None):
 
 
 def create_celery_app(app=None):
-    app = app or create_app_factory('ocd_frontend', os.path.dirname(__file__))
+    app = app or create_app_factory('ocd_frontend.rest.celery', os.path.dirname(__file__))
     celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])
     celery.conf.update(app.config)
     TaskBase = celery.Task

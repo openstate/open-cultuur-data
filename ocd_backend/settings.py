@@ -45,7 +45,7 @@ LOGGING = {
     'loggers': {
         'ocd_backend': {
             'handlers': ['console', 'file'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False,
         }
     }
