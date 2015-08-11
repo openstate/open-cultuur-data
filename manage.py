@@ -9,6 +9,7 @@ import requests
 import sys
 import time
 from urlparse import urljoin
+from pprint import pprint
 
 import click
 from click.core import Command
@@ -20,7 +21,8 @@ from werkzeug.serving import run_simple
 
 from ocd_backend.es import elasticsearch as es
 from ocd_backend.pipeline import setup_pipeline
-from ocd_backend.settings import SOURCES_CONFIG_FILE, DEFAULT_INDEX_PREFIX
+from ocd_backend.settings import (
+    SOURCES_CONFIG_FILE, DEFAULT_INDEX_PREFIX, COMBINED_INDEX)
 from ocd_backend.utils.misc import load_sources_config
 from ocd_frontend.settings import DUMPS_DIR, API_URL, LOCAL_DUMPS_DIR
 from ocd_frontend.wsgi import application
@@ -181,6 +183,15 @@ def frontend():
 def dumps():
     """Create and load dumps of indices"""
 
+@cli.group()
+def qa():
+    """Assess the quality of data in the API"""
+
+@command('matrix')
+@click.option('--index', default=COMBINED_INDEX, help='The index name.')
+def qa_matrix(index):
+    mapping = es.indices.get_mapping(index=index)
+    pprint(mapping)
 
 @command('put_template')
 @click.option('--template_file', default='es_mappings/ocd_template.json',
@@ -609,6 +620,7 @@ elasticsearch.add_command(available_indices)
 extract.add_command(extract_list_sources)
 extract.add_command(extract_start)
 
+qa.add_command(qa_matrix)
 
 if __name__ == '__main__':
     cli()
