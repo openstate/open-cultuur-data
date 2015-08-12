@@ -20,6 +20,7 @@ from elasticsearch.exceptions import RequestError
 from werkzeug.serving import run_simple
 
 from ocd_backend.es import elasticsearch as es
+from ocd_backend.items import BaseItem
 from ocd_backend.pipeline import setup_pipeline
 from ocd_backend.settings import (
     SOURCES_CONFIG_FILE, DEFAULT_INDEX_PREFIX, COMBINED_INDEX)
@@ -189,9 +190,66 @@ def qa():
 
 @command('matrix')
 @click.option('--index', default=COMBINED_INDEX, help='The index name.')
-def qa_matrix(index):
-    mapping = es.indices.get_mapping(index=index)
-    pprint(mapping)
+@click.option('--sources_config', default=SOURCES_CONFIG_FILE, type=click.File('rb'))
+def qa_matrix(index, sources_config):
+    #mapping = es.indices.get_mapping(index=index)
+    fields = BaseItem.combined_index_fields
+    sources = load_sources_config(sources_config)
+
+    #pprint(fields)
+
+    all_body = {
+        'query': {
+            'constant_score': {
+                'query': {'match_all': {}}
+            }
+        },
+        'aggs': {
+            'source_id': {
+                'terms': {'field': 'meta.source_id', 'size': len(sources)},
+            }
+        },
+        'size': 0
+    }
+    all_result = es.search(index=index, body=all_body)
+
+    all_counts = {b['key']: {
+        'all': b['doc_count']} for b in
+        all_result['aggregations']['source_id']['buckets']}
+
+    for field in fields:
+        body = {
+            'query': {
+                'filtered': {
+                    'query': {
+                        'constant_score': {
+                            'query': {'match_all': {}}
+                        }
+                    },
+                    'filter': {
+                        'exists': {'field': field}
+                    }
+                }
+            },
+            'aggs': {
+                'source_id': {
+                    'terms': {'field': 'meta.source_id', 'size': len(sources)},
+                }
+            },
+            'size': 0
+        }
+        result = es.search(index=index, body=body)
+        for b in result['aggregations']['source_id']['buckets']:
+            all_counts[b['key']][field] = b['doc_count']
+        # print field
+        # pprint(result)
+
+    pprint(all_counts)
+
+    print ("{:<24}" * (len(fields) + 2)).format(*(sorted(['Source', 'all'] + fields.keys())))
+    #print "{:<8} {:<15} {:<10}".format('Source',)
+    for source_id, counts in all_counts.iteritems():
+        print ("{:<24}" * (len(fields) + 2)).format(*([source_id, counts['all']] + [counts.get(c, 0) for c in sorted(fields)]))
 
 @command('put_template')
 @click.option('--template_file', default='es_mappings/ocd_template.json',
