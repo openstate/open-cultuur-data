@@ -29,5 +29,8 @@ from .gemeente_ede import GemeenteEdeItemTestCase
 from .kb_watermarks import WatermarksItemTestCase
 from .nabeeldbank import NationaalArchiefBeeldbankItemTestCase
 from .rce import RCEItemTestCase
+from .ra_nijmegen import (
+    NijmegenGrintenItemTestCase, NijmegenDoornroosjeItemTestCase,
+    NijmegenVierdaagseItemTestCase)
 from .museum_rotterdam import MuseumRotterdamItemTestCase
 from .archief_alkmaar import ArchiefAlkmaarItemTestCase
