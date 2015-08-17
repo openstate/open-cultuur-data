@@ -29,7 +29,7 @@ class ArchiefAlkmaarItemTestCase(ItemTestCase):
             self.raw_item = f.read()
         self.item = etree.XML(self.raw_item)
 
-        self.collection = u'Reg Archief Alkmaar Bonda'
+        self.collection = u'Regionaal Archief Alkmaar Bonda'
         self.rights = u'http://en.wikipedia.org/wiki/Public_domain'
         self.original_object_id = u'oai:d5dd999d-d98a-4ecc-a38f-04927a3fbe34:963f7248-a263-11e0-bf4a-bde4fca6c222'
         self.title = u'Elzenlaan 2-4. Gezicht op \'\'Huis Russenduin\'\''

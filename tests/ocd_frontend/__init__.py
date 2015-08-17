@@ -146,9 +146,7 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
 
         facets = {
             'rights': {
-                'terms': {
-                    'size': 'abc'
-                }
+                'size': 'abc'
             }
         }
 
@@ -184,9 +182,7 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
 
         facets = {
             'date': {
-                'date_histogram': {
-                    'interval': 123
-                }
+                'interval': 123
             }
         }
 
@@ -202,9 +198,7 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
 
         facets = {
             'date': {
-                'date_histogram': {
-                    'interval': 'millennium'
-                }
+                'interval': 'millennium'
             }
         }
 
@@ -462,10 +456,8 @@ class RestApiSearchSimilarTestCase(OcdRestTestCaseMixin, TestCase):
 
         facets = {
             'rights': {
-                'terms': {
-                    'field': 'meta.rights',
-                    'size': 'abc'
-                }
+                'field': 'meta.rights',
+                'size': 'abc'
             }
         }
 
@@ -502,10 +494,8 @@ class RestApiSearchSimilarTestCase(OcdRestTestCaseMixin, TestCase):
 
         facets = {
             'date': {
-                'date_histogram': {
-                    'field': 'date',
-                    'interval': 123
-                }
+                'field': 'date',
+                'interval': 123
             }
         }
 
@@ -521,10 +511,8 @@ class RestApiSearchSimilarTestCase(OcdRestTestCaseMixin, TestCase):
 
         facets = {
             'date': {
-                'date_histogram': {
-                    'field': 'date',
-                    'interval': 'millennium'
-                }
+                'field': 'date',
+                'interval': 'millennium'
             }
         }
 
