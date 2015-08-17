@@ -1,55 +1,69 @@
-import json
 import os
 from datetime import datetime
 
 from lxml import etree
 
-from ocd_backend.items.archiefalkmaar_bonda import ArchiefAlkmaarBondaItem
+from ocd_backend.items.museum_rotterdam import MuseumRotterdamItem
 
 from . import ItemTestCase
 
 
-class ArchiefAlkmaarItemTestCase(ItemTestCase):
+class MuseumRotterdamItemTestCase(ItemTestCase):
     def setUp(self):
-        super(ArchiefAlkmaarItemTestCase, self).setUp()
+        super(MuseumRotterdamItemTestCase, self).setUp()
         self.PWD = os.path.dirname(__file__)
         self.source_definition = {
-            'id': 'archief_alkmaar_bonda',
+            'id': 'museum_rotterdam',
             'extractor': (
-                'ocd_backend.extractors.opensearch.OpensearchExtractor'),
+                'ocd_backend.extractors.staticfile.StaticXmlExtractor'),
             'transformer': 'ocd_backend.transformers.BaseTransformer',
             'item': (
-                'ocd_backend.items.archiefalkmaar_bonda.ArchiefAlkmaarBondaItem'),
-            'loader': 'ocd_backend.loaders.ElasticsearchLoader'
+                'ocd_backend.items.museum_rotterdam.MuseumRotterdamItem'),
+            'loader': 'ocd_backend.loaders.ElasticsearchLoader',
+            'item_xpath': '//cb3:record',
+            'default_namespace': 'cb3',
+            'cb3_mapping': {
+                'inventarisnummer': 1,
+                'extensie': 5,
+                'titel': 48,
+                'objecttrefwoorden': 2,
+                'materiaal': 14,
+                'afmetingen': 15,
+                'datering_beginjaar': 18,
+                'datering_eindjaar': 19,
+                'plaats_vervaardiging': 20,
+                'technieken': 21,
+                'vervaardiger': 22,
+                'beschrijving': 3,
+                'opschrift_merken': 17,
+                'trefwoorden': 51,
+                'associatie': 23,
+                'herkomst': 40,
+                'licentie': 85
+            }
         }
 
         with open(os.path.abspath(os.path.join(
-            self.PWD, '../test_dumps/archief_alkmaar_item.xml')
+            self.PWD, '../test_dumps/museum_rotterdam.xml')
         ), 'r') as f:
             self.raw_item = f.read()
         self.item = etree.XML(self.raw_item)
 
-        self.collection = u'Regionaal Archief Alkmaar Bonda'
-        self.rights = u'http://en.wikipedia.org/wiki/Public_domain'
-        self.original_object_id = u'oai:d5dd999d-d98a-4ecc-a38f-04927a3fbe34:963f7248-a263-11e0-bf4a-bde4fca6c222'
-        self.title = u'Elzenlaan 2-4. Gezicht op \'\'Huis Russenduin\'\''
+        self.collection = u'Museum Rotterdam'
+        self.rights = u'https://creativecommons.org/publicdomain/mark/1.0/'
+        self.original_object_id = u'4'
+        self.title = u'Kelkglas, bokaal gegraveerd met allegorie op huwelijkse liefde'
         self.original_object_urls = {
-            u'html': (
-                u'http://www.regionaalarchiefalkmaar.nl/beeldbank/'
-                u'd5dd999d-d98a-4ecc-a38f-04927a3fbe34/'),
-            u'xml': (
-                u'https://maior.memorix.nl/api/oai/raa/key/Bonda/?verb=GetRecord'
-                u'&identifier=oai:d5dd999d-d98a-4ecc-a38f-04927a3fbe34:963f7248-a263-11e0-bf4a-bde4fca6c222'
-                u'&metadataPrefix=ese'
-                )}
+            u'html': u'http://museumrotterdam.nl/collectie/item/4'
+        }
         self.media_urls = [{
             'original_url': (
-                u'https://images.memorix.nl/raa/thumb/2000x2000/'
-                u'4d80982f-9720-4c6c-abb9-da0424141575.jpg'),
-            'content_type': 'image/jpg'
+                u'http://museumrotterdam.blob.core.windows.net/'
+                u'lowres/4_1.jpg'
+            ),
+            'content_type': 'image/jpeg'
         }]
-        self.date_str = '1920-00-00'
-        self.year = '1920'
+        self.year = '1720'
         self.date = datetime.strptime(self.year, '%Y')
         self.date_granularity = 4
 
@@ -57,7 +71,7 @@ class ArchiefAlkmaarItemTestCase(ItemTestCase):
         """
         Instantiate the item from the raw and parsed item we have
         """
-        return ArchiefAlkmaarBondaItem(
+        return MuseumRotterdamItem(
             self.source_definition, 'application/xml',
             self.raw_item, self.item
         )

@@ -4,6 +4,7 @@ from flask import (Blueprint, current_app, request, jsonify, redirect, url_for,)
 from elasticsearch import NotFoundError
 import os
 from urlparse import urljoin
+from pprint import pprint
 
 from ocd_frontend import thumbnails
 from ocd_frontend.rest import OcdApiError, decode_json_post_data
