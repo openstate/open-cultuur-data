@@ -10,7 +10,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -29,7 +29,7 @@
                     "tasks": ["media_type", "image_metadata"],
                     "partial_media_fetch": true
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -48,7 +48,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -67,7 +67,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -86,7 +86,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -116,7 +116,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -135,7 +135,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -155,7 +155,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -175,7 +175,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -195,7 +195,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -214,7 +214,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -233,7 +233,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -252,7 +252,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -281,6 +281,26 @@
         "index_name": "museum_rotterdam"
     },
     {
+        "id": "kb_watermarks",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.kb.WatermarksItem",
+        "enrichers": [
+            [
+                "ocd_backend.enrichers.media_enricher.MediaEnricher",
+                {
+                    "tasks": ["media_type", "image_metadata"]
+                }
+            ]
+        ],
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "oai_base_url": "http://services.kb.nl/mdo/oai",
+        "oai_metadata_prefix": "dcx",
+        "oai_set": "WILC",
+        "index_name": "koninklijke-bibliotheek-watermerken"
+    },
+    {
         "id": "ra_tilburg",
         "extractor": "ocd_backend.extractors.oai.OaiExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
@@ -291,7 +311,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -310,7 +330,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -327,7 +347,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -345,7 +365,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",

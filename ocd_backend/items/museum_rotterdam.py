@@ -45,7 +45,7 @@ class MuseumRotterdamItem(BaseItem):
             res = self.original_item.xpath(
                 xpath_query, namespaces=namespaces
             )
-            
+
             if len(res) > 0:
                 return u''.join(res[0].xpath('.//text()'))
             else:
@@ -57,18 +57,21 @@ class MuseumRotterdamItem(BaseItem):
         return unicode(self._get_field('INVENTARISNUMMER'))
 
     def _get_permalink(self, for_image=False):
-        main_path = 'objecten' if for_image else 'beelden'
         orig_id = self.get_original_object_id()
         extension = self._get_field('EXTENSIE')
 
-        if extension is not None:
-            html_link = 'http://collectie.museumrotterdam.nl/%s/%s-%s' % (
-                main_path, orig_id,  extension,
+        item_path = orig_id if extension is None else '%s-%s' % (
+            orig_id,  extension
             )
+
+        if(for_image):
+            html_link = 'http://museumrotterdam.blob.core.windows.net/lowres/%s_1.jpg' % (
+                item_path
+                )
         else:
-            html_link = 'http://collectie.museumrotterdam.nl/%s/%s' % (
-                main_path, orig_id,
-            )
+            html_link = 'http://museumrotterdam.nl/collectie/item/%s' % (
+                item_path
+                )
 
         return html_link
 
@@ -82,17 +85,17 @@ class MuseumRotterdamItem(BaseItem):
 
     def get_rights(self):
         # rights are defined for the whole collection.
-        return u'No Rights Reserved / Public Domain'
+        return u'https://creativecommons.org/publicdomain/mark/1.0/'
 
     def get_combined_index_data(self):
         index_data = {}
-        
+
         title = self._get_field('TITEL')
-        if title != None:
+        if title is not None:
             index_data['title'] = unicode(title)
 
         gran = 4
-        
+
         try:
             date = datetime.datetime(
                 int(self._get_field('DATERING_BEGINJAAR')), 1, 1
@@ -105,7 +108,7 @@ class MuseumRotterdamItem(BaseItem):
             index_data['date'] = date
 
         description = self._get_field('BESCHRIJVING')
-        if description != None:
+        if description is not None:
             index_data['description'] = unicode(description)
 
         # author is optional

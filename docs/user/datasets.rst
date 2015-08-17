@@ -496,3 +496,54 @@ Gemeentearchief Ede
 
 Gemeentearchief Ede index
 ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Museum Rotterdam
+----------------
+
+This dataset contains objects from the `Museum Rotterdam <http://www.museumrotterdam.nl/>`_. The dataset (a static XML file) has been made available under an open license.
+
+.. _datasets_combinedindex:
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+-----------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                         | Comment                                |
++========================+=========================================+========================================+
+| ``title``              | ``dc:title``                            |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+| ``description``        | ``dc:description``                      |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+| ``date``               | ``dc:date``                             |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+| ``authors``            | ``dc:creator``                          |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+| ``media_urls``         | ``dc:identifier`` and ``dcx:thumbnail`` |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+
+Museum Rotterdam index
+^^^^^^^^^^^^^^^^^^^^^^
+
+Koninklijke Bibliotheek - Watermarks
+------------------------------------
+
+This dataset contains watermark images from the `Koninklijke Bibliotheek <http://watermark.kb.nl/default/search/advanced/>`_.
+The `archive's OAI-MPH interface <http://www.kb.nl/sites/default/files/docs/Techniek-WILC.pdf>`_ is used to harvest content
+that the archive has made available under an open license.
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``f[@id="1"]``                       | The url is derive from the object id.  |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``f[@id="3"]``                       | Only included if it is specified       |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``f[@id="18"]``                      | It is assumed that the only the year   |
+|                        |                                      | is known. The ``date_granularity``     |
+|                        |                                      | is therefor always 4.                  |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | -                                    | Author is not specified                |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``f[@id="1"]``                       | Only one image per object. Infered     |
+|                        |                                      | from the object id.                    |
++------------------------+--------------------------------------+----------------------------------------+
