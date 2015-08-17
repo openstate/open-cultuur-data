@@ -316,5 +316,41 @@
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "file_url": "http://static.opencultuurdata.nl/gemeente_ede/2014OpenData_ABWigman_CSV_06-12.json",
         "index_name": "gemeente_ede"
+    },{
+        "id": "archief_alkmaar_bonda",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item":   "ocd_backend.items.archiefalkmaar_bonda.ArchiefAlkmaarBondaItem",
+        "enrichers": [
+            [
+                "ocd_backend.enrichers.media_enricher.MediaEnricher",
+                {
+                    "tasks": ["media_type", "image_metadata"]
+                }
+            ]     
+        ],
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "oai_base_url": "https://maior.memorix.nl/api/oai/raa/key/Bonda",
+        "oai_metadata_prefix": "ese",
+        "index_name": "archief_alkmaar_bonda"
+    },{
+        "id": "archief_alkmaar_bosboom",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item":   "ocd_backend.items.archiefalkmaar_bosboom.ArchiefAlkmaarBosboomItem",
+        "enrichers": [
+            [
+                "ocd_backend.enrichers.media_enricher.MediaEnricher",
+                {
+                    "tasks": ["media_type", "image_metadata"]
+                }
+            ]     
+        ],
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "oai_base_url": "https://maior.memorix.nl/api/oai/raa/key/Bosboom",
+        "oai_metadata_prefix": "ese",
+        "index_name": "archief_alkmaar_bosboom"
     }
 ]

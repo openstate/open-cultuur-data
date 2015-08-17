@@ -70,15 +70,15 @@ def parse_search_request(data, mlt=False):
             raise OcdApiError('\'%s\' is not a valid facet' % facet, 400)
 
         if type(facet_opts) is not dict:
-            raise OcdApiError('\'facets.%s\' should cotain an object' % facet,
+            raise OcdApiError('\'facets.%s\' should contain an object' % facet,
                               400)
 
         # Take the default facet options from the settings
         facets[facet] = available_facets[facet]
         f_type = facets[facet].keys()[0]
         if f_type == 'terms':
-            if 'size' in facet_opts.get(f_type, {}):
-                size = facet_opts[f_type]['size']
+            if 'size' in facet_opts.keys():
+                size = facet_opts['size']
                 if type(size) is not int:
                     raise OcdApiError('\'facets.%s.size\' should be an '
                                       'integer' % facet, 400)
@@ -86,8 +86,8 @@ def parse_search_request(data, mlt=False):
                 facets[facet][f_type]['size'] = size
 
         elif f_type == 'date_histogram':
-            if 'interval' in facet_opts.get(f_type, {}):
-                interval = facet_opts[f_type]['interval']
+            if 'interval' in facet_opts.keys():
+                interval = facet_opts['interval']
                 if type(interval) is not unicode:
                     raise OcdApiError('\'facets.%s.interval\' should be '
                                       'a string' % facet, 400)
@@ -207,6 +207,11 @@ def format_sources_results(results):
     return {
         'sources': sources
     }
+
+
+@bp.route('/', methods=['GET'])
+def redirect_to_docs():
+    return redirect(current_app.config['DOCS_URL'])
 
 
 @bp.route('/sources', methods=['GET'])
