@@ -165,6 +165,18 @@
         "index_name": "uukaarten"
     },
     {
+        "id": "rce",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.rce.RCEItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "oai_base_url": "http://cultureelerfgoed.adlibsoft.com/oaiapi/oai.ashx",
+        "oai_metadata_prefix": "oai_dc",
+        "oai_set": "fotos",
+        "index_name": "rijkscultureel-erfgoed-beeldbank"
+    },
+    {
         "id": "zoutkamp",
         "extractor": "ocd_backend.extractors.adlib.AdlibExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
