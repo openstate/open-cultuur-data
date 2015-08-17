@@ -28,7 +28,7 @@ from .a2a import OpenArchievenTestCase, RegionaalArchiefTilburgTestCase
 from .gemeente_ede import GemeenteEdeItemTestCase
 from .nabeeldbank import NationaalArchiefBeeldbankItemTestCase
 from .ra_nijmegen import (
-    NijmegenGrintenItemTestCase,
-    NijmegenDoornroosjeItemTestCase,
-    NijmegenVierdaagseItemTestCase
-)
+    NijmegenGrintenItemTestCase, NijmegenDoornroosjeItemTestCase,
+    NijmegenVierdaagseItemTestCase)
+from .museum_rotterdam import MuseumRotterdamItemTestCase
+from .archief_alkmaar import ArchiefAlkmaarItemTestCase

@@ -32,23 +32,6 @@ class OpensearchExtractor(BaseExtractor, HttpRequestMixin):
         log.debug('Getting %s (params: %s)' % (self.url, params))
 
         r = self.http_session.get(self.url, params=params)
-
-        # In case a server error is returned (for example, a gateway
-        # time-out), we retry the same request for a number of times
-        max_retries = 10
-        retried = 0
-        while r.status_code >= 500 and retried <= max_retries:
-            log.warning('Received server error (status %s), retry %s of %s'
-                            % (r.status_code, retried + 1, max_retries))
-
-            sleep_s = retried + 1
-            log.warning('Sleeping %s second(s) before retrying...' % sleep_s)
-            sleep(sleep_s)
-
-            r = self.http_session.get(self.url, params=params)
-
-            retried += 1
-
         r.raise_for_status()
 
         return etree.fromstring(r.content)

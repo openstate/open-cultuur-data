@@ -5,6 +5,7 @@ from ocd_backend.settings import CELERY_CONFIG
 celery_app = Celery('ocd_backend', include=[
     'ocd_backend.extractors',
     'ocd_backend.transformers',
+    'ocd_backend.enrichers.media_enricher',
     'ocd_backend.loaders',
     'ocd_backend.tasks'
 ])

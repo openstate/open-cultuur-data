@@ -560,3 +560,34 @@ Fotocollectie Regionaal Archief Nijmegen - Vierdaagsefeesten
 
 Fotocollectie Regionaal Archief Nijmegen - Vierdaagsefeesten index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Museum Rotterdam
+----------------
+
+This dataset contains objects from the `Museum Rotterdam <http://www.museumrotterdam.nl/>`_. The dataset (a static XML file) has been made available under an open license.
+
+.. _datasets_combinedindex:
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``f[@id="1"]``                       | The url is derive from the object id.  |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``f[@id="3"]``                       | Only included if it is specified       |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``f[@id="18"]``                      | It is assumed that the only the year   |
+|                        |                                      | is known. The ``date_granularity``     |
+|                        |                                      | is therefor always 4.                  |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | -                                    | Author is not specified                |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``f[@id="1"]``                       | Only one image per object. Infered     |
+|                        |                                      | from the object id.                    |
++------------------------+--------------------------------------+----------------------------------------+
+
+
+Museum Rotterdam index
+^^^^^^^^^^^^^^^^^^^^^^

@@ -1,14 +1,11 @@
-import glob
 import json
 import mock
-import os.path
 import random
 from unittest import TestCase as UnittestTestCase
 
 from flask import url_for, current_app
 from flask.ext.testing import TestCase
 
-from ocd_frontend import rest
 from ocd_frontend.rest import tasks
 from .mixins import OcdRestTestCaseMixin
 
@@ -96,17 +93,27 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
         for fk in facet_keys:
             self.assertIn(fk, response.json.get('facets', {}))
 
+    def test_invalid_facet_option_value(self):
+        """Tests if requesting a facet with invalid value (not dict)
+        results in a response with status code 400."""
+        url = url_for(self.endpoint_url, **self.endpoint_url_args)
+
+        facets = {
+            'rights': []
+        }
+
+        response = self.post(url, content_type='application/json',
+                             data=json.dumps({'query': 'de',
+                                              'facets': facets}))
+        self.assert_bad_request_json(response)
+
     def test_not_available_facet(self):
         """Tests if requesting a facet that is not available results
         in a response with status code 400."""
         url = url_for(self.endpoint_url, **self.endpoint_url_args)
 
         facets = {
-            'rights-that-are-not-a-facet': {
-                'terms': {
-                    'field': 'meta.rights'
-                }
-            }
+            'rights-that-are-not-a-facet': {}
         }
 
         response = self.post(url, content_type='application/json',
@@ -122,7 +129,6 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
         facets = {
             'rights': {
                 'terms': {
-                    'field': 'meta.rights',
                     'size': 10
                 }
             }
@@ -140,10 +146,7 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
 
         facets = {
             'rights': {
-                'terms': {
-                    'field': 'meta.rights',
-                    'size': 'abc'
-                }
+                'size': 'abc'
             }
         }
 
@@ -160,7 +163,6 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
         facets = {
             'date': {
                 'date_histogram': {
-                    'field': 'date',
                     'interval': 'month'
                 }
             }
@@ -180,10 +182,7 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
 
         facets = {
             'date': {
-                'date_histogram': {
-                    'field': 'date',
-                    'interval': 123
-                }
+                'interval': 123
             }
         }
 
@@ -199,10 +198,7 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
 
         facets = {
             'date': {
-                'date_histogram': {
-                    'field': 'date',
-                    'interval': 'millennium'
-                }
+                'interval': 'millennium'
             }
         }
 
@@ -460,10 +456,8 @@ class RestApiSearchSimilarTestCase(OcdRestTestCaseMixin, TestCase):
 
         facets = {
             'rights': {
-                'terms': {
-                    'field': 'meta.rights',
-                    'size': 'abc'
-                }
+                'field': 'meta.rights',
+                'size': 'abc'
             }
         }
 
@@ -500,10 +494,8 @@ class RestApiSearchSimilarTestCase(OcdRestTestCaseMixin, TestCase):
 
         facets = {
             'date': {
-                'date_histogram': {
-                    'field': 'date',
-                    'interval': 123
-                }
+                'field': 'date',
+                'interval': 123
             }
         }
 
@@ -519,10 +511,8 @@ class RestApiSearchSimilarTestCase(OcdRestTestCaseMixin, TestCase):
 
         facets = {
             'date': {
-                'date_histogram': {
-                    'field': 'date',
-                    'interval': 'millennium'
-                }
+                'field': 'date',
+                'interval': 'millennium'
             }
         }
 
@@ -853,7 +843,7 @@ class RestApiResolveTestCase(OcdRestTestCaseMixin, TestCase):
         'ocd_test_resolver_index'
     ]
 
-    def test_succesfull_resolve(self):
+    def test_successful_resolve(self):
         """Test if a valid URL resolves and returns a redirect with the
         correct status, location and content type."""
         doc_id = self.doc_ids['ocd_test_resolver_index']['url'][0]
@@ -866,6 +856,61 @@ class RestApiResolveTestCase(OcdRestTestCaseMixin, TestCase):
         self.assertIn('location', response.headers)
         self.assertTrue(response.headers['location'].startswith('http://'))
 
+    def test_resolve_not_whitelisted_content_type(self):
+        """Test that a resolve document with an incorrent content_type resolves
+        to the original url"""
+        doc_id = self.doc_ids['ocd_test_resolver_index']['url'][1]
+        url = url_for('api.resolve', url_id=doc_id)
+
+        response = self.get(url, follow_redirects=False)
+
+        self.assert_status_code(response, 302)
+        self.assert_content_type(response, 'text/html; charset=utf-8')
+        self.assertIn('location', response.headers)
+        self.assertTrue(response.headers['location'].startswith('http://'))
+
+    def test_successful_thumbnail_resolve(self):
+        """Test if a valid URL resolves and returns a redirect to a thumbnailed
+        image.
+        """
+        doc_id = self.doc_ids['ocd_test_resolver_index']['url'][0]
+        url = url_for('api.resolve', url_id=doc_id, size='large')
+
+        response = self.get(url, follow_redirects=False)
+
+        self.assert_status_code(response, 302)
+        self.assert_content_type(response, 'text/html; charset=utf-8')
+        self.assertIn('location', response.headers)
+        self.assertIn('large', response.headers['location'])
+        self.assertIn(self.app.config.get('THUMBNAIL_URL'), response.headers['location'])
+
+    def test_invalid_thumbnail_size_json(self):
+        """Test if a request with an invalid thumbnail size returns a 400 with
+        proper content type"""
+        doc_id = self.doc_ids['ocd_test_resolver_index']['url'][0]
+        url = url_for('api.resolve', url_id=doc_id, size='humongous')
+
+        response = self.get(url, follow_redirects=False)
+
+        self.assert_bad_request(response)
+        self.assert_content_type(response, 'application/json')
+        self.assertEqual(response.json.get('status'), 'error')
+        self.assertIn('appropriate thumbnail size', response.json.get('error'))
+
+    def test_invalid_thumbnail_size_html(self):
+        """Test if a request with an invalid thumbnail size returns a 400 with
+        proper content type"""
+        doc_id = self.doc_ids['ocd_test_resolver_index']['url'][0]
+        url = url_for('api.resolve', url_id=doc_id, size='humongous')
+
+        response = self.get(url, follow_redirects=False,
+                            content_type='text/html')
+
+        self.assert_bad_request(response)
+        self.assert_content_type(response, 'text/html; charset=utf-8')
+        self.assertIn('<html><body>You did not provide an appropriate '
+                      'thumbnail size', response.data)
+
     def test_invalid_resolve_json(self):
         """Tests if a request to resolve an invalid URL results in a
         404 response with the proper content type."""
@@ -874,6 +919,7 @@ class RestApiResolveTestCase(OcdRestTestCaseMixin, TestCase):
                             content_type='application/json')
         self.assert_not_found_request_json(response)
 
+
     def test_invalid_resolve_html(self):
         """Tests if a request to resolve an invalid URL results in a
         404 response with the proper content type."""
@@ -881,7 +927,7 @@ class RestApiResolveTestCase(OcdRestTestCaseMixin, TestCase):
         response = self.get(url, follow_redirects=False,
                             content_type='text/html')
 
-        self.assert_status_code(response, 404)
+        self.assert_not_found(response)
         self.assert_content_type(response, 'text/html; charset=utf-8')
 
     @mock.patch('ocd_frontend.rest.tasks.log_event.delay')

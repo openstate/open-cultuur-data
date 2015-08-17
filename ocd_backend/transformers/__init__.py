@@ -2,15 +2,15 @@ import json
 from hashlib import sha1
 
 from lxml import etree
-from celery import Task
 
+from ocd_backend import celery_app
 from ocd_backend import settings
 from ocd_backend.exceptions import NoDeserializerAvailable
 from ocd_backend.mixins import OCDBackendTaskFailureMixin
 from ocd_backend.utils.misc import load_object
 
 
-class BaseTransformer(OCDBackendTaskFailureMixin, Task):
+class BaseTransformer(OCDBackendTaskFailureMixin, celery_app.Task):
 
     def run(self, *args, **kwargs):
         """Start transformation of a single item.
@@ -75,4 +75,8 @@ class BaseTransformer(OCDBackendTaskFailureMixin, Task):
 
         self.add_resolveable_media_urls(item)
 
-        return item.get_object_id(), item.get_combined_index_doc(), item.get_index_doc()
+        return (
+            item.get_object_id(),
+            item.get_combined_index_doc(),
+            item.get_index_doc()
+        )

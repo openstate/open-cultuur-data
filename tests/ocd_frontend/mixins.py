@@ -1,6 +1,7 @@
 import os
 from glob import glob
 import json
+import shutil
 
 from werkzeug.utils import parse_cookie
 
@@ -23,6 +24,10 @@ class OcdRestTestCaseMixin(object):
 
         self.es_client = app.es._es
         self.PWD = os.path.dirname(__file__)
+        self.thumbnail_cache = os.path.join(os.path.abspath(self.PWD),
+                                            'test-thumbnail-cache')
+
+        app.config['THUMBNAIL_DIR'] = self.thumbnail_cache
 
         return app
 
@@ -37,6 +42,12 @@ class OcdRestTestCaseMixin(object):
 
         # Add test documents to the specified indexes
         self.es_index_docs(self.required_indexes)
+
+        self.create_thumbnail_cache()
+
+    def create_thumbnail_cache(self):
+        os.makedirs(self.thumbnail_cache)
+        self.addCleanup(self.remove_thumbnail_cache)
 
     def es_add_indices(self, indices):
         """Create the ES indexes givin in ``indices``. A cleanup
@@ -86,6 +97,10 @@ class OcdRestTestCaseMixin(object):
 
     def es_remove_index(self, index_name):
         self.es_client.indices.delete(index_name)
+
+    def remove_thumbnail_cache(self):
+        """Remove thumbnail cache directory"""
+        shutil.rmtree(self.thumbnail_cache)
 
     def _request(self, method, *args, **kwargs):
         """Execute HTTP method with provided args and kwargs.
