@@ -2,6 +2,7 @@ from datetime import datetime
 from uuid import uuid4
 
 from elasticsearch.exceptions import NotFoundError
+from celery import chain
 
 from ocd_backend.es import elasticsearch as es
 from ocd_backend import settings, celery_app
@@ -32,8 +33,8 @@ def setup_pipeline(source_definition):
     try:
         current_index_aliases = es.indices.get_alias(name=index_alias)
     except NotFoundError:
-        raise ConfigurationError('Index with alias "{index_alias}" does not exi'
-                                 'st'.format(index_alias=index_alias))
+        raise ConfigurationError('Index with alias "{index_alias}" does '
+                                 'not exist'.format(index_alias=index_alias))
 
     current_index_name = current_index_aliases.keys()[0]
     new_index_name = '{index_alias}_{now}'.format(
@@ -42,6 +43,8 @@ def setup_pipeline(source_definition):
 
     extractor = load_object(source_definition['extractor'])(source_definition)
     transformer = load_object(source_definition['transformer'])()
+    enrichers = [(load_object(enricher[0])(), enricher[1]) for enricher in
+                 source_definition['enrichers']]
     loader = load_object(source_definition['loader'])()
 
     # Parameters that are passed to each task in the chain
@@ -58,13 +61,36 @@ def setup_pipeline(source_definition):
     try:
         for item in extractor.run():
             # Generate an identifier for each chain, and record that in
-            # {}_chains, so that we can know for sure when all tasks from an
-            # extractor have finished
-            params['chain_id']= uuid4().hex
+            # {}_chains, so that we can know for sure when all tasks
+            # from an extractor have finished
+            params['chain_id'] = uuid4().hex
             celery_app.backend.add_value_to_set(set_name=run_identifier_chains,
                                                 value=params['chain_id'])
-            (transformer.s(*item, source_definition=source_definition, **params)
-             | loader.s(source_definition=source_definition, **params)).delay()
+
+            item_chain = chain()
+
+            # Tranform
+            item_chain |= transformer.s(
+                *item,
+                source_definition=source_definition,
+                **params
+            )
+
+            # Enrich
+            for enricher_task, enricher_settings in enrichers:
+                item_chain |= enricher_task.s(
+                    source_definition=source_definition,
+                    enricher_settings=enricher_settings,
+                    **params
+                )
+
+            # Load
+            item_chain |= loader.s(
+                source_definition=source_definition,
+                **params
+            )
+
+            item_chain.delay()
     except:
         logger.error('An exception has occured in the "{extractor}" extractor. '
                      'Deleting index "{index}" and setting status of run '

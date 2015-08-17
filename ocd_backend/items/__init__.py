@@ -2,9 +2,10 @@ from collections import MutableMapping
 from datetime import datetime
 from hashlib import sha1
 import json
-from ocd_backend.utils import json_encoder
 
-from ocd_backend.exceptions import (UnableToGenerateObjectId, FieldNotAvailable)
+from ocd_backend.utils import json_encoder
+from ocd_backend.exceptions import (UnableToGenerateObjectId,
+                                    FieldNotAvailable)
 
 
 class BaseItem(object):
@@ -89,6 +90,7 @@ class BaseItem(object):
         combined_item = {}
 
         combined_item['meta'] = dict(self.meta)
+        combined_item['enrichments'] = {}
         combined_item.update(dict(self.combined_index_data))
         combined_item['all_text'] = self.get_all_text()
 
@@ -101,9 +103,10 @@ class BaseItem(object):
         :returns: a dict ready for indexing.
         :rtype: dict
         """
-        item =  {}
+        item = {}
 
         item['meta'] = dict(self.meta)
+        item['enrichments'] = {}
         item['source_data'] = {
             'content_type': self.data_content_type,
             'data': self.data
@@ -156,9 +159,9 @@ class BaseItem(object):
         if not object_id and not urls:
             raise UnableToGenerateObjectId('Both original id and urls missing')
 
-        hash_content = self.source_definition['id'] + object_id + ''.join(sorted(urls.values()))
+        hash_content = self.source_definition['id'] + object_id + u''.join(sorted(urls.values()))
 
-        return sha1(hash_content).hexdigest()
+        return sha1(hash_content.decode('utf8')).hexdigest()
 
     def get_original_object_urls(self):
         """Retrieves the item's original URLs at the source location.
@@ -166,8 +169,8 @@ class BaseItem(object):
         document format to which the value of the dictionary item, the
         URL, points (e.g. ``json``, ``html`` or ``csv``).
 
-        This method should be implemented by the class that inherits from
-        :class:`.BaseItem`.
+        This method should be implemented by the class that inherits
+        from :class:`.BaseItem`.
 
         :rtype: dict.
         """
@@ -203,18 +206,18 @@ class BaseItem(object):
         :attr:`.combined_index_fields`
         are allowed.
 
-        This method should be implemented by the class that inherits from
-        :class:`.BaseItem`.
+        This method should be implemented by the class that inherits
+        from :class:`.BaseItem`.
 
         :rtype: dict
         """
         raise NotImplementedError
 
     def get_index_data(self):
-        """Returns a dictionary containing index-specific data that you want to
-        index, but does not belong in the combined index. Can contain whatever
-        fields, and should be handled an validated (with care) in the class that
-        inherits from :class:`.BaseItem`.
+        """Returns a dictionary containing index-specific data that you
+        want to index, but does not belong in the combined index. Can
+        contain whatever fields, and should be handled an validated
+        (with care) in the class that inherits from :class:`.BaseItem`.
 
         :rtype: dict
         """
@@ -226,8 +229,8 @@ class BaseItem(object):
         retrieving content that is not included in one of the
         :attr:`.combined_index_fields` fields.
 
-        This method should be implemented by the class that inherits from
-        :class:`.BaseItem`.
+        This method should be implemented by the class that inherits
+        from :class:`.BaseItem`.
 
         :rtype: unicode.
         """

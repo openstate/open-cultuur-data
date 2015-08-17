@@ -36,6 +36,18 @@ Transforming items
 .. autoclass:: ocd_backend.items.StrictMappingDict
    :members:
 
+Enriching items
+---------------
+
+.. autoclass:: ocd_backend.enrichers.BaseEnricher
+   :members: run, enrich_item
+
+.. autoclass:: ocd_backend.enrichers.media_enricher.MediaEnricher
+   :members: fetch_media, enrich_item
+
+   .. autoattribute: ocd_backend.enrichers.media_enricher.MediaEnricher.available_tasks
+      :annotation: 
+
 Loading items
 -------------
 

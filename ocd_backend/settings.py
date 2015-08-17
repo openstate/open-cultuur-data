@@ -16,8 +16,8 @@ CELERY_CONFIG = {
     'CELERY_RESULT_BACKEND': 'ocd_backend.result_backends:OCDRedisBackend+redis://127.0.0.1:6379/0',
     'CELERY_IGNORE_RESULT': True,
     'CELERY_DISABLE_RATE_LIMITS': True,
-    # Expire results after 30 minutes; otherwise Redis will keep claiming memory
-    # for a day
+    # Expire results after 30 minutes; otherwise Redis will keep
+    # claiming memory for a day
     'CELERY_TASK_RESULT_EXPIRES': 1800
 }
 
@@ -35,11 +35,17 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'console'
         },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'formatter': 'console',
+            'filename': 'backend.log'
+        }
     },
     'loggers': {
         'ocd_backend': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
             'propagate': False,
         }
     }
@@ -49,6 +55,9 @@ ELASTICSEARCH_HOST = '127.0.0.1'
 ELASTICSEARCH_PORT = 9200
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+
+# The path of the directory used to store temporary files
+TEMP_DIR_PATH = os.path.join(ROOT_PATH, 'temp')
 
 # The path of the JSON file containing the sources config
 SOURCES_CONFIG_FILE = os.path.join(ROOT_PATH, 'sources.json')

@@ -8,7 +8,7 @@ from ocd_backend.exceptions import NotFound
 
 class RijksmuseumExtractor(BaseExtractor, HttpRequestMixin):
     api_base_url = 'https://www.rijksmuseum.nl/api/nl/'
-    items_per_page = 100 # The number of items to request in a single API call
+    items_per_page = 100  # The number of items to request in a single API call
 
     def api_call(self, url, params={}):
         params.update(key=self.source_definition['rijksmuseum_api_key'],
@@ -29,7 +29,8 @@ class RijksmuseumExtractor(BaseExtractor, HttpRequestMixin):
         # Calculate the total number of pages that are available
         total_pages = int(ceil(total_items / float(self.items_per_page)))
 
-        log.info('Total collection items to fetch %s (%s pages)', total_items, total_pages)
+        log.info('Total collection items to fetch %s (%s pages)',
+                 total_items, total_pages)
 
         for p in xrange(0, total_pages):
             log.info('Getting collection items page %s of %s', p, total_pages)

@@ -33,7 +33,8 @@ def log_event(user_agent, referer, user_ip, created_at, event_type, **kwargs):
         'sources': sources_event,
         'get_object': get_object_event,
         'get_object_source': get_object_event,
-        'resolve': resolve_event
+        'resolve': resolve_event,
+        'resolve_thumbnail': resolve_thumbnail
     }
 
     if event_type not in available_event_types.keys():
@@ -151,4 +152,18 @@ def resolve_event(url_id):
     """
     return {
         'url_id': url_id
+    }
+
+
+def resolve_thumbnail(url_id, requested_size='original'):
+    """Format the properties of the ``resolve_thumbnail`` event.
+
+    :param url_id: the resolve ID of the URL that was resolved
+    :type url_id: str
+    :param requested_size: Thumbnails can be requested in different sizes, log
+                           which one was requested
+    """
+    return {
+        'url_id': url_id,
+        'requested_size': requested_size
     }

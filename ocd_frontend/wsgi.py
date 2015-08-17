@@ -18,3 +18,9 @@ if application.app.config.get('DEBUG', False):
         base_dir = os.path.join(application.app.config.get('DUMPS_DIR'),
                                 collection_name)
         return send_from_directory(base_dir, filename, as_attachment=True)
+
+    @application.app.route('/media/<path:filename>')
+    def serve_media(filename):
+        base_dir = os.path.join(application.app.config.get('THUMBNAILS_DIR'),
+                                os.path.dirname(filename))
+        return send_from_directory(base_dir, os.path.basename(filename))

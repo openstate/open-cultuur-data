@@ -44,8 +44,8 @@ class GemeenteEdeItemTestCase(ItemTestCase):
         self.media_urls = [
             {
                 'original_url': (
-                    'https://upload.wikimedia.org/wikipedia/commons/b/b1/'
-                    'Bijgebouw_van_jachthuis._-_A.B._Wigman_-_GA32573.jpg'
+                    u'https://upload.wikimedia.org/wikipedia/commons/b/b1/'
+                    u'Bijgebouw_van_jachthuis._-_A.B._Wigman_-_GA32573.jpg'
                 ),
                 'content_type': 'image/jpeg'
             }

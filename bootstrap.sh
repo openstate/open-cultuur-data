@@ -18,7 +18,7 @@ sudo service elasticsearch start
 echo "Installing Elasticsearch head plugin"
 sudo /usr/share/elasticsearch/bin/plugin --install mobz/elasticsearch-head
 
-sudo apt-get install -y make libxml2-dev libxslt1-dev libssl-dev libffi-dev python-dev python-setuptools python-virtualenv git > /dev/null
+sudo apt-get install -y make libxml2-dev libxslt1-dev libssl-dev libffi-dev libtiff4-dev libjpeg8-dev liblcms2-dev python-dev python-setuptools python-virtualenv git > /dev/null
 sudo easy_install -q pip
 
 virtualenv -q ocd
