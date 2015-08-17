@@ -141,6 +141,56 @@
                         }
                     }
                 },
+                "enrichments": {
+                    "type": "object",
+                    "properties": {
+                        "media_urls": {
+                            "properties": {
+                                "url": {
+                                    "type": "string",
+                                    "index": "no"
+                                },
+                                "original_url": {
+                                    "type": "string",
+                                    "index": "no"
+                                },
+                                "media_type": {
+                                    "type": "string",
+                                    "index": "not_analyzed"
+                                },
+                                "content_type": {
+                                    "type": "string",
+                                    "index": "not_analyzed"
+                                },
+                                "size_in_bytes": {
+                                    "type": "integer"
+                                },
+                                "resolution": {
+                                    "type": "object",
+                                    "properties": {
+                                        "width": {
+                                            "type": "integer"
+                                        },
+                                        "height": {
+                                            "type": "integer"
+                                        },
+                                        "total_pixels": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "image_format": {
+                                    "type": "string",
+                                    "index": "not_analyzed"
+                                },
+                                "image_mode": {
+                                    "type": "string",
+                                    "index": "not_analyzed"
+                                }
+                            }
+                        }
+                    }
+                },
                 "source_data": {
                     "type": "object",
                     "properties": {

@@ -1,5 +1,5 @@
-from celery import Task
 
+from ocd_backend import celery_app
 from ocd_backend import settings
 from ocd_backend.es import elasticsearch as es
 from ocd_backend.log import get_source_logger
@@ -8,7 +8,7 @@ from ocd_backend.log import get_source_logger
 log = get_source_logger('ocd_backend.tasks')
 
 
-class BaseCleanup(Task):
+class BaseCleanup(celery_app.Task):
     ignore_result = True
 
     def run(self, *args, **kwargs):
@@ -41,9 +41,10 @@ class CleanupElasticsearch(BaseCleanup):
         new_index_name = kwargs.get('new_index_name')
         alias = kwargs.get('index_alias')
 
-        log.info('Finished run {}. Removing alias "{}" from "{}", and applying'
-                 'it to "{}"'.format(run_identifier, alias, current_index_name,
-                                     new_index_name))
+        log.info('Finished run {}. Removing alias "{}" from "{}", and '
+                 'applying it to "{}"'.format(run_identifier, alias,
+                                              current_index_name,
+                                              new_index_name))
 
         actions = {
             'actions': [
