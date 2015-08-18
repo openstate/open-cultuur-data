@@ -401,7 +401,7 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "file_url": "http://static.opencultuurdata.nl/ra_nijmegen/open_dataset_vierdaagse.json",
-        "index_name": "regionaal-archief-nijmegen-vierdaagse",
+        "index_name": "regionaal-archief-nijmegen-vierdaagse"
     },
     {
         "id": "archief_alkmaar_bonda",
