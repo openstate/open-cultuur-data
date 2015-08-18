@@ -118,3 +118,19 @@ class NationaalArchiefBeeldbankItemTestCase(ItemTestCase):
         for field, field_type in item.combined_index_fields.iteritems():
             if data.get(field, None) is not None:
                 self.assertIsInstance(data[field], field_type)
+
+    def test_faulty_link(self):
+        with open(os.path.abspath(os.path.join(
+            self.PWD,
+            '../test_dumps/nationaal_archief_beeldbank_item_no_link.xml')
+        ), 'r') as f:
+            self.raw_item = f.read()
+        self.item = etree.XML(self.raw_item)
+        self.original_object_urls = {
+            u'html': (
+                u'http://hdl.handle.net/10648/'
+                u'88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9')}
+
+        item = self._instantiate_item()
+        self.assertDictEqual(
+            item.get_original_object_urls(), self.original_object_urls)

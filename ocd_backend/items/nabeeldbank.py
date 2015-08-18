@@ -44,7 +44,7 @@ class NationaalArchiefBeeldbankItem(BaseItem, HttpRequestMixin):
             if resp.status_code != 303: # hdl is a redirect service
                 link = self._get_text_or_none(
                     ('.//item/memorix:MEMORIX//field[@name="PhotoHandle"]'
-                    '//value[1]'))
+                    '//value[1]')).replace('hdl://', 'http://hdl.handle.net/')
 
             self._original_object_urls = {'html': link}
         else:
