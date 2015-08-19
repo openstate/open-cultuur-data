@@ -1,5 +1,6 @@
 import os
 import fnmatch
+import json
 
 from ocd_backend.extractors import BaseExtractor
 from ocd_backend.exceptions import ConfigurationError
@@ -63,4 +64,4 @@ class LocalPathJSONExtractor(LocalPathBaseExtractor):
     file name."""
 
     def extract_item(self, filename):
-        return 'application/json', {'filename': filename}
+        return 'application/json', json.dumps({'filename': filename})

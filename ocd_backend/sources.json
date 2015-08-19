@@ -445,7 +445,7 @@
         "id": "marker_museum",
         "extractor": "ocd_backend.extractors.local.LocalPathJSONExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
-        "item":   "ocd_backend.items.BaseItem",
+        "item":   "ocd_backend.items.marker_museum.MarkerMuseumItem",
         "enrichers": [
             [
                 "ocd_backend.enrichers.media_enricher.MediaEnricher",
@@ -458,6 +458,7 @@
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "index_name": "marker-museum",
         "path": "/opt/ocd/data/markermuseum",
-        "pattern": "*.jpg"
+        "pattern": "*.jpg",
+        "media_base_url": "http://static.opencultuurdata.nl/marker_museum/"
     }
   ]
