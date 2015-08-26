@@ -6,7 +6,6 @@ from ocd_backend.extractors import BaseExtractor
 from ocd_backend.exceptions import ConfigurationError
 
 
-
 class LocalPathBaseExtractor(BaseExtractor):
     """ A class for implementing extractors that retrieve items
     by listing files in a local path."""
@@ -47,11 +46,21 @@ class LocalPathBaseExtractor(BaseExtractor):
         """
         raise NotImplementedError
 
+    def _list_files(self):
+        """Traverses the path specified in the sourc definition and returns
+        a list of local files.
+        """
+
+        # [os.path.join(d, x) for x in f for d,e,f in  os.walk('/opt/ocd/tests/ocd_backend/test_dumps/marker_museum')]
+        # fnmatch.filter(files, self.pattern)
+        files = []
+        for dp, dn, fs in os.walk(self.path):
+            files = files + [
+                os.path.join(dp, f) for f in fnmatch.filter(fs, self.pattern)]
+        return files
+
     def run(self):
-        # list files in the specified path, with the specified pattern
-        files = [os.path.join(dirpath, f)
-            for dirpath, dirnames, files in os.walk(self.path)
-            for f in fnmatch.filter(files,self.pattern)]
+        files = self._list_files()
 
         # Extract and yield the items
         for filename in files:

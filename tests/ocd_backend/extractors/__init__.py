@@ -24,3 +24,6 @@ class ExtractorTestCase(TestCase):
 from .staticfile import (
     StaticfileExtractorTestCase, StaticJSONExtractorTestCase
 )
+from .local import (
+    LocalPathBaseExtractorTestCase
+)

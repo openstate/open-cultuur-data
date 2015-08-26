@@ -56,6 +56,12 @@ class MarkerMuseumItem(BaseItem):
         combined_index_data['description'] = re.sub(
             r'\d+\.\d+\.\d+', '', description).strip()
 
+        # if we do not have a title, then the description becomes the title
+        if 'title' not in combined_index_data:
+            combined_index_data['title'] = combined_index_data['description']
+            del combined_index_data['description']
+
+        # only use original dates (DateTime exif field is when it was scanned)
         if exif.has_key('DateTimeOriginal') and exif['DateTimeOriginal']:
             try:
                 combined_index_data['date'] = datetime.strptime(
