@@ -9,7 +9,6 @@ from ocd_backend.extractors.local import (
 from . import ExtractorTestCase
 
 class LocalPathBaseExtractorTestCase(ExtractorTestCase):
-
     def setUp(self):
         super(LocalPathBaseExtractorTestCase, self).setUp()
         self.source_definition["extractor"] = (
@@ -53,3 +52,25 @@ class LocalPathBaseExtractorTestCase(ExtractorTestCase):
         files = self.extractor._list_files()
         self.assertEqual(self.extractor.path, self.source_definition["path"])
         self.assertEqual(files, self.local_files)
+
+class LocalPathJSONExtractorTestCase(ExtractorTestCase):
+    def setUp(self):
+        super(LocalPathJSONExtractorTestCase, self).setUp()
+        self.source_definition["extractor"] = (
+            "ocd_backend.extractors.local.LocalPathJSONExtractor")
+        self.source_definition["path"] = os.path.abspath(os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            '../test_dumps/marker_museum/'))
+        self.source_definition["pattern"] = "*.jpg"
+        self.source_definition["media_base_url"] = (
+            "http://static.opencultuurdata.nl/marker_museum/")
+
+        self.local_files = [
+            os.path.join(self.source_definition["path"], '10012.jpg'),
+            os.path.join(self.source_definition["path"], '10012a.jpg')]
+
+        self.extractor = LocalPathJSONExtractor(self.source_definition)
+
+    def test_extract_item(self):
+        result = self.extractor.extract_item('x')
+        self.assertEqual(result, ('application/json', '{"filename": "x"}',))

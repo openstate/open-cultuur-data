@@ -34,3 +34,4 @@ from .ra_nijmegen import (
     NijmegenVierdaagseItemTestCase)
 from .museum_rotterdam import MuseumRotterdamItemTestCase
 from .archief_alkmaar import ArchiefAlkmaarItemTestCase
+from .marker_museum import MarkerMuseumItemTestCase

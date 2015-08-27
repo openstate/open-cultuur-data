@@ -51,8 +51,6 @@ class LocalPathBaseExtractor(BaseExtractor):
         a list of local files.
         """
 
-        # [os.path.join(d, x) for x in f for d,e,f in  os.walk('/opt/ocd/tests/ocd_backend/test_dumps/marker_museum')]
-        # fnmatch.filter(files, self.pattern)
         files = []
         for dp, dn, fs in os.walk(self.path):
             files = files + [

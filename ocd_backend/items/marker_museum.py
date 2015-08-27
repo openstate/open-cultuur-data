@@ -26,6 +26,7 @@ class MarkerMuseumItem(BaseItem):
     def get_rights(self):
         return u'http://creativecommons.org/publicdomain/zero/1.0/deed.nl'
 
+    # this should be factored out to a mixin ....
     def _exif(self):
         img = PIL.Image.open(self.original_item['filename'])
         return {
@@ -51,6 +52,8 @@ class MarkerMuseumItem(BaseItem):
         description = os.path.dirname(self.original_item['filename']).replace(
             self.source_definition['path'], '').replace(
                 '/', ' '
+            ).replace(
+                '_', ' '
             )
 
         combined_index_data['description'] = re.sub(
