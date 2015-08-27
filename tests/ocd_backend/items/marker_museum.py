@@ -55,6 +55,11 @@ class MarkerMuseumItemTestCase(ItemTestCase):
         }]
         self.date = None
         self.date_granularity = 0
+        self.exif = {
+            'DateTime': u'2013:01:10 20:46:45',
+            'ExifOffset': 2142,
+            'Orientation': 1
+        }
 
     def _instantiate_item(self):
         """
@@ -119,3 +124,18 @@ class MarkerMuseumItemTestCase(ItemTestCase):
         for field, field_type in item.combined_index_fields.iteritems():
             if data.get(field, None) is not None:
                 self.assertIsInstance(data[field], field_type)
+
+    def test_exif(self):
+        item = self._instantiate_item()
+        exif = item._exif()
+        self.assertEqual(exif, self.exif)
+
+    def test_no_exif(self):
+        self.raw_item = u'{"filename": "%s/marker_museum/10012a.jpg"}' % (
+            self.source_definition['path'],)
+        self.item = json.loads(self.raw_item)
+        item = self._instantiate_item()
+
+        with self.assertRaises(AttributeError) as nie:
+            exif = item._exif()
+            self.assertEqual(exif, self.exif)
