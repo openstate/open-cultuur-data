@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 import json
+import hashlib
 
 from lxml import etree
 
@@ -43,7 +44,7 @@ class MarkerMuseumItemTestCase(ItemTestCase):
         self.collection = u'Marker Museum'
         self.rights = (
             u'http://creativecommons.org/publicdomain/zero/1.0/deed.nl')
-        self.original_object_id = u'e20780c7887fc2bc8a47d8b1f8fbfbaf'
+        self.original_object_id = u'3b3e7aae4df36dec38e0a9483cdb7f01'
         self.title = u'marker museum'
         self.original_object_urls = {}
         self.media_urls = [{

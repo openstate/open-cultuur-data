@@ -14,7 +14,9 @@ from ocd_backend.items import BaseItem
 class MarkerMuseumItem(BaseItem):
     def get_original_object_id(self):
         m = hashlib.md5()
-        m.update(self.original_item['filename'])
+        m.update(
+            self.original_item['filename'].replace(
+                self.source_definition['path'], u''))
         return unicode(m.hexdigest())
 
     def get_original_object_urls(self):

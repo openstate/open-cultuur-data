@@ -20,9 +20,9 @@ class LocalPathBaseExtractorTestCase(ExtractorTestCase):
         self.source_definition["media_base_url"] = (
             "http://static.opencultuurdata.nl/marker_museum/")
 
-        self.local_files = [
+        self.local_files = sorted([
             os.path.join(self.source_definition["path"], '10012.jpg'),
-            os.path.join(self.source_definition["path"], '10012a.jpg')]
+            os.path.join(self.source_definition["path"], '10012a.jpg')])
 
         self.extractor = LocalPathBaseExtractor(self.source_definition)
 
@@ -49,7 +49,7 @@ class LocalPathBaseExtractorTestCase(ExtractorTestCase):
             self.extractor.extract_item({})
 
     def test_list_files(self):
-        files = self.extractor._list_files()
+        files = sorted(self.extractor._list_files())
         self.assertEqual(self.extractor.path, self.source_definition["path"])
         self.assertEqual(files, self.local_files)
 
@@ -65,9 +65,9 @@ class LocalPathJSONExtractorTestCase(ExtractorTestCase):
         self.source_definition["media_base_url"] = (
             "http://static.opencultuurdata.nl/marker_museum/")
 
-        self.local_files = [
+        self.local_files = sorted([
             os.path.join(self.source_definition["path"], '10012.jpg'),
-            os.path.join(self.source_definition["path"], '10012a.jpg')]
+            os.path.join(self.source_definition["path"], '10012a.jpg')])
 
         self.extractor = LocalPathJSONExtractor(self.source_definition)
 
