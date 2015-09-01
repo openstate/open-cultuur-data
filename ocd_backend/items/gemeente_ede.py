@@ -47,7 +47,7 @@ class GemeenteEdeItem(BaseItem):
             resp.text
         )
         if matches is not None:
-            return u'https:' + unicode(matches.group(1))
+            return unicode(matches.group(1))
         return None
 
     def get_combined_index_data(self):

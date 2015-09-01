@@ -1,0 +1,343 @@
+<rss xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:memorix="http://www.pictura-dp.nl/memorix/3.0" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ese="http://www.europeana.eu/schemas/ese/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <atom:link href="http://www.gahetna.nl/beeldbank-api/opensearch/?q=%22%2A%3A%2A%22&amp;count=100&amp;startIndex=13001" rel="self" type="application/rss+xml"/>
+    <atom:link rel="search" href="http://www.gahetna.nl/beeldbank-api/opensearch/description-document" type="application/opensearchdescription+xml" title="Content Search"/>
+    <title>Beeldbank Nationaal Archief</title>
+    <link>http://www.gahetna.nl/</link>
+    <description>OpenSearch API voor de Beeldbank van het Nationaal Archief</description>
+    <opensearch:Query role="request" searchTerms="&quot;*:*&quot;" count="100" startIndex="13001"/>
+    <opensearch:totalResults>399495</opensearch:totalResults>
+    <opensearch:startIndex>13001</opensearch:startIndex>
+    <opensearch:itemsPerPage>100</opensearch:itemsPerPage>
+    <item>
+      <title>Sardini&#235;. Akte van ratificatie</title>
+      <link>http://hdl.handle.net/10648/5b98f572-66d3-11e0-98b9-0030489e184c</link>
+      <description>Sardini&#235;. Akte van ratificatie</description>
+      <enclosure url="http://afbeeldingen.gahetna.nl/naa/thumb/800x600/88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9.jpg" length="0" type="image/jpeg"/>
+      <pubDate>Tue, 17 Feb 2015 12:04:51 +0100</pubDate>
+      <guid isPermaLink="true">http://hdl.handle.net/10648/5b98f572-66d3-11e0-98b9-0030489e184c</guid>
+      <dc:isPartOf rdf:about="http://www.gahetna.nl/collectie/archief/ead/index/eadid/1.01.02">1.01.02</dc:isPartOf>
+      <dc:date>0002-11-30T00:00:00Z</dc:date>
+      <dc:type>Document</dc:type>
+      <dc:isPartOf rdf:about="http://www.gahetna.nl/isPartOf/Reportage_Serienaam">[ onbekend ]</dc:isPartOf>
+      <dc:creator>Fotograaf Onbekend</dc:creator>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/8968ade3-44b9-016e-46b1-9caa94e5c244.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/8968ade3-44b9-016e-46b1-9caa94e5c244.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/8968ade3-44b9-016e-46b1-9caa94e5c244.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/8968ade3-44b9-016e-46b1-9caa94e5c244.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/8968ade3-44b9-016e-46b1-9caa94e5c244.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/8968ade3-44b9-016e-46b1-9caa94e5c244.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/8968ade3-44b9-016e-46b1-9caa94e5c244.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/8968ade3-44b9-016e-46b1-9caa94e5c244.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/8968ade3-44b9-016e-46b1-9caa94e5c244.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/8968ade3-44b9-016e-46b1-9caa94e5c244.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/b4fe623b-f1f9-5779-fdf9-69e1ce879230.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/b4fe623b-f1f9-5779-fdf9-69e1ce879230.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/b4fe623b-f1f9-5779-fdf9-69e1ce879230.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/b4fe623b-f1f9-5779-fdf9-69e1ce879230.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/b4fe623b-f1f9-5779-fdf9-69e1ce879230.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/b4fe623b-f1f9-5779-fdf9-69e1ce879230.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/b4fe623b-f1f9-5779-fdf9-69e1ce879230.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/b4fe623b-f1f9-5779-fdf9-69e1ce879230.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/b4fe623b-f1f9-5779-fdf9-69e1ce879230.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/b4fe623b-f1f9-5779-fdf9-69e1ce879230.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/effa95f4-5f5e-ff69-c670-9ca64ff6da7e.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/effa95f4-5f5e-ff69-c670-9ca64ff6da7e.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/effa95f4-5f5e-ff69-c670-9ca64ff6da7e.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/effa95f4-5f5e-ff69-c670-9ca64ff6da7e.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/effa95f4-5f5e-ff69-c670-9ca64ff6da7e.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/effa95f4-5f5e-ff69-c670-9ca64ff6da7e.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/effa95f4-5f5e-ff69-c670-9ca64ff6da7e.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/effa95f4-5f5e-ff69-c670-9ca64ff6da7e.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/effa95f4-5f5e-ff69-c670-9ca64ff6da7e.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/effa95f4-5f5e-ff69-c670-9ca64ff6da7e.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/62328b01-7eef-e902-9f3c-3cb676d005ed.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/62328b01-7eef-e902-9f3c-3cb676d005ed.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/62328b01-7eef-e902-9f3c-3cb676d005ed.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/62328b01-7eef-e902-9f3c-3cb676d005ed.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/62328b01-7eef-e902-9f3c-3cb676d005ed.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/62328b01-7eef-e902-9f3c-3cb676d005ed.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/62328b01-7eef-e902-9f3c-3cb676d005ed.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/62328b01-7eef-e902-9f3c-3cb676d005ed.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/62328b01-7eef-e902-9f3c-3cb676d005ed.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/62328b01-7eef-e902-9f3c-3cb676d005ed.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/4d76ccab-0f8f-545d-7aa2-fd5a287338a3.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/4d76ccab-0f8f-545d-7aa2-fd5a287338a3.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/4d76ccab-0f8f-545d-7aa2-fd5a287338a3.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/4d76ccab-0f8f-545d-7aa2-fd5a287338a3.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/4d76ccab-0f8f-545d-7aa2-fd5a287338a3.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/4d76ccab-0f8f-545d-7aa2-fd5a287338a3.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/4d76ccab-0f8f-545d-7aa2-fd5a287338a3.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/4d76ccab-0f8f-545d-7aa2-fd5a287338a3.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/4d76ccab-0f8f-545d-7aa2-fd5a287338a3.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/4d76ccab-0f8f-545d-7aa2-fd5a287338a3.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/d3bc4af5-e580-4562-2427-4406bc0e5b1c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/d3bc4af5-e580-4562-2427-4406bc0e5b1c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/d3bc4af5-e580-4562-2427-4406bc0e5b1c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/d3bc4af5-e580-4562-2427-4406bc0e5b1c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/d3bc4af5-e580-4562-2427-4406bc0e5b1c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/d3bc4af5-e580-4562-2427-4406bc0e5b1c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/d3bc4af5-e580-4562-2427-4406bc0e5b1c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/d3bc4af5-e580-4562-2427-4406bc0e5b1c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/d3bc4af5-e580-4562-2427-4406bc0e5b1c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/d3bc4af5-e580-4562-2427-4406bc0e5b1c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/1d18f1c0-60e7-c3f7-d2f6-cb0a1093c842.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/1d18f1c0-60e7-c3f7-d2f6-cb0a1093c842.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/1d18f1c0-60e7-c3f7-d2f6-cb0a1093c842.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/1d18f1c0-60e7-c3f7-d2f6-cb0a1093c842.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/1d18f1c0-60e7-c3f7-d2f6-cb0a1093c842.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/1d18f1c0-60e7-c3f7-d2f6-cb0a1093c842.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/1d18f1c0-60e7-c3f7-d2f6-cb0a1093c842.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/1d18f1c0-60e7-c3f7-d2f6-cb0a1093c842.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/1d18f1c0-60e7-c3f7-d2f6-cb0a1093c842.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/1d18f1c0-60e7-c3f7-d2f6-cb0a1093c842.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/612ce519-1482-acd2-469b-5783e1ac87eb.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/612ce519-1482-acd2-469b-5783e1ac87eb.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/612ce519-1482-acd2-469b-5783e1ac87eb.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/612ce519-1482-acd2-469b-5783e1ac87eb.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/612ce519-1482-acd2-469b-5783e1ac87eb.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/612ce519-1482-acd2-469b-5783e1ac87eb.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/612ce519-1482-acd2-469b-5783e1ac87eb.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/612ce519-1482-acd2-469b-5783e1ac87eb.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/612ce519-1482-acd2-469b-5783e1ac87eb.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/612ce519-1482-acd2-469b-5783e1ac87eb.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/8330b7a0-c3d3-cf1a-e699-42833f0cb3cd.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/8330b7a0-c3d3-cf1a-e699-42833f0cb3cd.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/8330b7a0-c3d3-cf1a-e699-42833f0cb3cd.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/8330b7a0-c3d3-cf1a-e699-42833f0cb3cd.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/8330b7a0-c3d3-cf1a-e699-42833f0cb3cd.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/8330b7a0-c3d3-cf1a-e699-42833f0cb3cd.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/8330b7a0-c3d3-cf1a-e699-42833f0cb3cd.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/8330b7a0-c3d3-cf1a-e699-42833f0cb3cd.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/8330b7a0-c3d3-cf1a-e699-42833f0cb3cd.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/8330b7a0-c3d3-cf1a-e699-42833f0cb3cd.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/4c05cba1-9a3d-7f0e-5229-2b955a70338a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/4c05cba1-9a3d-7f0e-5229-2b955a70338a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/4c05cba1-9a3d-7f0e-5229-2b955a70338a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/4c05cba1-9a3d-7f0e-5229-2b955a70338a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/4c05cba1-9a3d-7f0e-5229-2b955a70338a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/4c05cba1-9a3d-7f0e-5229-2b955a70338a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/4c05cba1-9a3d-7f0e-5229-2b955a70338a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/4c05cba1-9a3d-7f0e-5229-2b955a70338a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/4c05cba1-9a3d-7f0e-5229-2b955a70338a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/4c05cba1-9a3d-7f0e-5229-2b955a70338a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/dda77b77-c67d-f886-acdb-dbcdd731e51c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/dda77b77-c67d-f886-acdb-dbcdd731e51c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/dda77b77-c67d-f886-acdb-dbcdd731e51c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/dda77b77-c67d-f886-acdb-dbcdd731e51c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/dda77b77-c67d-f886-acdb-dbcdd731e51c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/dda77b77-c67d-f886-acdb-dbcdd731e51c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/dda77b77-c67d-f886-acdb-dbcdd731e51c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/dda77b77-c67d-f886-acdb-dbcdd731e51c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/dda77b77-c67d-f886-acdb-dbcdd731e51c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/dda77b77-c67d-f886-acdb-dbcdd731e51c.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/e8ebfeb9-637b-766b-a310-2c97251d15e0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/e8ebfeb9-637b-766b-a310-2c97251d15e0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/e8ebfeb9-637b-766b-a310-2c97251d15e0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/e8ebfeb9-637b-766b-a310-2c97251d15e0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/e8ebfeb9-637b-766b-a310-2c97251d15e0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/e8ebfeb9-637b-766b-a310-2c97251d15e0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/e8ebfeb9-637b-766b-a310-2c97251d15e0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/e8ebfeb9-637b-766b-a310-2c97251d15e0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/e8ebfeb9-637b-766b-a310-2c97251d15e0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/e8ebfeb9-637b-766b-a310-2c97251d15e0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/5caa4b8c-58b6-89cc-afff-edda68488bb6.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/5caa4b8c-58b6-89cc-afff-edda68488bb6.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/5caa4b8c-58b6-89cc-afff-edda68488bb6.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/5caa4b8c-58b6-89cc-afff-edda68488bb6.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/5caa4b8c-58b6-89cc-afff-edda68488bb6.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/5caa4b8c-58b6-89cc-afff-edda68488bb6.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/5caa4b8c-58b6-89cc-afff-edda68488bb6.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/5caa4b8c-58b6-89cc-afff-edda68488bb6.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/5caa4b8c-58b6-89cc-afff-edda68488bb6.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/5caa4b8c-58b6-89cc-afff-edda68488bb6.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/2869db9f-bcf4-2203-30fa-c602d4279142.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/2869db9f-bcf4-2203-30fa-c602d4279142.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/2869db9f-bcf4-2203-30fa-c602d4279142.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/2869db9f-bcf4-2203-30fa-c602d4279142.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/2869db9f-bcf4-2203-30fa-c602d4279142.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/2869db9f-bcf4-2203-30fa-c602d4279142.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/2869db9f-bcf4-2203-30fa-c602d4279142.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/2869db9f-bcf4-2203-30fa-c602d4279142.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/2869db9f-bcf4-2203-30fa-c602d4279142.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/2869db9f-bcf4-2203-30fa-c602d4279142.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/9bd25bf9-be5c-e880-6a17-c870e93e1b5a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/9bd25bf9-be5c-e880-6a17-c870e93e1b5a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/9bd25bf9-be5c-e880-6a17-c870e93e1b5a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/9bd25bf9-be5c-e880-6a17-c870e93e1b5a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/9bd25bf9-be5c-e880-6a17-c870e93e1b5a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/9bd25bf9-be5c-e880-6a17-c870e93e1b5a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/9bd25bf9-be5c-e880-6a17-c870e93e1b5a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/9bd25bf9-be5c-e880-6a17-c870e93e1b5a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/9bd25bf9-be5c-e880-6a17-c870e93e1b5a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/9bd25bf9-be5c-e880-6a17-c870e93e1b5a.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/f7fbee12-e2c9-ec8c-2bc7-0eb2d5d296b0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/f7fbee12-e2c9-ec8c-2bc7-0eb2d5d296b0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/f7fbee12-e2c9-ec8c-2bc7-0eb2d5d296b0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/f7fbee12-e2c9-ec8c-2bc7-0eb2d5d296b0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/f7fbee12-e2c9-ec8c-2bc7-0eb2d5d296b0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/f7fbee12-e2c9-ec8c-2bc7-0eb2d5d296b0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/f7fbee12-e2c9-ec8c-2bc7-0eb2d5d296b0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/f7fbee12-e2c9-ec8c-2bc7-0eb2d5d296b0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/f7fbee12-e2c9-ec8c-2bc7-0eb2d5d296b0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/f7fbee12-e2c9-ec8c-2bc7-0eb2d5d296b0.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/bb2f81b4-ee41-5b51-4d72-f2fc24f038fe.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/bb2f81b4-ee41-5b51-4d72-f2fc24f038fe.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/bb2f81b4-ee41-5b51-4d72-f2fc24f038fe.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/bb2f81b4-ee41-5b51-4d72-f2fc24f038fe.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/bb2f81b4-ee41-5b51-4d72-f2fc24f038fe.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/bb2f81b4-ee41-5b51-4d72-f2fc24f038fe.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/bb2f81b4-ee41-5b51-4d72-f2fc24f038fe.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/bb2f81b4-ee41-5b51-4d72-f2fc24f038fe.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/bb2f81b4-ee41-5b51-4d72-f2fc24f038fe.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/bb2f81b4-ee41-5b51-4d72-f2fc24f038fe.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/bee1d2af-d44d-a8ed-b555-ecb4290dff00.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/bee1d2af-d44d-a8ed-b555-ecb4290dff00.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/bee1d2af-d44d-a8ed-b555-ecb4290dff00.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/bee1d2af-d44d-a8ed-b555-ecb4290dff00.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/bee1d2af-d44d-a8ed-b555-ecb4290dff00.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/bee1d2af-d44d-a8ed-b555-ecb4290dff00.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/bee1d2af-d44d-a8ed-b555-ecb4290dff00.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/bee1d2af-d44d-a8ed-b555-ecb4290dff00.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/bee1d2af-d44d-a8ed-b555-ecb4290dff00.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/bee1d2af-d44d-a8ed-b555-ecb4290dff00.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/b4f1ad43-df4b-87f2-56c2-32c222f84c27.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/b4f1ad43-df4b-87f2-56c2-32c222f84c27.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/b4f1ad43-df4b-87f2-56c2-32c222f84c27.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/b4f1ad43-df4b-87f2-56c2-32c222f84c27.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/b4f1ad43-df4b-87f2-56c2-32c222f84c27.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/b4f1ad43-df4b-87f2-56c2-32c222f84c27.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/b4f1ad43-df4b-87f2-56c2-32c222f84c27.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/b4f1ad43-df4b-87f2-56c2-32c222f84c27.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/b4f1ad43-df4b-87f2-56c2-32c222f84c27.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/b4f1ad43-df4b-87f2-56c2-32c222f84c27.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/4a594f36-b821-ad3d-ea9f-8a9f77e95c74.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/4a594f36-b821-ad3d-ea9f-8a9f77e95c74.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/4a594f36-b821-ad3d-ea9f-8a9f77e95c74.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/4a594f36-b821-ad3d-ea9f-8a9f77e95c74.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/4a594f36-b821-ad3d-ea9f-8a9f77e95c74.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/4a594f36-b821-ad3d-ea9f-8a9f77e95c74.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/4a594f36-b821-ad3d-ea9f-8a9f77e95c74.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/4a594f36-b821-ad3d-ea9f-8a9f77e95c74.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/4a594f36-b821-ad3d-ea9f-8a9f77e95c74.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/4a594f36-b821-ad3d-ea9f-8a9f77e95c74.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/d7f6bded-d020-6c77-4a5b-4212c5186475.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/d7f6bded-d020-6c77-4a5b-4212c5186475.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/d7f6bded-d020-6c77-4a5b-4212c5186475.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/d7f6bded-d020-6c77-4a5b-4212c5186475.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/d7f6bded-d020-6c77-4a5b-4212c5186475.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/d7f6bded-d020-6c77-4a5b-4212c5186475.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/d7f6bded-d020-6c77-4a5b-4212c5186475.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/d7f6bded-d020-6c77-4a5b-4212c5186475.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/d7f6bded-d020-6c77-4a5b-4212c5186475.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/d7f6bded-d020-6c77-4a5b-4212c5186475.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/800x600/1d06cfc8-644a-64b7-83d2-885760233ef8.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/40x40/1d06cfc8-644a-64b7-83d2-885760233ef8.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/88x88/1d06cfc8-644a-64b7-83d2-885760233ef8.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/150x150/1d06cfc8-644a-64b7-83d2-885760233ef8.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/160x160/1d06cfc8-644a-64b7-83d2-885760233ef8.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/188x188/1d06cfc8-644a-64b7-83d2-885760233ef8.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/300x300/1d06cfc8-644a-64b7-83d2-885760233ef8.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/460x460/1d06cfc8-644a-64b7-83d2-885760233ef8.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/500x500/1d06cfc8-644a-64b7-83d2-885760233ef8.jpg</ese:isShownBy>
+      <ese:isShownBy>http://afbeeldingen.gahetna.nl/naa/thumb/1280x1280/1d06cfc8-644a-64b7-83d2-885760233ef8.jpg</ese:isShownBy>
+      <ese:type>IMAGE</ese:type>
+      <ese:provider>Beeldbank Nationaal Archief</ese:provider>
+      <ese:isShownAt>http://hdl.handle.net/10648/5b98f572-66d3-11e0-98b9-0030489e184c</ese:isShownAt>
+      <memorix:MEMORIX>
+        <field name="auteursrechten_auteursrechthebbende">
+          <value>Nationaal Archief, Public Domain</value>
+        </field>
+        <field name="Inventarisnummer">
+          <value>12631.4A</value>
+        </field>
+        <field name="PhotoName">
+          <value>NL-HaNA_1.01.02_12631.4A_01</value>
+          <value>NL-HaNA_1.01.02_12631.4A_02</value>
+          <value>NL-HaNA_1.01.02_12631.4A_03</value>
+          <value>NL-HaNA_1.01.02_12631.4A_04</value>
+          <value>NL-HaNA_1.01.02_12631.4A_05</value>
+          <value>NL-HaNA_1.01.02_12631.4A_06</value>
+          <value>NL-HaNA_1.01.02_12631.4A_07</value>
+          <value>NL-HaNA_1.01.02_12631.4A_08</value>
+          <value>NL-HaNA_1.01.02_12631.4A_09</value>
+          <value>NL-HaNA_1.01.02_12631.4A_10</value>
+          <value>NL-HaNA_1.01.02_12631.4A_11</value>
+          <value>NL-HaNA_1.01.02_12631.4A_12</value>
+          <value>NL-HaNA_1.01.02_12631.4A_13</value>
+          <value>NL-HaNA_1.01.02_12631.4A_14</value>
+          <value>NL-HaNA_1.01.02_12631.4A_15</value>
+          <value>NL-HaNA_1.01.02_12631.4A_16</value>
+          <value>NL-HaNA_1.01.02_12631.4A_17</value>
+          <value>NL-HaNA_1.01.02_12631.4A_18</value>
+          <value>NL-HaNA_1.01.02_12631.4A_19</value>
+          <value>NL-HaNA_1.01.02_12631.4A_20</value>
+          <value>NL-HaNA_1.01.02_12631.4A_21</value>
+          <value>NL-HaNA_1.01.02_12631.4A_22</value>
+          <value>NL-HaNA_1.01.02_12631.4A_23</value>
+        </field>
+        <field name="PhotoHandle">
+          <value>hdl://10648/88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9</value>
+          <value>hdl://10648/8968ade3-44b9-016e-46b1-9caa94e5c244</value>
+          <value>hdl://10648/b4fe623b-f1f9-5779-fdf9-69e1ce879230</value>
+          <value>hdl://10648/effa95f4-5f5e-ff69-c670-9ca64ff6da7e</value>
+          <value>hdl://10648/62328b01-7eef-e902-9f3c-3cb676d005ed</value>
+          <value>hdl://10648/4d76ccab-0f8f-545d-7aa2-fd5a287338a3</value>
+          <value>hdl://10648/d3bc4af5-e580-4562-2427-4406bc0e5b1c</value>
+          <value>hdl://10648/1d18f1c0-60e7-c3f7-d2f6-cb0a1093c842</value>
+          <value>hdl://10648/612ce519-1482-acd2-469b-5783e1ac87eb</value>
+          <value>hdl://10648/8330b7a0-c3d3-cf1a-e699-42833f0cb3cd</value>
+          <value>hdl://10648/4c05cba1-9a3d-7f0e-5229-2b955a70338a</value>
+          <value>hdl://10648/dda77b77-c67d-f886-acdb-dbcdd731e51c</value>
+          <value>hdl://10648/e8ebfeb9-637b-766b-a310-2c97251d15e0</value>
+          <value>hdl://10648/5caa4b8c-58b6-89cc-afff-edda68488bb6</value>
+          <value>hdl://10648/2869db9f-bcf4-2203-30fa-c602d4279142</value>
+          <value>hdl://10648/9bd25bf9-be5c-e880-6a17-c870e93e1b5a</value>
+          <value>hdl://10648/f7fbee12-e2c9-ec8c-2bc7-0eb2d5d296b0</value>
+          <value>hdl://10648/bb2f81b4-ee41-5b51-4d72-f2fc24f038fe</value>
+          <value>hdl://10648/bee1d2af-d44d-a8ed-b555-ecb4290dff00</value>
+          <value>hdl://10648/b4f1ad43-df4b-87f2-56c2-32c222f84c27</value>
+          <value>hdl://10648/4a594f36-b821-ad3d-ea9f-8a9f77e95c74</value>
+          <value>hdl://10648/d7f6bded-d020-6c77-4a5b-4212c5186475</value>
+          <value>hdl://10648/1d06cfc8-644a-64b7-83d2-885760233ef8</value>
+        </field>
+        <rights>
+          <right name="grote thumbnail">TRUE</right>
+          <right name="tentoonstelling in huis">TRUE</right>
+          <right name="Public Domain">TRUE</right>
+          <right name="gebruik eigen website">TRUE</right>
+          <right name="CC BY">FALSE</right>
+          <right name="print particulier">TRUE</right>
+          <right name="onbestelbaar">FALSE</right>
+          <right name="wetenschappelijk onderzoek">TRUE</right>
+          <right name="download particulier">TRUE</right>
+          <right name="webwinkel">TRUE</right>
+          <right name="bestelbaar">TRUE</right>
+          <right name="Ed it">TRUE</right>
+          <right name="croptool">TRUE</right>
+          <right name="offline educatie">TRUE</right>
+          <right name="download commercieel">TRUE</right>
+          <right name="print commercieel">TRUE</right>
+          <right name="CC BY SA">FALSE</right>
+          <right name="gebruik eigen publicaties">TRUE</right>
+          <right name="webdisplay">TRUE</right>
+          <right name="offline educatie">FALSE</right>
+          <right name="online educatie">TRUE</right>
+          <right name="tentoonstelling elders">TRUE</right>
+          <right name="Europeana">TRUE</right>
+          <right name="commercieel">TRUE</right>
+        </rights>
+      </memorix:MEMORIX>
+    </item>
+    </channel>
+</rss>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record  xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <header>
+    <identifier>collect:20000001</identifier>
+    <datestamp>2012-10-12T15:25:58Z</datestamp>
+  </header>
+  <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+      <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/">http://beeldbank.cultureelerfgoed.nl/20000001</dc:identifier>
+      <dc:type xmlns:dc="http://purl.org/dc/elements/1.1/">Fotocollectie</dc:type>
+      <dc:description xmlns:dc="http://purl.org/dc/elements/1.1/">Exterieur, overzicht voorgevel pand Vrouwenverband</dc:description>
+      <dcterms:creator xmlns:dcterms="http://purl.org/dc/terms/">Dukker, G.J.</dcterms:creator>
+      <dcterms:creator xmlns:dcterms="http://purl.org/dc/terms/">Fotograaf</dcterms:creator>
+      <dc:date xmlns:dc="http://purl.org/dc/elements/1.1/">1998-07</dc:date>
+      <dc:image xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+        http://images.memorix.nl/rce/thumb/800x800/d99c8594-4a8c-acf9-b498-6f3a0a4e5f4b.jpg
+      </dc:image>
+      <dc:image xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+        http://images.memorix.nl/rce/thumb/400x400/d99c8594-4a8c-acf9-b498-6f3a0a4e5f4b.jpg
+      </dc:image>
+      <dcterms:medium xmlns:dcterms="http://purl.org/dc/terms/">Techniek: zwart wit negatief</dcterms:medium>
+      <dcterms:rights xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/"/>
+      <dcterms:rights xmlns:dcterms="http://purl.org/dc/terms/">Rijksdienst voor het Cultureel Erfgoed</dcterms:rights>
+      <dc:coverage xmlns:dc="http://purl.org/dc/elements/1.1/">Land: Nederland</dc:coverage>
+      <dc:coverage xmlns:dc="http://purl.org/dc/elements/1.1/">Gemeente: Amsterdam</dc:coverage>
+      <dc:coverage xmlns:dc="http://purl.org/dc/elements/1.1/">Huisnummer: 15</dc:coverage>
+      <dc:coverage xmlns:dc="http://purl.org/dc/elements/1.1/">Monumentnaam: Vrouwenverband</dc:coverage>
+      <dc:coverage xmlns:dc="http://purl.org/dc/elements/1.1/">Monumentnummer: 518303</dc:coverage>
+      <geo:long xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:skos="http://www.w3.org/2004/02/skos/core#">4.8939711148671800</geo:long>
+      <geo:lat xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:skos="http://www.w3.org/2004/02/skos/core#">52.3689795531174000</geo:lat>
+      <dc:coverage xmlns:dc="http://purl.org/dc/elements/1.1/">Plaats: Amsterdam</dc:coverage>
+      <dc:coverage xmlns:dc="http://purl.org/dc/elements/1.1/">Provincie: Noord-Holland</dc:coverage>
+      <dc:coverage xmlns:dc="http://purl.org/dc/elements/1.1/">Adm.nummer.bib: 417272</dc:coverage>
+      <dc:coverage xmlns:dc="http://purl.org/dc/elements/1.1/">Straat: Turfdraagsterpad</dc:coverage>
+      <dc:coverage xmlns:dc="http://purl.org/dc/elements/1.1/">Postcode: 1012 XT</dc:coverage>
+      <dcterms:subject xmlns:dcterms="http://purl.org/dc/terms/">
+        <skos:prefLabel xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">Grachtenpand</skos:prefLabel>
+      </dcterms:subject>
+    </oai_dc:dc>
+  </metadata>
+</record>

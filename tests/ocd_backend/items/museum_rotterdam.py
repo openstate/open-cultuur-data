@@ -1,60 +1,77 @@
-import json
 import os
 from datetime import datetime
 
 from lxml import etree
 
-from ocd_backend.items.nabeeldbank import NationaalArchiefBeeldbankItem
+from ocd_backend.items.museum_rotterdam import MuseumRotterdamItem
 
 from . import ItemTestCase
 
 
-class NationaalArchiefBeeldbankItemTestCase(ItemTestCase):
+class MuseumRotterdamItemTestCase(ItemTestCase):
     def setUp(self):
-        super(NationaalArchiefBeeldbankItemTestCase, self).setUp()
+        super(MuseumRotterdamItemTestCase, self).setUp()
         self.PWD = os.path.dirname(__file__)
         self.source_definition = {
-            'id': 'nationaal_archief_beeldbank',
+            'id': 'museum_rotterdam',
             'extractor': (
-                'ocd_backend.extractors.opensearch.OpensearchExtractor'),
+                'ocd_backend.extractors.staticfile.StaticXmlExtractor'),
             'transformer': 'ocd_backend.transformers.BaseTransformer',
             'item': (
-                'ocd_backend.items.nabeeldbank.NationaalArchiefBeeldbankItem'),
+                'ocd_backend.items.museum_rotterdam.MuseumRotterdamItem'),
             'loader': 'ocd_backend.loaders.ElasticsearchLoader',
-            'opensearch_url': (
-                'http://www.gahetna.nl/beeldbank-api/opensearch/'),
-            'opensearch_query': '"*:*"'
+            'item_xpath': '//cb3:record',
+            'default_namespace': 'cb3',
+            'cb3_mapping': {
+                'inventarisnummer': 1,
+                'extensie': 5,
+                'titel': 48,
+                'objecttrefwoorden': 2,
+                'materiaal': 14,
+                'afmetingen': 15,
+                'datering_beginjaar': 18,
+                'datering_eindjaar': 19,
+                'plaats_vervaardiging': 20,
+                'technieken': 21,
+                'vervaardiger': 22,
+                'beschrijving': 3,
+                'opschrift_merken': 17,
+                'trefwoorden': 51,
+                'associatie': 23,
+                'herkomst': 40,
+                'licentie': 85
+            }
         }
 
         with open(os.path.abspath(os.path.join(
-            self.PWD, '../test_dumps/nationaal_archief_beeldbank_item.xml')
+            self.PWD, '../test_dumps/museum_rotterdam.xml')
         ), 'r') as f:
             self.raw_item = f.read()
         self.item = etree.XML(self.raw_item)
 
-        self.collection = u'Beeldbank Nationaal Archief'
-        self.rights = u'http://creativecommons.org/licenses/by-sa/3.0/deed.nl'
-        self.original_object_id = u'ae98579a-d0b4-102d-bcf8-003048976d84'
+        self.collection = u'Museum Rotterdam'
+        self.rights = u'https://creativecommons.org/publicdomain/mark/1.0/'
+        self.original_object_id = u'4'
+        self.title = u'Kelkglas, bokaal gegraveerd met allegorie op huwelijkse liefde'
         self.original_object_urls = {
-            u'html': (
-                u'http://hdl.handle.net/10648/'
-                u'ae98579a-d0b4-102d-bcf8-003048976d84')}
+            u'html': u'http://museumrotterdam.nl/collectie/item/4'
+        }
         self.media_urls = [{
             'original_url': (
-                'http://afbeeldingen.gahetna.nl/naa/thumb/800x600/'
-                '8e6606c4-bad0-4009-b708-acdb4062ab39.jpg'),
-            'content_type': 'image/jpeg',
-            'width': 800,
-            'height': 600}]
-        self.date_str = '1932-11-30T00:00:00Z'
-        self.date = datetime.strptime(self.date_str, '%Y-%m-%dT%H:%M:%SZ')
-        self.date_granularity = 14
+                u'http://museumrotterdam.blob.core.windows.net/'
+                u'lowres/4_1.jpg'
+            ),
+            'content_type': 'image/jpeg'
+        }]
+        self.year = '1720'
+        self.date = datetime.strptime(self.year, '%Y')
+        self.date_granularity = 4
 
     def _instantiate_item(self):
         """
         Instantiate the item from the raw and parsed item we have
         """
-        return NationaalArchiefBeeldbankItem(
+        return MuseumRotterdamItem(
             self.source_definition, 'application/xml',
             self.raw_item, self.item
         )
@@ -81,6 +98,11 @@ class NationaalArchiefBeeldbankItemTestCase(ItemTestCase):
         item = self._instantiate_item()
         self.assertIsInstance(item.get_combined_index_data(), dict)
 
+    def test_get_item_title(self):
+        item = self._instantiate_item()
+        data = item.get_combined_index_data()
+        self.assertEqual(data['title'], self.title)
+
     def test_get_index_data(self):
         item = self._instantiate_item()
         self.assertIsInstance(item.get_index_data(), dict)
@@ -102,35 +124,9 @@ class NationaalArchiefBeeldbankItemTestCase(ItemTestCase):
         self.assertEqual(data['date'], self.date)
         self.assertEqual(data['date_granularity'], self.date_granularity)
 
-    def test_faulty_date(self):
-        self.raw_item = self.raw_item.replace(
-            '<dc:date>' + self.date_str + '</dc:date>',
-            '<dc:date>0002-11-30T00:00:00Z</dc:date>')
-        self.item = etree.XML(self.raw_item)
-        item = self._instantiate_item()
-        data = item.get_combined_index_data()
-        self.assertNotIn('date', data)
-        self.assertEqual(data['date_granularity'], self.date_granularity)
-
     def test_combined_index_data_types(self):
         item = self._instantiate_item()
         data = item.get_combined_index_data()
         for field, field_type in item.combined_index_fields.iteritems():
             if data.get(field, None) is not None:
                 self.assertIsInstance(data[field], field_type)
-
-    def test_faulty_link(self):
-        with open(os.path.abspath(os.path.join(
-            self.PWD,
-            '../test_dumps/nationaal_archief_beeldbank_item_no_link.xml')
-        ), 'r') as f:
-            self.raw_item = f.read()
-        self.item = etree.XML(self.raw_item)
-        self.original_object_urls = {
-            u'html': (
-                u'http://hdl.handle.net/10648/'
-                u'88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9')}
-
-        item = self._instantiate_item()
-        self.assertDictEqual(
-            item.get_original_object_urls(), self.original_object_urls)

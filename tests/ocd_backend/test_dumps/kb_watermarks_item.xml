@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<record xmlns="http://www.openarchives.org/OAI/2.0/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/
+  http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <header>
+    <identifier>WILC:WILC:57350</identifier>
+    <datestamp>2012-05-25T10:30:47.167Z</datestamp>
+    <setSpec>WILC</setSpec>
+  </header>
+  <metadata>
+    <srw_dc:dc xmlns:srw_dc="info:srw/schema/1/dc-v1.1" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:mods="http://www.loc.gov/mods" xmlns:marcrel="http://www.loc.gov/loc.terms/relators/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dcx="http://krait.kb.nl/coop/tel/handbook/telterms.html"><dcx:recordIdentifier>WILC:57350</dcx:recordIdentifier><dc:title>pot, small, single line ear right</dc:title><dcterms:isPartOf>Watermarks in Incunabula printed in the Low Countries</dcterms:isPartOf><dcterms:isPartOf>WILC</dcterms:isPartOf><dc:creator>Bac, Govaert</dc:creator><dc:date dcx:label="deduced">[1499, not before]</dc:date><dcx:deductionBasis>type evidence</dcx:deductionBasis><dc:type>watermark</dc:type><dc:type xsi:type="DCMIType">StillImage</dc:type><dcterms:medium xsi:type="IMT">image/jpeg</dcterms:medium><dc:subject dcx:label="IPH">P</dc:subject><dc:subject>pot</dc:subject><dc:identifier xsi:type="URI">http://resolver.kb.nl/resolve?urn=WILC:57350</dc:identifier><dcx:thumbnail xsi:type="URI">http://resolver.kb.nl/resolve?urn=WILC:57350&amp;role=thumbnail</dcx:thumbnail><dcx:annotation dcx:label="folio">c5recto-c2verso</dcx:annotation><dcx:recordRights>Koninklijke Bibliotheek, Den Haag</dcx:recordRights><dcx:position>Right</dcx:position><dcx:chainlines>4-5</dcx:chainlines><dcx:distance>25</dcx:distance><dcx:paperSize>Chancery</dcx:paperSize><dcterms:isReferencedBy dcx:label="ILC">ILC 1135, KC II 895 = CA(I) 1551a</dcterms:isReferencedBy><dcterms:extent xsi:type="pixels">374x457</dcterms:extent><dcx:originRegion>Belgium</dcx:originRegion><dcx:originPlace>Antwerp</dcx:originPlace><mods:location>MPM, Antwerpen, Belgium</mods:location><dcx:sizeIncunabula>4o</dcx:sizeIncunabula><dcx:reproductionType>Rubbing</dcx:reproductionType><dcterms:extent dcx:label="nr. leaves">18</dcterms:extent><dcterms:extent dcx:label="nr. sheets">4,5</dcterms:extent><dcterms:extent dcx:label="density">18,7</dcterms:extent><dcterms:spatial xsi:type="dcterms:Point" dcx:label="printer">north=51.22 east=4.42 name=BE211, Vlaams Gewest, Antwerpen, Antwerpen</dcterms:spatial><dcterms:spatial xsi:type="dcterms:Point" dcx:label="location">north=51.22 east=4.42 name=BE211, Vlaams Gewest, Antwerpen, Antwerpen</dcterms:spatial></srw_dc:dc>
+  </metadata>
+</record>

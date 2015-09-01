@@ -10,7 +10,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -29,7 +29,7 @@
                     "tasks": ["media_type", "image_metadata"],
                     "partial_media_fetch": true
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -48,7 +48,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -67,7 +67,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -86,7 +86,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -116,7 +116,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -135,7 +135,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -155,7 +155,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -163,6 +163,18 @@
         "oai_metadata_prefix": "oai_dc",
         "oai_set": "col_1874_213366",
         "index_name": "uukaarten"
+    },
+    {
+        "id": "rce",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.rce.RCEItem",
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "oai_base_url": "http://cultureelerfgoed.adlibsoft.com/oaiapi/oai.ashx",
+        "oai_metadata_prefix": "oai_dc",
+        "oai_set": "fotos",
+        "index_name": "rijkscultureel-erfgoed-beeldbank"
     },
     {
         "id": "zoutkamp",
@@ -175,7 +187,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -195,7 +207,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -214,7 +226,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -233,7 +245,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -252,7 +264,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -281,6 +293,26 @@
         "index_name": "museum_rotterdam"
     },
     {
+        "id": "kb_watermarks",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.kb.WatermarksItem",
+        "enrichers": [
+            [
+                "ocd_backend.enrichers.media_enricher.MediaEnricher",
+                {
+                    "tasks": ["media_type", "image_metadata"]
+                }
+            ]
+        ],
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "oai_base_url": "http://services.kb.nl/mdo/oai",
+        "oai_metadata_prefix": "dcx",
+        "oai_set": "WILC",
+        "index_name": "koninklijke-bibliotheek-watermerken"
+    },
+    {
         "id": "ra_tilburg",
         "extractor": "ocd_backend.extractors.oai.OaiExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
@@ -291,7 +323,7 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
@@ -310,13 +342,68 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "file_url": "http://static.opencultuurdata.nl/gemeente_ede/2014OpenData_ABWigman_CSV_06-12.json",
         "index_name": "gemeente_ede"
-    },{
+    },
+    {
+        "id": "ra_nijmegen_grinten",
+        "extractor": "ocd_backend.extractors.staticfile.StaticJSONExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.ra_nijmegen.NijmegenGrintenItem",
+        "enrichers": [
+            [
+                "ocd_backend.enrichers.media_enricher.MediaEnricher",
+                {
+                    "tasks": ["media_type", "image_metadata"]
+                }
+            ]
+        ],
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "file_url": "http://static.opencultuurdata.nl/ra_nijmegen/VanderGrinten_opendata.json",
+        "index_name": "regionaal-archief-nijmegen-van-der-grinten"
+    },
+    {
+        "id": "ra_nijmegen_doornroosje",
+        "extractor": "ocd_backend.extractors.staticfile.StaticJSONExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.ra_nijmegen.NijmegenDoornroosjeItem",
+        "enrichers": [
+            [
+                "ocd_backend.enrichers.media_enricher.MediaEnricher",
+                {
+                    "tasks": ["media_type", "image_metadata"]
+                }
+            ]
+        ],
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "file_url": "http://static.opencultuurdata.nl/ra_nijmegen/open_dataset_affiches_doornroosje.json",
+        "index_name": "regionaal-archief-nijmegen-affiches-doornroosje"
+    },
+    {
+        "id": "ra_nijmegen_vierdaagse",
+        "extractor": "ocd_backend.extractors.staticfile.StaticJSONExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.ra_nijmegen.NijmegenVierdaagseItem",
+        "enrichers": [
+            [
+                "ocd_backend.enrichers.media_enricher.MediaEnricher",
+                {
+                    "tasks": ["media_type", "image_metadata"]
+                }
+            ]
+        ],
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "file_url": "http://static.opencultuurdata.nl/ra_nijmegen/open_dataset_vierdaagse.json",
+        "index_name": "regionaal-archief-nijmegen-vierdaagse"
+    },
+    {
         "id": "archief_alkmaar_bonda",
         "extractor": "ocd_backend.extractors.oai.OaiExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
@@ -327,14 +414,15 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "oai_base_url": "https://maior.memorix.nl/api/oai/raa/key/Bonda",
         "oai_metadata_prefix": "ese",
         "index_name": "archief_alkmaar_bonda"
-    },{
+    },
+    {
         "id": "archief_alkmaar_bosboom",
         "extractor": "ocd_backend.extractors.oai.OaiExtractor",
         "transformer": "ocd_backend.transformers.BaseTransformer",
@@ -345,12 +433,32 @@
                 {
                     "tasks": ["media_type", "image_metadata"]
                 }
-            ]     
+            ]
         ],
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "oai_base_url": "https://maior.memorix.nl/api/oai/raa/key/Bosboom",
         "oai_metadata_prefix": "ese",
         "index_name": "archief_alkmaar_bosboom"
+    },
+    {
+        "id": "marker_museum",
+        "extractor": "ocd_backend.extractors.local.LocalPathJSONExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item":   "ocd_backend.items.marker_museum.MarkerMuseumItem",
+        "enrichers": [
+            [
+                "ocd_backend.enrichers.media_enricher.MediaEnricher",
+                {
+                    "tasks": ["media_type", "image_metadata"]
+                }
+            ]
+        ],
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "index_name": "marker-museum",
+        "path": "/opt/ocd/data/markermuseum",
+        "pattern": "*.jpg",
+        "media_base_url": "http://static.opencultuurdata.nl/marker_museum/"
     }
-]
+  ]

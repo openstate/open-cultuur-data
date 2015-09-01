@@ -335,6 +335,32 @@ Combined index
 Universiteitsbibliotheek Utrecht Maps index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Rijkscultureel Erfgoed
+----------------------
+
+This dataset contains images from `Rijksdienst voor het Cultureel Erfgoed <http://beeldbank.cultureelerfgoed.nl/>`_.
+Content is harvested by using the `OAI-PMH feed <http://cultureelerfgoed.adlibsoft.com/oaiapi/oai.ashx>`_.
+The OCD implementation uses the 'oai_dc' (OAI Dublic Core) data format.
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``title``                            |                                        |
+| ``description``        | ``dc:description``                   |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``dc:date``                          | It is either year and month, or just   |
+|                        |                                      | year.                                  |
+|                        |                                      | Therefore, ``date_granularity`` is     |
+|                        |                                      | either 6 or 4 when a date is present.  |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``dc:creator``                       |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``dc:image                   ``      | Each ``media_url`` entry contains one  |
+|                        |                                      | or more dc:image nodes                 |
++------------------------+--------------------------------------+----------------------------------------+
+
+Rijkscultureel Erfgoed
+^^^^^^^^^^^^^^^^^^^^^^
 
 Visserijmuseum Zoutkamp
 -----------------------
@@ -496,3 +522,118 @@ Gemeentearchief Ede
 
 Gemeentearchief Ede index
 ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Regionaal Archief Nijmegen Fotocollectie Prof. dr. E.F. van der Grinten
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``adres``                            | Only if available                      |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``beschrijving``                     | Only if available                      |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``vroegste``                         |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``auteur``                           |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``link foto``                        | Each ``media_url`` entry contains an   |
+|                        |                                      | object for the image link.             |
++------------------------+--------------------------------------+----------------------------------------+
+
+Regionaal Archief Nijmegen Fotocollectie Prof. dr. E.F. van der Grinten index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Regionaal Archief Nijmegen Affichecollectie Doornroosje
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``beschrijving``                     | Only if available                      |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``beschrijving``                     | Only if available                      |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``beginjaar`                         |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``auteur``                           |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``url afbeelding``                   | Each ``media_url`` entry contains an   |
+|                        |                                      | object for the image link.             |
++------------------------+--------------------------------------+----------------------------------------+
+
+Regionaal Archief Nijmegen Affichecollectie Doornroosje index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Fotocollectie Regionaal Archief Nijmegen - Vierdaagsefeesten
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``Beschrijving``                     | Only if available                      |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``Beschrijving``                     | Only if available                      |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``Vroegst mogelijke datering`        |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | ``Auteur``                           |                                        |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``Identificatie``                    | Each ``media_url`` entry contains an   |
+|                        |                                      | object for the image link. The link is |
+|                        |                                      | constructed using the object id.       |
++------------------------+--------------------------------------+----------------------------------------+
+
+Fotocollectie Regionaal Archief Nijmegen - Vierdaagsefeesten index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Museum Rotterdam
+----------------
+
+This dataset contains objects from the `Museum Rotterdam <http://www.museumrotterdam.nl/>`_. The dataset (a static XML file) has been made available under an open license.
+
+.. _datasets_combinedindex:
+
+Combined index
+^^^^^^^^^^^^^^
+
++------------------------+-----------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                         | Comment                                |
++========================+=========================================+========================================+
+| ``title``              | ``dc:title``                            |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+| ``description``        | ``dc:description``                      |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+| ``date``               | ``dc:date``                             |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+| ``authors``            | ``dc:creator``                          |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+| ``media_urls``         | ``dc:identifier`` and ``dcx:thumbnail`` |                                        |
++------------------------+-----------------------------------------+----------------------------------------+
+
+Museum Rotterdam index
+^^^^^^^^^^^^^^^^^^^^^^
+
+Koninklijke Bibliotheek - Watermarks
+------------------------------------
+
+This dataset contains watermark images from the `Koninklijke Bibliotheek <http://watermark.kb.nl/default/search/advanced/>`_.
+The `archive's OAI-MPH interface <http://www.kb.nl/sites/default/files/docs/Techniek-WILC.pdf>`_ is used to harvest content
+that the archive has made available under an open license.
+
++------------------------+--------------------------------------+----------------------------------------+
+| Combined index field   | Source field(s)                      | Comment                                |
++========================+======================================+========================================+
+| ``title``              | ``f[@id="1"]``                       | The url is derive from the object id.  |
++------------------------+--------------------------------------+----------------------------------------+
+| ``description``        | ``f[@id="3"]``                       | Only included if it is specified       |
++------------------------+--------------------------------------+----------------------------------------+
+| ``date``               | ``f[@id="18"]``                      | It is assumed that the only the year   |
+|                        |                                      | is known. The ``date_granularity``     |
+|                        |                                      | is therefor always 4.                  |
++------------------------+--------------------------------------+----------------------------------------+
+| ``authors``            | -                                    | Author is not specified                |
++------------------------+--------------------------------------+----------------------------------------+
+| ``media_urls``         | ``f[@id="1"]``                       | Only one image per object. Infered     |
+|                        |                                      | from the object id.                    |
++------------------------+--------------------------------------+----------------------------------------+

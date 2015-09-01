@@ -4,57 +4,62 @@ from datetime import datetime
 
 from lxml import etree
 
-from ocd_backend.items.nabeeldbank import NationaalArchiefBeeldbankItem
+from ocd_backend.items.rce import RCEItem
 
 from . import ItemTestCase
 
 
-class NationaalArchiefBeeldbankItemTestCase(ItemTestCase):
+class RCEItemTestCase(ItemTestCase):
     def setUp(self):
-        super(NationaalArchiefBeeldbankItemTestCase, self).setUp()
+        super(RCEItemTestCase, self).setUp()
         self.PWD = os.path.dirname(__file__)
         self.source_definition = {
-            'id': 'nationaal_archief_beeldbank',
+            'id': 'rce',
             'extractor': (
-                'ocd_backend.extractors.opensearch.OpensearchExtractor'),
+                'ocd_backend.extractors.oai.OaiExtractor'),
             'transformer': 'ocd_backend.transformers.BaseTransformer',
             'item': (
-                'ocd_backend.items.nabeeldbank.NationaalArchiefBeeldbankItem'),
+                'ocd_backend.items.rce.RCEItem'),
             'loader': 'ocd_backend.loaders.ElasticsearchLoader',
-            'opensearch_url': (
-                'http://www.gahetna.nl/beeldbank-api/opensearch/'),
-            'opensearch_query': '"*:*"'
-        }
+            'oai_base_url': (
+                'http://cultureelerfgoed.adlibsoft.com/oaiapi/oai.ashx'),
+            'oai_metadata_prefix': 'oai_dc',
+            'oai_set': 'fotos'}
 
         with open(os.path.abspath(os.path.join(
-            self.PWD, '../test_dumps/nationaal_archief_beeldbank_item.xml')
+            self.PWD, '../test_dumps/rce_item.xml')
         ), 'r') as f:
             self.raw_item = f.read()
         self.item = etree.XML(self.raw_item)
 
-        self.collection = u'Beeldbank Nationaal Archief'
-        self.rights = u'http://creativecommons.org/licenses/by-sa/3.0/deed.nl'
-        self.original_object_id = u'ae98579a-d0b4-102d-bcf8-003048976d84'
+        self.collection = u'Rijkscultureel Erfgoed Beeldbank'
+        self.rights = u'http://creativecommons.org/licenses/by-sa/3.0/'
+        self.original_object_id = u'collect:20000001'
         self.original_object_urls = {
-            u'html': (
-                u'http://hdl.handle.net/10648/'
-                u'ae98579a-d0b4-102d-bcf8-003048976d84')}
+            u'html': u'http://beeldbank.cultureelerfgoed.nl/20000001',
+            u'xml': (
+                u'http://cultureelerfgoed.adlibsoft.com/oaiapi/oai.ashx?verb='
+                u'GetRecord&identifier=collect:20000001&metadataPrefix='
+                u'oai_dc')}
         self.media_urls = [{
             'original_url': (
-                'http://afbeeldingen.gahetna.nl/naa/thumb/800x600/'
-                '8e6606c4-bad0-4009-b708-acdb4062ab39.jpg'),
-            'content_type': 'image/jpeg',
-            'width': 800,
-            'height': 600}]
-        self.date_str = '1932-11-30T00:00:00Z'
-        self.date = datetime.strptime(self.date_str, '%Y-%m-%dT%H:%M:%SZ')
-        self.date_granularity = 14
+                u'http://images.memorix.nl/rce/thumb/800x800/'
+                'd99c8594-4a8c-acf9-b498-6f3a0a4e5f4b.jpg'),
+            'content_type': 'image/jpeg'
+        }, {
+            'original_url': (
+                u'http://images.memorix.nl/rce/thumb/400x400/'
+                'd99c8594-4a8c-acf9-b498-6f3a0a4e5f4b.jpg'),
+            'content_type': 'image/jpeg'}]
+        self.date_str = '1998-07'
+        self.date = datetime.strptime(self.date_str, '%Y-%m')
+        self.date_granularity = 6
 
     def _instantiate_item(self):
         """
         Instantiate the item from the raw and parsed item we have
         """
-        return NationaalArchiefBeeldbankItem(
+        return RCEItem(
             self.source_definition, 'application/xml',
             self.raw_item, self.item
         )
@@ -102,35 +107,9 @@ class NationaalArchiefBeeldbankItemTestCase(ItemTestCase):
         self.assertEqual(data['date'], self.date)
         self.assertEqual(data['date_granularity'], self.date_granularity)
 
-    def test_faulty_date(self):
-        self.raw_item = self.raw_item.replace(
-            '<dc:date>' + self.date_str + '</dc:date>',
-            '<dc:date>0002-11-30T00:00:00Z</dc:date>')
-        self.item = etree.XML(self.raw_item)
-        item = self._instantiate_item()
-        data = item.get_combined_index_data()
-        self.assertNotIn('date', data)
-        self.assertEqual(data['date_granularity'], self.date_granularity)
-
     def test_combined_index_data_types(self):
         item = self._instantiate_item()
         data = item.get_combined_index_data()
         for field, field_type in item.combined_index_fields.iteritems():
             if data.get(field, None) is not None:
                 self.assertIsInstance(data[field], field_type)
-
-    def test_faulty_link(self):
-        with open(os.path.abspath(os.path.join(
-            self.PWD,
-            '../test_dumps/nationaal_archief_beeldbank_item_no_link.xml')
-        ), 'r') as f:
-            self.raw_item = f.read()
-        self.item = etree.XML(self.raw_item)
-        self.original_object_urls = {
-            u'html': (
-                u'http://hdl.handle.net/10648/'
-                u'88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9')}
-
-        item = self._instantiate_item()
-        self.assertDictEqual(
-            item.get_original_object_urls(), self.original_object_urls)
