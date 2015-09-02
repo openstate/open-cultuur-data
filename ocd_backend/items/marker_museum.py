@@ -26,7 +26,7 @@ class MarkerMuseumItem(BaseItem):
         return u'Marker Museum'
 
     def get_rights(self):
-        return u'http://creativecommons.org/publicdomain/zero/1.0/deed.nl'
+        return u'https://creativecommons.org/licenses/by-sa/4.0/'
 
     # this should be factored out to a mixin ....
     def _exif(self):
