@@ -182,7 +182,7 @@
         "oai_base_url": "http://cultureelerfgoed.adlibsoft.com/oaiapi/oai.ashx",
         "oai_metadata_prefix": "oai_dc",
         "oai_set": "fotos",
-        "index_name": "rijkscultureel-erfgoed-beeldbank"
+        "index_name": "rce"
     },
     {
         "id": "zoutkamp",
