@@ -43,7 +43,7 @@ class MarkerMuseumItemTestCase(ItemTestCase):
 
         self.collection = u'Marker Museum'
         self.rights = (
-            u'http://creativecommons.org/publicdomain/zero/1.0/deed.nl')
+            u'https://creativecommons.org/licenses/by-sa/4.0/')
         self.original_object_id = u'3b3e7aae4df36dec38e0a9483cdb7f01'
         self.title = u'marker museum'
         self.original_object_urls = {}
