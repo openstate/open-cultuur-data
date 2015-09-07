@@ -51,6 +51,7 @@ class RCEItemTestCase(ItemTestCase):
                 u'http://images.memorix.nl/rce/thumb/400x400/'
                 'd99c8594-4a8c-acf9-b498-6f3a0a4e5f4b.jpg'),
             'content_type': 'image/jpeg'}]
+        self.title = u'Exterieur, overzicht voorgevel pand Vrouwenverband'
         self.date_str = '1998-07'
         self.date = datetime.strptime(self.date_str, '%Y-%m')
         self.date_granularity = 6
@@ -94,6 +95,11 @@ class RCEItemTestCase(ItemTestCase):
         item = self._instantiate_item()
         self.assertEqual(type(item.get_all_text()), unicode)
         self.assertTrue(len(item.get_all_text()) > 0)
+
+    def test_title(self):
+        item = self._instantiate_item()
+        data = item.get_combined_index_data()
+        self.assertEqual(data['title'], self.title)
 
     def test_media_urls(self):
         item = self._instantiate_item()

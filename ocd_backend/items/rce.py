@@ -57,12 +57,8 @@ class RCEItem(BaseItem):
     def get_combined_index_data(self):
         combined_index_data = {}
 
-        title = self._get_text_or_none('.//dc:title')
-        combined_index_data['title'] = title
-
         description = self._get_text_or_none('.//dc:description')
-        if description:
-            combined_index_data['description'] = description
+        combined_index_data['title'] = description
 
         date = self._get_text_or_none('.//dc:date')
         if date:
