@@ -37,8 +37,8 @@ def validate_from_and_size(data):
 def parse_search_request(data, mlt=False):
     # Return an error when no query or an empty query string is provied
     query = data.get('query', None)
-    if not query and not mlt:
-        raise OcdApiError('Missing \'query\'', 400)
+    # if not query and not mlt:
+    #     raise OcdApiError('Missing \'query\'', 400)
 
     # Additional fields requested to include in the response
     include_fields = [f.strip() for f in data.get('include_fields', []) if f.strip()]
@@ -297,6 +297,9 @@ def search():
             'exclude': excluded_fields
         }
     }
+
+    if not search_req['query']:
+        es_q['query']['filtered']['query'] = {'match_all': {}}
 
     if search_req['filters']:
         es_q['query']['filtered']['filter'] = {
