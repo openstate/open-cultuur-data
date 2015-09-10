@@ -383,6 +383,9 @@ def search_source(source_id):
         }
     }
 
+    if not search_req['query']:
+        es_q['query']['filtered']['query'] = {'match_all': {}}
+
     if search_req['filters']:
         es_q['query']['filtered']['filter'] = {
             'bool': {'must': search_req['filters']}
