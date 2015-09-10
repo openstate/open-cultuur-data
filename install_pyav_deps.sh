@@ -56,8 +56,8 @@ make install
 
 cd ..
 #git clone --depth 1 git://source.ffmpeg.org/ffmpeg
-git clone git@github.com:FFmpeg/FFmpeg.git
-cd FFmpeg
+git clone git://source.ffmpeg.org/ffmpeg.git
+cd ffmpeg
 git co release/2.4
 
 ./configure --enable-shared --enable-gpl --enable-libfaac --enable-libmp3lame --enable-libopencore-amrnb \
