@@ -32,25 +32,19 @@ class NationaalArchiefBeeldbankItem(BaseItem, HttpRequestMixin):
         return self._get_text_or_none('.//item/guid').split('/')[-1]
 
     def get_original_object_urls(self):
-        if getattr(self, '_original_object_urls', None) is not None:
-            return self._original_object_urls
+        identifier = self._get_text_or_none('.//item/dc:identifier')
 
-        link = self._get_text_or_none('.//item/link')
-        if link:
-            # Not all objects are published on the website of the Textiel Museum,
-            # we perform a HEAD request to find out if the object is available
-            resp = self.http_session.head(link)
-            pprint(resp.status_code)
-            if resp.status_code != 303: # hdl is a redirect service
-                link = self._get_text_or_none(
-                    ('.//item/memorix:MEMORIX//field[@name="PhotoHandle"]'
-                    '//value[1]')).replace('hdl://', 'http://hdl.handle.net/')
-
-            self._original_object_urls = {'html': link}
+        if identifier is not None:
+            link = self._get_text_or_none('.//item/link')
         else:
-            self._original_object_urls = {}
+            link = self._get_text_or_none(
+                ('.//item/memorix:MEMORIX//field[@name="PhotoHandle"]'
+                '//value[1]')).replace('hdl://', 'http://hdl.handle.net/')
 
-        return self._original_object_urls
+        if link is not None:
+            return {'html': link}
+        else:
+            return {}
 
     def get_rights(self):
         return u'http://creativecommons.org/licenses/by-sa/3.0/deed.nl'
