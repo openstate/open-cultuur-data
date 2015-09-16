@@ -1,4 +1,4 @@
-from . import MediaEnricher
+from ocd_backend.enrichers.media_enricher import MediaEnricher
 
 
 class NationaalArchiefEnricher(MediaEnricher):
