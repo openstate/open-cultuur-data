@@ -1,3 +1,4 @@
+from ocd_backend.enrichers import BaseEnricher
 from ocd_backend.enrichers.media_enricher import MediaEnricher
 
 
