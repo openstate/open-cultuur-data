@@ -1,7 +1,12 @@
+from ocd_backend import celery_app
+from ocd_backend import settings
+from ocd_backend.exceptions import SkipEnrichment
 from ocd_backend.enrichers import BaseEnricher
 from ocd_backend.enrichers.media_enricher import MediaEnricher
 
 
+# FIXME: does not work because tasks need to be preloaded in the app.
+# FIXME: see ocd_backend/__init__.py:5
 class NationaalArchiefEnricher(MediaEnricher):
     def enrich_item(self, enrichments, object_id, combined_index_doc, doc):
         # take only the first media item (or the first that is of a high resolution)

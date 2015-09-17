@@ -12,6 +12,8 @@ from ocd_backend.log import get_source_logger
 
 from .tasks import ImageMetadata, MediaType
 
+from .nabeeldbank import NationaalArchiefEnricher
+
 log = get_source_logger('enricher')
 
 
