@@ -178,6 +178,13 @@ class MediaEnricher(BaseEnricher):
 
 
 class NationaalArchiefEnricher(MediaEnricher):
+    available_tasks = {
+        'image_metadata': ImageMetadata,
+        'media_type': MediaType
+    }
+
+    http_session = None
+
     def enrich_item(self, enrichments, object_id, combined_index_doc, doc):
         media_urls_enrichments = []
 
