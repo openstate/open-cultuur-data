@@ -179,6 +179,8 @@ class MediaEnricher(BaseEnricher):
 
 class NationaalArchiefEnricher(MediaEnricher):
     def enrich_item(self, enrichments, object_id, combined_index_doc, doc):
+        media_urls_enrichments = []
+
         if doc.has_key('media_urls'):
             # take only the first media item (or the first that is of a high resolution)
             # since enriching them all takes way too long
@@ -188,7 +190,11 @@ class NationaalArchiefEnricher(MediaEnricher):
             if len(large_media_urls) > 0:
                 media_item = large_media_items[0]
 
-            enrichments = super(NationaalArchiefEnricher, self).enrich_item(
-                enrichments, object_id, combined_index_doc, {'media_urls': [media_item]})
+            temp_enrichments = {}
+            enrichment_results = super(NationaalArchiefEnricher, self).enrich_item(
+                temp_enrichments, object_id, combined_index_doc, {'media_urls': [media_item]})
+            media_urls_enrichments = enrichment_results['media_urls']
+
+        enrichments['media_urls'] = media_urls_enrichments
 
         return enrichments
