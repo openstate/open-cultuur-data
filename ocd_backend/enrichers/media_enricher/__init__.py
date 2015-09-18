@@ -194,7 +194,7 @@ class NationaalArchiefEnricher(MediaEnricher):
             media_item = doc['media_urls'][0]
 
             large_media_items = [m for m in doc['media_urls'] if u'/1280x' in m['original_url']]
-            if len(large_media_urls) > 0:
+            if len(large_media_items) > 0:
                 media_item = large_media_items[0]
 
             temp_enrichments = {}
