@@ -140,7 +140,14 @@ class MediaEnricher(BaseEnricher):
         partial_fetch = self.enricher_settings.get('partial_media_fetch', False)
 
         media_urls_enrichments = []
-        for media_item in doc['media_urls']:
+
+        maximum_per_item = self.enricher_settings.get('maximum_per_item', 0)
+        if maximum_per_item > 0:
+            media_items = doc['media_urls'][:maximum_per_item]
+        else:
+            media_items = doc['media_urls']
+
+        for media_item in media_items:
             media_item_enrichment = {}
 
             content_type, content_length, media_file = self.fetch_media(
@@ -172,35 +179,6 @@ class MediaEnricher(BaseEnricher):
             media_file.close()
 
             media_urls_enrichments.append(media_item_enrichment)
-
-        enrichments['media_urls'] = media_urls_enrichments
-
-        return enrichments
-
-
-class NationaalArchiefEnricher(MediaEnricher):
-    available_tasks = {
-        'image_metadata': ImageMetadata,
-        'media_type': MediaType
-    }
-
-    http_session = None
-
-    def enrich_item(self, enrichments, object_id, combined_index_doc, doc):
-        media_urls_enrichments = []
-
-        # take only the first media item (or the first that is of a high resolution)
-        # since enriching them all takes way too long
-        media_item = doc['media_urls'][0]
-
-        # large_media_items = [m for m in doc['media_urls'] if u'/1280x' in m['original_url']]
-        # if len(large_media_items) > 0:
-        #     media_item = large_media_items[0]
-
-        temp_enrichments = deepcopy(enrichments)
-        enrichment_results = super(NationaalArchiefEnricher, self).enrich_item(
-            temp_enrichments, object_id, combined_index_doc, {'media_urls': [media_item]})
-        media_urls_enrichments = enrichment_results['media_urls']
 
         enrichments['media_urls'] = media_urls_enrichments
 

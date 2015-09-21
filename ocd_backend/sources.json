@@ -63,9 +63,10 @@
         "item": "ocd_backend.items.nabeeldbank.NationaalArchiefBeeldbankItem",
         "enrichers": [
             [
-                "ocd_backend.enrichers.media_enricher.NationaalArchiefEnricher",
+                "ocd_backend.enrichers.media_enricher.MediaEnricher",
                 {
-                    "tasks": ["media_type", "image_metadata"]
+                    "tasks": ["media_type", "image_metadata"],
+                    "maximum_per_item": 1
                 }
             ]
         ],
