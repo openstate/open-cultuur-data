@@ -53,7 +53,7 @@ class OpensearchExtractor(BaseExtractor, HttpRequestMixin):
         start_index = 1
 
         while start_index <= total_results:
-            sleep(1)
+            sleep(60)
 
             log.info('Getting results for %s from %s' % (
                 self.query, start_index,))
