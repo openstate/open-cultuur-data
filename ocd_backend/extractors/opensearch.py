@@ -58,6 +58,9 @@ class OpensearchExtractor(BaseExtractor, HttpRequestMixin):
                 'startIndex': start_index
             })
 
+            log.info('Getting results for %s from %s' % (
+                self.query, start_index,))
+
             # Create a copy of the tree without any items
             itemless_tree = deepcopy(resp)
             for item in itemless_tree.xpath('.//channel/item'):

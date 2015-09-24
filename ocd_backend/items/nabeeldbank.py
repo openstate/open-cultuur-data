@@ -32,9 +32,9 @@ class NationaalArchiefBeeldbankItem(BaseItem, HttpRequestMixin):
         return self._get_text_or_none('.//item/guid').split('/')[-1]
 
     def get_original_object_urls(self):
-        identifier = self._get_text_or_none('.//item/dc:identifier')
+        identifiers = self._get_all_text('.//item//dc:identifier')
 
-        if identifier is not None:
+        if len(identifiers) > 0:
             link = self._get_text_or_none('.//item/link')
         else:
             link = self._get_text_or_none(
