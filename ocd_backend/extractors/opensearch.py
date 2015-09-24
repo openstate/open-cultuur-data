@@ -2,6 +2,7 @@ from copy import deepcopy
 from time import sleep
 
 from lxml import etree
+import requests
 
 from ocd_backend.extractors import BaseExtractor, HttpRequestMixin
 from ocd_backend.extractors import log
@@ -52,14 +53,22 @@ class OpensearchExtractor(BaseExtractor, HttpRequestMixin):
         start_index = 1
 
         while start_index <= total_results:
-            resp = self.opensearch_call({
-                'q': self.query,
-                'count': self.per_page_count,
-                'startIndex': start_index
-            })
+            sleep(1)
 
             log.info('Getting results for %s from %s' % (
                 self.query, start_index,))
+
+            try:
+                resp = self.opensearch_call({
+                    'q': self.query,
+                    'count': self.per_page_count,
+                    'startIndex': start_index
+                })
+            except requests.exceptions.HTTPError as e:
+                log.exception('Error getting results for %s from %s' % (
+                    self.query, start_index,))
+                start_index += self.per_page_count
+                continue
 
             # Create a copy of the tree without any items
             itemless_tree = deepcopy(resp)
