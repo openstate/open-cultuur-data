@@ -69,6 +69,11 @@ class OpensearchExtractor(BaseExtractor, HttpRequestMixin):
                     self.query, start_index,))
                 start_index += self.per_page_count
                 continue
+            except lxml.etree.XMLSyntaxError as e:
+                log.exception('Error parsing XML for %s from %s' % (
+                    self.query, start_index,))
+                start_index += self.per_page_count
+                continue
 
             # Create a copy of the tree without any items
             itemless_tree = deepcopy(resp)
