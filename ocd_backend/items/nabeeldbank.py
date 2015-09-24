@@ -50,7 +50,7 @@ class NationaalArchiefBeeldbankItem(BaseItem, HttpRequestMixin):
         return u'http://creativecommons.org/licenses/by-sa/3.0/deed.nl'
 
     def get_collection(self):
-        return u'Beeldbank Nationaal Archief'
+        return u'Nationaal Archief'
 
     def get_combined_index_data(self):
         combined_index_data = {}
