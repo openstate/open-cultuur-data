@@ -35,3 +35,4 @@ from .ra_nijmegen import (
 from .museum_rotterdam import MuseumRotterdamItemTestCase
 from .archief_alkmaar import ArchiefAlkmaarItemTestCase
 from .marker_museum import MarkerMuseumItemTestCase
+from .elobeeldbank import ErfgoedLeidenBeeldbankItemTestCase
