@@ -74,7 +74,8 @@
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "opensearch_url": "http://www.gahetna.nl/beeldbank-api/opensearch/",
         "opensearch_query": "\"*:*\"",
-        "index_name": "nationaal_archief_beeldbank"
+        "index_name": "nationaal_archief_beeldbank",
+        "opensearch_delay": 60
     },
     {
         "id": "centraal_museum_utrecht",

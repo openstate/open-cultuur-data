@@ -51,9 +51,10 @@ class OpensearchExtractor(BaseExtractor, HttpRequestMixin):
         total_results = int(resp.find('.//channel/opensearch:totalResults',
                                       namespaces=resp.nsmap).text)
         start_index = 1
+        page_delay = self.source_definition.get('opensearch_delay', 1)
 
         while start_index <= total_results:
-            sleep(60)
+            sleep(page_delay)
 
             log.info('Getting results for %s from %s' % (
                 self.query, start_index,))
