@@ -169,7 +169,7 @@ class NijmegenVierdaagseItem(BaseItem):
 
     def get_collection(self):
         return u'%s - %s' % (
-            self.original_item['Collectie'], self.original_item['Trefwoord'])
+            self.original_item['instelling'], self.original_item['collectie'])
 
     def get_rights(self):
         return u'https://creativecommons.org/licenses/by-sa/3.0/'
@@ -184,9 +184,12 @@ class NijmegenVierdaagseItem(BaseItem):
 
     def _get_image_link(self):
         obj_id = self.get_original_object_id()
-
-        return u'http://www.nijmegen.nl/opendata/archief/%s.jpg' % (
-            obj_id)
+        req = requests.get(u'http://www.nijmegen.nl/opendata/archief/%s.jpg' % (
+            obj_id))
+        headers = req.headers
+        if headers['content_type'] == 'image/jpeg':
+            return u'http://www.nijmegen.nl/opendata/archief/%s.jpg' % (
+                obj_id)
 
     def get_combined_index_data(self):
         index_data = {}
