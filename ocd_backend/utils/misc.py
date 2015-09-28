@@ -62,7 +62,7 @@ def parse_date(regexen, date_str):
     """
     if date_str:
         for reg, (gran, dater) in regexen:
-            m = re.match(reg, date_str)
+            m = re.search(reg, date_str)
             if m:
                 try:
                     return gran, dater(m.groups())

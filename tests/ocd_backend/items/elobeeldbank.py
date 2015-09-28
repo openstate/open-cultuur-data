@@ -45,9 +45,8 @@ class ErfgoedLeidenBeeldbankItemTestCase(ItemTestCase):
             'width': 1200,
             'height': 1200}]
         self.date_str = u'Circa 1948'
-        self.date = None
-        # self.date = datetime.strptime(u'1948-01-01T00:00:00Z', '%Y-%m-%dT%H:%M:%SZ')
-        self.date_granularity = 0
+        self.date = datetime.strptime(u'1948-01-01T00:00:00Z', '%Y-%m-%dT%H:%M:%SZ')
+        self.date_granularity = 4
 
     def _instantiate_item(self):
         """
@@ -100,16 +99,6 @@ class ErfgoedLeidenBeeldbankItemTestCase(ItemTestCase):
         self.assertIn('date', data)
         self.assertEqual(data['date_granularity'], self.date_granularity)
         self.assertEqual(data['date'], self.date)
-
-    # def test_faulty_date(self):
-    #     self.raw_item = self.raw_item.replace(
-    #         '<dc:date>' + self.date_str + '</dc:date>',
-    #         '<dc:date>0002-11-30T00:00:00Z</dc:date>')
-    #     self.item = etree.XML(self.raw_item)
-    #     item = self._instantiate_item()
-    #     data = item.get_combined_index_data()
-    #     self.assertNotIn('date', data)
-    #     self.assertEqual(data['date_granularity'], self.date_granularity)
 
     def test_combined_index_data_types(self):
         item = self._instantiate_item()

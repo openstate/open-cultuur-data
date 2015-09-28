@@ -11,16 +11,16 @@ class ErfgoedLeidenBeeldbankItem(BaseItem):
     # Granularities - borrowed from ocd_backend/items/cmutrecht.py
 
     regexen = [
-        ('\?$', (0, lambda _ : None) ),
-        ('(\d\d)[\?]+$', (2, lambda (y,) : datetime.datetime(int(y+'00'), 1, 1)) ),
-        ('(\d\d\d)\?$', (3, lambda (y,) : datetime.datetime(int(y+'0'), 1, 1)) ),
-        ('(\d\d\d\d) ?- ?\d\d\d\d$', (3, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
-        ('(\d\d\d0)[\?() ]+$', (3, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
+        (r'\?$', (0, lambda _ : None) ),
+        (r'(\d\d)[\?]+$', (2, lambda (y,) : datetime.datetime(int(y+'00'), 1, 1)) ),
+        (r'(\d\d\d)\?$', (3, lambda (y,) : datetime.datetime(int(y+'0'), 1, 1)) ),
+        (r'(\d\d\d\d) ?- ?\d\d\d\d$', (3, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
+        (r'(\d\d\d0)[\?() ]+$', (3, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
         # 'yyyy?' will still have a date granularity of 4
-        ('(\d\d\d\d)[\?() ]+$', (4, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
-        ('(\d+)$', (4, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
-        ('(\d\d\d\d)-(\d+)$', (6, lambda (y,m) : datetime.datetime(int(y), int(m), 1)) ),
-        ('(\d\d\d\d)-(\d+)-(\d+)$', (8, lambda (y,m,d) : datetime.datetime(int(y), int(m), int(d))) ),
+        (r'(\d\d\d\d)[\?() ]+$', (4, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
+        (r'(\d+)$', (4, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
+        (r'(\d\d\d\d)-(\d+)$', (6, lambda (y,m) : datetime.datetime(int(y), int(m), 1)) ),
+        (r'(\d\d\d\d)-(\d+)-(\d+)$', (8, lambda (y,m,d) : datetime.datetime(int(y), int(m), int(d))) ),
     ]
 
     def _get_text_or_none(self, xpath_expression):
@@ -51,11 +51,11 @@ class ErfgoedLeidenBeeldbankItem(BaseItem):
         return {}
 
     def _get_date_and_granularity(self):
-        date = self._get_text_or_none('.//memorix:MEMORIX/field[@name="Datum_afbeelding"]/value')
-        if date is None:
-            date = self._get_text_or_none('.//item/dcterms:created')
-        if date is None:
-                date = self._get_text_or_none('.//item/dc:date')
+        date = (
+            self._get_text_or_none(
+                './/memorix:MEMORIX/field[@name="Datum_afbeelding"]/value') or
+            self._get_text_or_none('.//item/dcterms:created') or
+            self._get_text_or_none('.//item/dc:date'))
 
         if date is not None:
             return parse_date(self.regexen, date)
