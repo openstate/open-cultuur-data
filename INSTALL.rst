@@ -1,10 +1,39 @@
 Open Cultuur Data API install notes
 ###################################
 
+Using Docker
+============
+
+Using `Docker <http://www.docker.com/>`_ is by far the easiest way to spin up a development environment and get started with contributing to the Open Cultuur Data API.
+
+1. Clone the OCD git repository::
+
+   $ git clone https://github.com/openstate/open-cultuur-data.git
+   $ cd open-cultuur-data/
+
+2. Build the image with Docker::
+
+   $ docker build -t open-state/openspending .
+
+3. Start a container::
+
+   $ docker run -it --name c-open-cultuur-data -v `pwd`:/opt/ocd -p 5000:5000 -p 9200:9200 open-state/open-cultuur-data
+
+4. Start Elasticsearch and Redis::
+
+   $ service elasticsearch restart
+   $ redis-server >redis.log 2>redis.err &
+
+5. Start the frondend::
+
+   $ ./manage.py frontend runserver
+
+See below for the extraction processes.
+
 Using Vagrant
 =============
 
-Using `Vagrant <http://www.vagrantup.com/>`_ is by far the easiest way to spin up a development environment and get started with contributing to the Open Cultuur Data API.
+Using `Vagrant <http://www.vagrantup.com/>`_ is also an easy way to spin up a development environment and get started with contributing to the Open Cultuur Data API.
 
 1. Clone the OCD git repository::
 
