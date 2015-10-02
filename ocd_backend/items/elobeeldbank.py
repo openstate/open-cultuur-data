@@ -1,6 +1,8 @@
 import re
-from ocd_backend.items import BaseItem
+from pprint import pprint
 import datetime
+
+from ocd_backend.items import BaseItem
 from ocd_backend.utils.misc import try_convert, parse_date, parse_date_span
 
 class ErfgoedLeidenBeeldbankItem(BaseItem):
@@ -9,16 +11,16 @@ class ErfgoedLeidenBeeldbankItem(BaseItem):
     # Granularities - borrowed from ocd_backend/items/cmutrecht.py
 
     regexen = [
-        ('\?$', (0, lambda _ : None) ),
-        ('(\d\d)[\?]+$', (2, lambda (y,) : datetime.datetime(int(y+'00'), 1, 1)) ),
-        ('(\d\d\d)\?$', (3, lambda (y,) : datetime.datetime(int(y+'0'), 1, 1)) ),
-        ('(\d\d\d\d) ?- ?\d\d\d\d$', (3, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
-        ('(\d\d\d0)[\?() ]+$', (3, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
+        (r'\?$', (0, lambda _ : None) ),
+        (r'(\d\d)[\?]+$', (2, lambda (y,) : datetime.datetime(int(y+'00'), 1, 1)) ),
+        (r'(\d\d\d)\?$', (3, lambda (y,) : datetime.datetime(int(y+'0'), 1, 1)) ),
+        (r'(\d\d\d\d) ?- ?\d\d\d\d$', (3, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
+        (r'(\d\d\d0)[\?() ]+$', (3, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
         # 'yyyy?' will still have a date granularity of 4
-        ('(\d\d\d\d)[\?() ]+$', (4, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
-        ('(\d+)$', (4, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
-        ('(\d\d\d\d)-(\d+)$', (6, lambda (y,m) : datetime.datetime(int(y), int(m), 1)) ),
-        ('(\d\d\d\d)-(\d+)-(\d+)$', (8, lambda (y,m,d) : datetime.datetime(int(y), int(m), int(d))) ),
+        (r'(\d\d\d\d)[\?() ]+$', (4, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
+        (r'(\d+)$', (4, lambda (y,) : datetime.datetime(int(y), 1, 1)) ),
+        (r'(\d\d\d\d)-(\d+)$', (6, lambda (y,m) : datetime.datetime(int(y), int(m), 1)) ),
+        (r'(\d\d\d\d)-(\d+)-(\d+)$', (8, lambda (y,m,d) : datetime.datetime(int(y), int(m), int(d))) ),
     ]
 
     def _get_text_or_none(self, xpath_expression):
@@ -49,23 +51,19 @@ class ErfgoedLeidenBeeldbankItem(BaseItem):
         return {}
 
     def _get_date_and_granularity(self):
+        date = (
+            self._get_text_or_none(
+                './/memorix:MEMORIX/field[@name="Datum_afbeelding"]/value') or
+            self._get_text_or_none('.//item/dcterms:created') or
+            self._get_text_or_none('.//item/dc:date'))
 
-        date = self._get_text_or_none('.//memorix:MEMORIX/field[@name="Datum_afbeelding"]/value')
         if date is not None:
             return parse_date(self.regexen, date)
-        else:
-            date = self._get_text_or_none('.//item/dcterms:created')
-            if date is not None:
-                return parse_date(self.regexen, date)
-            else:
-                date = self._get_text_or_none('.//item/dc:date')
-                if date is not None:
-                    return parse_date(self.regexen, date)
-                else:
-                    return None, None
+
+        return 0, None
 
     def get_rights(self):
-        return u'Creative Commons Attribution-ShareAlike'
+        return u'http://creativecommons.org/licenses/by-sa/3.0/deed.nl'
 
     def get_collection(self):
         return u'Beeldbank Erfgoed Leiden en omstreken'
@@ -88,9 +86,8 @@ class ErfgoedLeidenBeeldbankItem(BaseItem):
 
 
         gran, date = self._get_date_and_granularity()
-        if gran and date:
-            combined_index_data['date_granularity'] = gran
-            combined_index_data['date'] = date
+        combined_index_data['date_granularity'] = gran
+        combined_index_data['date'] = date
 
         creators = self.original_item.findall('.//dc:creator',
             namespaces=self.original_item.nsmap)
@@ -115,12 +112,16 @@ class ErfgoedLeidenBeeldbankItem(BaseItem):
                 # a workaround is to append .jpg to each URL
                 # example working: http://neon.pictura-hosting.nl/lei/lei_mrx_bld/thumbs/70x70/lei/00/LEI_REP_8142/PV38162_1I
                 # example not working: http://neon.pictura-hosting.nl/lei/lei_mrx_bld/thumbs/188x188/upload/1111/PV22310.1
-                url = picture_version.text+'.jpg'
+                url = picture_version.text + u'.jpg'
                 resolution = self.R_IMG_RES.match(url)
+
+                # if the url ends with 'noimg.png', it is not a valid image link
+                if url.endswith(u'/noimg.png.jpg'):
+                    continue
 
                 combined_index_data['media_urls'].append({
                     'original_url': url,
-                    'content_type': 'image/jpeg',
+                    'content_type': u'image/jpeg',
                     'width': int(resolution.group('width')),
                     'height': int(resolution.group('height'))
                 })

@@ -4,22 +4,22 @@ from datetime import datetime
 
 from lxml import etree
 
-from ocd_backend.items.nabeeldbank import NationaalArchiefBeeldbankItem
+from ocd_backend.items.elobeeldbank import ErfgoedLeidenBeeldbankItem
 
 from . import ItemTestCase
 
 
-class NationaalArchiefBeeldbankItemTestCase(ItemTestCase):
+class ErfgoedLeidenBeeldbankItemTestCase(ItemTestCase):
     def setUp(self):
-        super(NationaalArchiefBeeldbankItemTestCase, self).setUp()
+        super(ErfgoedLeidenBeeldbankItemTestCase, self).setUp()
         self.PWD = os.path.dirname(__file__)
         self.source_definition = {
-            'id': 'nationaal_archief_beeldbank',
+            'id': 'erfgoed_leiden_beeldbank',
             'extractor': (
                 'ocd_backend.extractors.opensearch.OpensearchExtractor'),
             'transformer': 'ocd_backend.transformers.BaseTransformer',
             'item': (
-                'ocd_backend.items.nabeeldbank.NationaalArchiefBeeldbankItem'),
+                'ocd_backend.items.nabeeldbank.ErfgoedLeidenBeeldbankItem'),
             'loader': 'ocd_backend.loaders.ElasticsearchLoader',
             'opensearch_url': (
                 'http://www.gahetna.nl/beeldbank-api/opensearch/'),
@@ -27,34 +27,32 @@ class NationaalArchiefBeeldbankItemTestCase(ItemTestCase):
         }
 
         with open(os.path.abspath(os.path.join(
-            self.PWD, '../test_dumps/nationaal_archief_beeldbank_item.xml')
+            self.PWD, '../test_dumps/erfgoed_leiden.xml')
         ), 'r') as f:
             self.raw_item = f.read()
         self.item = etree.XML(self.raw_item)
 
-        self.collection = u'Nationaal Archief'
+        self.collection = u'Beeldbank Erfgoed Leiden en omstreken'
         self.rights = u'http://creativecommons.org/licenses/by-sa/3.0/deed.nl'
-        self.original_object_id = u'ae98579a-d0b4-102d-bcf8-003048976d84'
+        self.original_object_id = u'lei:col1:dat12064:id127'
         self.original_object_urls = {
             u'html': (
-                u'http://hdl.handle.net/10648/'
-                u'ae98579a-d0b4-102d-bcf8-003048976d84')}
+                u'http://www.archiefleiden.nl/lei:col1:dat12064:id127')}
         self.media_urls = [{
             'original_url': (
-                'http://afbeeldingen.gahetna.nl/naa/thumb/800x600/'
-                '8e6606c4-bad0-4009-b708-acdb4062ab39.jpg'),
-            'content_type': 'image/jpeg',
-            'width': 800,
-            'height': 600}]
-        self.date_str = '1932-11-30T00:00:00Z'
-        self.date = datetime.strptime(self.date_str, '%Y-%m-%dT%H:%M:%SZ')
-        self.date_granularity = 14
+                u'http://neon.pictura-hosting.nl/lei/lei_mrx_bld/thumbs/1200x1200/lei/00/LEI_DB_010/LEI_DAT_4453_10/LEI001006912.jpg'),
+            'content_type': u'image/jpeg',
+            'width': 1200,
+            'height': 1200}]
+        self.date_str = u'Circa 1948'
+        self.date = datetime.strptime(u'1948-01-01T00:00:00Z', '%Y-%m-%dT%H:%M:%SZ')
+        self.date_granularity = 4
 
     def _instantiate_item(self):
         """
         Instantiate the item from the raw and parsed item we have
         """
-        return NationaalArchiefBeeldbankItem(
+        return ErfgoedLeidenBeeldbankItem(
             self.source_definition, 'application/xml',
             self.raw_item, self.item
         )
@@ -99,18 +97,8 @@ class NationaalArchiefBeeldbankItemTestCase(ItemTestCase):
         item = self._instantiate_item()
         data = item.get_combined_index_data()
         self.assertIn('date', data)
+        self.assertEqual(data['date_granularity'], self.date_granularity)
         self.assertEqual(data['date'], self.date)
-        self.assertEqual(data['date_granularity'], self.date_granularity)
-
-    def test_faulty_date(self):
-        self.raw_item = self.raw_item.replace(
-            '<dc:date>' + self.date_str + '</dc:date>',
-            '<dc:date>0002-11-30T00:00:00Z</dc:date>')
-        self.item = etree.XML(self.raw_item)
-        item = self._instantiate_item()
-        data = item.get_combined_index_data()
-        self.assertNotIn('date', data)
-        self.assertEqual(data['date_granularity'], self.date_granularity)
 
     def test_combined_index_data_types(self):
         item = self._instantiate_item()
@@ -122,14 +110,13 @@ class NationaalArchiefBeeldbankItemTestCase(ItemTestCase):
     def test_faulty_link(self):
         with open(os.path.abspath(os.path.join(
             self.PWD,
-            '../test_dumps/nationaal_archief_beeldbank_item_no_link.xml')
+            '../test_dumps/erfgoed_leiden_noimg.xml')
         ), 'r') as f:
             self.raw_item = f.read()
         self.item = etree.XML(self.raw_item)
         self.original_object_urls = {
-            u'html': (
-                u'http://hdl.handle.net/10648/'
-                u'88dbec58-ab5a-4f95-1ce3-f8a3fafb07f9')}
+            'html': (
+                u'http://www.archiefleiden.nl/lei:col1:dat82017:id127')}
 
         item = self._instantiate_item()
         self.assertDictEqual(

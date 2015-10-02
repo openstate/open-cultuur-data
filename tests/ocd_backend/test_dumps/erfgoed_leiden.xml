@@ -1,0 +1,65 @@
+<channel xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:memorix="http://www.pictura-dp.nl/memorix/3.0" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ese="http://www.europeana.eu/schemas/ese/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <item>
+    <title>De Herder</title>
+    <link>http://www.archiefleiden.nl/lei:col1:dat12064:id127</link>
+    <description/>
+    <enclosure url="http://neon.pictura-hosting.nl/lei/lei_mrx_bld/thumbs/70x70/lei/00/LEI_DB_010/LEI_DAT_4453_10/LEI001006912" length="1651" type="image/jpeg"/>
+    <pubDate>Mon, 25 Nov 2013 07:37:49 +0100</pubDate>
+    <guid isPermaLink="false">lei:col1:dat12064:id127</guid>
+    <dcterms:created>Circa 1948</dcterms:created>
+    <dc:rights>Wilde, F.E. de</dc:rights>
+    <dc:type>Prentbriefkaart</dc:type>
+    <dc:description>'De Herder'. Haarlemmerweg 80 te Leiden. Gezicht op de houtzaagmolen aan de Haarlemmerweg, gezien vanaf de Maredijk brug over de Poelwetering.</dc:description>
+    <dc:subject>Molens</dc:subject>
+    <dc:format>15 x 10 cm</dc:format>
+    <dcterms:isPartOf>Beeldbank Regionaal Archief Leiden</dcterms:isPartOf>
+    <dc:date>1925 - 1950</dc:date>
+    <dc:coverage>Leiden</dc:coverage>
+    <dc:creator>Wilde, F.E. de</dc:creator>
+    <ese:isShownBy>http://neon.pictura-hosting.nl/lei/lei_mrx_bld/thumbs/1200x1200/lei/00/LEI_DB_010/LEI_DAT_4453_10/LEI001006912</ese:isShownBy>
+    <ese:type>IMAGE</ese:type>
+    <ese:provider>Beeldbank Regionaal Archief Leiden</ese:provider>
+    <ese:isShownAt>http://www.archiefleiden.nl/lei:col1:dat12064:id127</ese:isShownAt>
+    <memorix:MEMORIX>
+      <field name="PhotoID_sort">
+        <value>LEI001006912</value>
+      </field>
+      <field name="mrx_collection_id">
+        <value>1</value>
+      </field>
+      <field name="collectie">
+        <value>Beeldbank Regionaal Archief Leiden</value>
+      </field>
+      <field name="Datum_afbeelding">
+        <value>Circa 1948</value>
+      </field>
+      <field name="Signatuur">
+        <value>PBK2288</value>
+      </field>
+      <field name="Oud_pv_nr">
+        <value>PV32479.7.4</value>
+      </field>
+      <field name="Straatnaam_facet">
+        <value>Haarlemmerweg</value>
+      </field>
+      <field name="Straatnaam">
+        <value>Haarlemmerweg</value>
+      </field>
+      <field name="Datum_afbeelding_begin">
+        <value>1946</value>
+      </field>
+      <field name="Datum_maken_begin">
+        <value>1946</value>
+      </field>
+      <field name="Datum_afbeelding_einde">
+        <value>1949</value>
+      </field>
+      <field name="Datum_maken_einde">
+        <value>1949</value>
+      </field>
+      <field name="Uitgever">
+        <value/>
+      </field>
+    </memorix:MEMORIX>
+  </item>
+</channel>

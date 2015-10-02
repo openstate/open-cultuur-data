@@ -1,0 +1,35 @@
+<channel xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:memorix="http://www.pictura-dp.nl/memorix/3.0" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ese="http://www.europeana.eu/schemas/ese/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <item>
+    <title>'Ajax'</title>
+    <link>http://www.archiefleiden.nl/lei:col1:dat82017:id127</link>
+    <description/>
+    <enclosure url="http://neon.pictura-hosting.nl/lei/lei_mrx_bld/thumbs/70x70/noimg.png" length="2692" type="image/jpeg"/>
+    <pubDate>Mon, 25 Nov 2013 07:38:16 +0100</pubDate>
+    <guid isPermaLink="false">lei:col1:dat82017:id127</guid>
+    <dc:description>Fruinlaan 15. Moment uit de opvoering van 'Ajax' tijdens de 'grote uitvoering' ten gunste van het 10e lustrum van de schoolvereniging Unus Sumus Animo 8 maart 1958 in de Leidse
+    Schouwburg. Links o.a. Bart Punt. 8 Maart 1958.</dc:description>
+    <dc:date>Niet gedateerd</dc:date>
+    <dcterms:isPartOf>Beeldbank Regionaal Archief Leiden</dcterms:isPartOf>
+    <ese:isShownBy>http://neon.pictura-hosting.nl/lei/lei_mrx_bld/thumbs/70x70/noimg.png</ese:isShownBy>
+    <ese:isShownBy>http://neon.pictura-hosting.nl/lei/lei_mrx_bld/thumbs/188x188/noimg.png</ese:isShownBy>
+    <ese:isShownBy>http://neon.pictura-hosting.nl/lei/lei_mrx_bld/thumbs/500x500/noimg.png</ese:isShownBy>
+    <ese:isShownBy>http://neon.pictura-hosting.nl/lei/lei_mrx_bld/thumbs/1200x1200/noimg.png</ese:isShownBy>
+    <ese:type>IMAGE</ese:type>
+    <ese:provider>Beeldbank Regionaal Archief Leiden</ese:provider>
+    <ese:isShownAt>http://www.archiefleiden.nl/lei:col1:dat82017:id127</ese:isShownAt>
+    <memorix:MEMORIX>
+      <field name="PhotoID_sort">
+        <value>0</value>
+      </field>
+      <field name="mrx_collection_id">
+        <value>1</value>
+      </field>
+      <field name="collectie">
+        <value>Beeldbank Regionaal Archief Leiden</value>
+      </field>
+      <field name="Oud_pv_nr">
+        <value>PV19031.20</value>
+      </field>
+    </memorix:MEMORIX>
+  </item>
+</channel>
