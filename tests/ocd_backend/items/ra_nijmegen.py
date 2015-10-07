@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 
 from ocd_backend.items.ra_nijmegen import (
     NijmegenGrintenItem, NijmegenDoornroosjeItem, NijmegenVierdaagseItem)
@@ -215,18 +216,23 @@ class NijmegenVierdaagseItemTestCase(ItemTestCase):
             self.item = json.load(f)
 
         self.collection = (
-            u'Fotocollectie Regionaal Archief Nijmegen - Vierdaagsefeesten'
-            u' / Zomerfeesten')
+            u'Regionaal Archief Nijmegen - Fotocollectie Regionaal Archief '
+            u'Nijmegen')
         self.rights = u'https://creativecommons.org/licenses/by-sa/3.0/'
         self.original_object_id = u'F20706'
         self.original_object_urls = {
             u'html': (
                 u'http://studiezaal.nijmegen.nl/ran/_detail.aspx?xmldescid='
                 u'277219')}
+
+        #only some sources have correct images, some dont:
         self.media_urls = [{
             'original_url': (
-                u'http://www.nijmegen.nl/opendata/archief/F20706.jpg'),
+                u'http://www.nijmegen.nl/opendata/archief/F70766.jpg'),
             'content_type': 'image/jpeg'}]
+        self.media_urls_fail = []
+
+        self.long_date = datetime(1933, 2 ,1 )
 
     def _instantiate_item(self):
         return NijmegenVierdaagseItem(
@@ -267,7 +273,7 @@ class NijmegenVierdaagseItemTestCase(ItemTestCase):
     def test_media_urls(self):
         item = self._instantiate_item()
         data = item.get_combined_index_data()
-        self.assertEqual(data['media_urls'], self.media_urls)
+        self.assertEqual(data['media_urls'], self.media_urls_fail)
 
     def test_combined_index_data_types(self):
         item = self._instantiate_item()
@@ -276,3 +282,35 @@ class NijmegenVierdaagseItemTestCase(ItemTestCase):
             self.assertIn(field, data)
             if data[field] is not None:
                 self.assertIsInstance(data[field], field_type)
+
+    def test_media_urls_correct_img(self):
+        with open(os.path.abspath(os.path.join(
+            self.PWD, (
+                '../test_dumps/ra_nijmegen_vierdaagse_item_with_img_and_date.json'))),
+                'r') as f:
+            self.raw_item = f.read()
+        with open(os.path.abspath(os.path.join(
+            self.PWD, (
+                '../test_dumps/ra_nijmegen_vierdaagse_item_with_img_and_date.json'))),
+                'r') as f:
+            self.item = json.load(f)
+
+        item = self._instantiate_item()
+        data = item.get_combined_index_data()
+        self.assertEqual(data['media_urls'], self.media_urls)
+
+    def test_alternative_date(self):
+        with open(os.path.abspath(os.path.join(
+            self.PWD, (
+                '../test_dumps/ra_nijmegen_vierdaagse_item_with_img_and_date.json'))),
+                'r') as f:
+            self.raw_item = f.read()
+        with open(os.path.abspath(os.path.join(
+            self.PWD, (
+                '../test_dumps/ra_nijmegen_vierdaagse_item_with_img_and_date.json'))),
+                'r') as f:
+            self.item = json.load(f)
+
+        item = self._instantiate_item()
+        data = item.get_combined_index_data()
+        self.assertEqual(data['date'], self.long_date)

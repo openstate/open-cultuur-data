@@ -5,6 +5,7 @@ import requests
 
 from ocd_backend.items import BaseItem
 from ocd_backend.utils.misc import parse_date
+from ocd_backend.extractors import HttpRequestMixin
 
 
 class NijmegenGrintenItem(BaseItem):
@@ -156,7 +157,7 @@ class NijmegenDoornroosjeItem(BaseItem):
         return unicode(text)
 
 
-class NijmegenVierdaagseItem(BaseItem):
+class NijmegenVierdaagseItem(BaseItem, HttpRequestMixin):
     def get_original_object_id(self):
         return unicode(self.original_item['Identificatie'])
 
@@ -169,7 +170,7 @@ class NijmegenVierdaagseItem(BaseItem):
 
     def get_collection(self):
         return u'%s - %s' % (
-            self.original_item['instelling'], self.original_item['collectie'])
+            self.original_item['Instelling'], self.original_item['Collectie'])
 
     def get_rights(self):
         return u'https://creativecommons.org/licenses/by-sa/3.0/'
@@ -178,16 +179,23 @@ class NijmegenVierdaagseItem(BaseItem):
         earliest_date = self.original_item.get(
             'Vroegst mogelijke datering', None)
         if earliest_date is not None:
-            return 4, datetime(int(earliest_date), 1, 1)
+            if len(earliest_date) > 4:
+                datesplit = earliest_date.split("/")
+                if len(datesplit) > 2:
+                    return 8, datetime(int(datesplit[2]), int(datesplit[1]), int(datesplit[0]))
+                else:
+                    return 6, datetime(int(datesplit[2]), int(datesplit[1]), 1)
+            else:
+                return 4, datetime(int(earliest_date), 1, 1)
         else:
             return 16, None
 
     def _get_image_link(self):
         obj_id = self.get_original_object_id()
-        req = requests.get(u'http://www.nijmegen.nl/opendata/archief/%s.jpg' % (
+        req = self.http_session.get(u'http://www.nijmegen.nl/opendata/archief/%s.jpg' % (
             obj_id))
         headers = req.headers
-        if headers['content_type'] == 'image/jpeg':
+        if headers['content-type'] == 'image/jpeg':
             return u'http://www.nijmegen.nl/opendata/archief/%s.jpg' % (
                 obj_id)
 
