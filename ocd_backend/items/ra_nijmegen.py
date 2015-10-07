@@ -28,7 +28,7 @@ class NijmegenGrintenItem(BaseItem):
 
     def _get_date_and_granularity(self):
         earliest_date = self.original_item.get(
-            'Vroegst mogelijke datering', None)
+            'vroegst', None)
         if earliest_date is not None:
             if len(earliest_date) > 4:
                 datesplit = earliest_date.split("/")
@@ -110,7 +110,7 @@ class NijmegenDoornroosjeItem(BaseItem):
 
     def _get_date_and_granularity(self):
         earliest_date = self.original_item.get(
-            'Vroegst mogelijke datering', None)
+            'beginjaar', None)
         if earliest_date is not None:
             if len(earliest_date) > 4:
                 datesplit = earliest_date.split("/")
