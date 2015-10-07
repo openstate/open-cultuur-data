@@ -27,9 +27,17 @@ class NijmegenGrintenItem(BaseItem):
         return unicode(self.original_item['auteursrecht foto'])
 
     def _get_date_and_granularity(self):
-        earliest_date = self.original_item.get('vroegst', None)
+        earliest_date = self.original_item.get(
+            'Vroegst mogelijke datering', None)
         if earliest_date is not None:
-            return 4, datetime(int(earliest_date), 1, 1)
+            if len(earliest_date) > 4:
+                datesplit = earliest_date.split("/")
+                if len(datesplit) > 2:
+                    return 8, datetime(int(datesplit[2]), int(datesplit[1]), int(datesplit[0]))
+                else:
+                    return 6, datetime(int(datesplit[1]), int(datesplit[0]), 1)
+            else:
+                return 4, datetime(int(earliest_date), 1, 1)
         else:
             return 16, None
 
@@ -101,9 +109,17 @@ class NijmegenDoornroosjeItem(BaseItem):
         return u'https://creativecommons.org/licenses/by-sa/3.0/'
 
     def _get_date_and_granularity(self):
-        earliest_date = self.original_item.get('beginjaar', None)
+        earliest_date = self.original_item.get(
+            'Vroegst mogelijke datering', None)
         if earliest_date is not None:
-            return 4, datetime(int(earliest_date), 1, 1)
+            if len(earliest_date) > 4:
+                datesplit = earliest_date.split("/")
+                if len(datesplit) > 2:
+                    return 8, datetime(int(datesplit[2]), int(datesplit[1]), int(datesplit[0]))
+                else:
+                    return 6, datetime(int(datesplit[1]), int(datesplit[0]), 1)
+            else:
+                return 4, datetime(int(earliest_date), 1, 1)
         else:
             return 16, None
 
@@ -184,7 +200,7 @@ class NijmegenVierdaagseItem(BaseItem, HttpRequestMixin):
                 if len(datesplit) > 2:
                     return 8, datetime(int(datesplit[2]), int(datesplit[1]), int(datesplit[0]))
                 else:
-                    return 6, datetime(int(datesplit[2]), int(datesplit[1]), 1)
+                    return 6, datetime(int(datesplit[1]), int(datesplit[0]), 1)
             else:
                 return 4, datetime(int(earliest_date), 1, 1)
         else:
