@@ -34,7 +34,7 @@ class SaenredamItemTestCase(ItemTestCase):
             self.item = json.load(f)
 
         self.collection = u'Het Utrechts Archief - Saenredam Collectie'
-        self.rights = u'https://creativecommons.org/publicdomain/zero/1.0/'
+        self.rights = u'https://creativecommons.org/publicdomain/zero/1.0/deed.nl'
         self.original_object_id = u'28593'
         self.original_object_urls = {
             u'html': (

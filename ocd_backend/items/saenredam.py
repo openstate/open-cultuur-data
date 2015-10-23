@@ -25,7 +25,7 @@ class SaenredamItem(BaseItem, HttpRequestMixin):
         return u'Het Utrechts Archief - Saenredam Collectie'
 
     def get_rights(self):
-        return unicode(self.original_item['Licentie'])
+        return unicode(self.original_item['Licentie']) + u'deed.nl'
 
     def _get_date_and_granularity(self):
         earliest_date = self.original_item.get(
