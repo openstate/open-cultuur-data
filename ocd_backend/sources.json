@@ -470,5 +470,24 @@
         "path": "/home/ocd/data/static/marker_museum",
         "pattern": "*.jpg",
         "media_base_url": "http://static.opencultuurdata.nl/marker_museum/"
+    },
+    {
+        "id": "utrechts_archief_saenredam",
+        "extractor": "ocd_backend.extractors.staticfile.StaticJSONExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.saenredam.SaenredamItem",
+        "enrichers": [
+            [
+                "ocd_backend.enrichers.media_enricher.MediaEnricher",
+                {
+                    "tasks": ["media_type", "image_metadata"]
+                }
+            ]
+        ],
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "file_url": "http://static.opencultuurdata.nl/utrechts_archief/saenredam.json",
+        "index_name": "utrechts_archief_saenredam",
+        "media_base_url": "http://static.opencultuurdata.nl/utrechts_archief/saenredam/"
     }
   ]
