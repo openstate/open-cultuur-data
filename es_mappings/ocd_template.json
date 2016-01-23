@@ -186,6 +186,12 @@
                                 "image_mode": {
                                     "type": "string",
                                     "index": "not_analyzed"
+                                },
+                                "orientation": {
+                                    "type": "string"
+                                },
+                                "size_indicator": {
+                                    "type": "string"
                                 }
                             }
                         }
