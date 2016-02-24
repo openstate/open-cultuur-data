@@ -13,7 +13,7 @@ Using `Docker <http://www.docker.com/>`_ is by far the easiest way to spin up a 
 
 2. Build the image with Docker::
 
-   $ docker build -t open-state/openspending .
+   $ docker build -t open-state/open-cultuur-data .
 
 3. Start a container::
 
