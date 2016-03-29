@@ -140,8 +140,9 @@ RUN curl -sSL http://mirror.ryansanden.com/ffmpeg-d00bc6a8/xvidcore-${XVIDCORE_V
     && make install
 
 #ENV FFMPEG_COMMIT 580c86925ddf8c85d2e6f57ed55dd75853748b29
-RUN git clone --depth 1 git://source.ffmpeg.org/ffmpeg \
+RUN git clone git://source.ffmpeg.org/ffmpeg.git \
     && cd ffmpeg \
+    && git checkout release/2.4 \
 #&& git checkout -q $FFMPEG_COMMIT \
     && ./configure \
         --enable-shared \
