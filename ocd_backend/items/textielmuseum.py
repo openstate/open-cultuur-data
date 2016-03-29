@@ -28,7 +28,8 @@ class TextielMuseumItem(BaseItem, HttpRequestMixin):
     def get_original_object_urls(self):
         original_id = self.get_original_object_id()
         original_urls = {
-            'xml': 'http://78.108.138.82:85/opendata/wwwopac.ashx?database=collect&search=priref=%s&xmltype=unstructured' % original_id
+            'xml': '%s?database=collect&search=priref=%s&xmltype=unstructured' % (
+                self.source_definition['adlib_base_url'], original_id,)
         }
 
         object_number = self._get_text_or_none('.//object_number')
@@ -75,12 +76,13 @@ class TextielMuseumItem(BaseItem, HttpRequestMixin):
 
         mediums = self.original_item.findall('.//reproduction.identifier_URL')
         if mediums is not None:
-            img_url = 'http://images.textielmuseum.nl:85/wwwopac.ashx?command=getcontent&server=images&value=%s'
+            img_url = '%s?command=getcontent&server=images&value=%s'
 
             combined_index_data['media_urls'] = []
             for medium in mediums:
                 combined_index_data['media_urls'].append({
-                    'original_url': img_url % medium.text,
+                    'original_url': img_url % (
+                        self.source_definition['adlib_base_url'], medium.text,)
                     'content_type': 'image/jpeg'
                 })
 
