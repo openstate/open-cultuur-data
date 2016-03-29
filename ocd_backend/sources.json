@@ -222,6 +222,7 @@
         "loader": "ocd_backend.loaders.ElasticsearchLoader",
         "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
         "adlib_base_url": "http://textielmuseum.adlibhosting.com/opendata/wwwopac.ashx",
+        "adlib_image_url": "http://textielmuseum.adlibhosting.com/wwwopacx/wwwopac.ashx",
         "adlib_database": "collect",
         "index_name": "textielmuseum"
     },
