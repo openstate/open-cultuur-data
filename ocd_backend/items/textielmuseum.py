@@ -82,7 +82,7 @@ class TextielMuseumItem(BaseItem, HttpRequestMixin):
             for medium in mediums:
                 combined_index_data['media_urls'].append({
                     'original_url': img_url % (
-                        self.source_definition['adlib_base_url'], medium.text,),
+                        self.source_definition['adlib_image_url'], medium.text,),
                     'content_type': 'image/jpeg'
                 })
 
