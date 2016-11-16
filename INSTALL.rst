@@ -1,8 +1,8 @@
 Open Cultuur Data API install notes
 ###################################
 
-Using Docker
-============
+Install
+=======
 
 The Open Cultuur Data API is easily installed using `Docker Compose <https://docs.docker.com/compose/install/>`_.
 
