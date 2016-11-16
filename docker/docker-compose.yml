@@ -1,0 +1,29 @@
+version: '2'
+services:
+  c-ocd-nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
+    volumes:
+      - ./nginx/:/etc/nginx/
+      - ../log:/opt/nginx-load-balancer/log
+      - ../data:/usr/share/nginx/html/data
+      - ../docs/_build/html:/usr/share/nginx/html/docs
+    restart: always
+    networks:
+      - nginx-load-balancer
+      - ocd
+  c-ocd-app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/opt/ocd
+    restart: always
+    networks:
+      - ocd
+networks:
+  ocd:
+  nginx-load-balancer:
+    external:
+      name: docker_nginx-load-balancer

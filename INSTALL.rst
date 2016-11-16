@@ -9,7 +9,9 @@ The Open Cultuur Data API is easily installed using `Docker Compose<https://docs
 1. Clone the OCD git repository::
 
    git clone https://github.com/openstate/open-cultuur-data.git
-   cd open-cultuur-data/
+   cd open-cultuur-data/docker
+
+(optional) If you're developing then uncomment the ``Development`` and comment the ``Production`` sections in ``docker/nginx/conf.d/default.conf`` and ``conf/supervisor.conf``. You will then use Flask's development webserver instead of uWSGI, which is useful because changes to the code are automatically reloaded.
 
 2. Build and run the image using::
 
@@ -37,9 +39,9 @@ Some commands on how to [backup and restore Elasticsearch indices](https://www.e
 
 The following commands are assumed to be executed in the Docker container. You can enter the container using this command (exit it using ``CTRL+d``)::
 
-   sudo docker exec -it opencultuurdata_c-open-cultuur-data_1 bash
+   sudo docker exec -it docker_c-ocd-app_1 bash
 
-# Create a new backup location (do this on the machine which should be backupped AND the machine where you want to restore the backup) and make sure Elasticsearch can write to it, e.g.::
+# Create a new backup location in the root directory of the OCD repository (do this on the machine which should be backupped AND the machine where you want to restore the backup) and make sure Elasticsearch can write to it, e.g.::
 
    mkdir backups
    chown 102 backups
