@@ -10,6 +10,7 @@ RUN echo 'deb http://archive.ubuntu.com/ubuntu/ precise multiverse' >> etc/apt/s
 RUN apt-get update \
     && apt-get install -y \
         python-software-properties \
+        software-properties-common \
         openjdk-7-jre-headless \
         wget \
         curl \
@@ -167,23 +168,36 @@ WORKDIR /opt/ocd
 # Create a virtualenv project
 RUN echo 'ok'
 RUN virtualenv -q /opt
+RUN source ../bin/activate \
+    && pip install pip --upgrade
 RUN echo "source /opt/bin/activate; cd /opt/ocd;" >> ~/.bashrc
 
-# Temporarily add all NPO Backstage files on the host to the container
+# Temporarily add files on the host to the container
 # as it contains files needed to finish the base installation
 ADD . /opt/ocd
 
 # Install Python requirements
 RUN source ../bin/activate \
-    && pip install Cython==0.21.2 \
+    && pip install Cython==0.21.2
+
+RUN source ../bin/activate \
     && pip install -r requirements.txt
 
-# Start
+# Initialize
 RUN source ../bin/activate \
     && service elasticsearch start \
     && sleep 10 \
     && ./manage.py elasticsearch create_indexes es_mappings/ \
     && ./manage.py elasticsearch put_template
 
-# Delete all NPO Bastage files again
+RUN apt-get install -y supervisor
+
+# Generate documentation
+RUN source ../bin/activate && cd docs && make html
+
+# Delete all files again
 RUN find . -delete
+
+# When the container is created or started run start.sh which starts
+# all required services and supervisor which starts celery and celerycam
+CMD /opt/ocd/start.sh

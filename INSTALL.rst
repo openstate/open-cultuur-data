@@ -4,119 +4,61 @@ Open Cultuur Data API install notes
 Using Docker
 ============
 
-Using `Docker <http://www.docker.com/>`_ is by far the easiest way to spin up a development environment and get started with contributing to the Open Cultuur Data API.
+The Open Cultuur Data API is easily installed using `Docker Compose<https://docs.docker.com/compose/install/>`_.
 
 1. Clone the OCD git repository::
 
-   $ git clone https://github.com/openstate/open-cultuur-data.git
-   $ cd open-cultuur-data/
+   git clone https://github.com/openstate/open-cultuur-data.git
+   cd open-cultuur-data/
 
-2. Build the image with Docker::
+2. Build and run the image using::
 
-   $ docker build -t open-state/open-cultuur-data .
-
-3. Start a container::
-
-   $ docker run -it --name c-open-cultuur-data -v `pwd`:/opt/ocd -p 5000:5000 -p 9200:9200 open-state/open-cultuur-data
-
-4. Start Elasticsearch and Redis::
-
-   $ service elasticsearch restart
-   $ redis-server >redis.log 2>redis.err &
-
-5. Start the frondend::
-
-   $ ./manage.py frontend runserver
-
-See below for the extraction processes.
-
-Using Vagrant
-=============
-
-Using `Vagrant <http://www.vagrantup.com/>`_ is also an easy way to spin up a development environment and get started with contributing to the Open Cultuur Data API.
-
-1. Clone the OCD git repository::
-
-   $ git clone https://github.com/openstate/open-cultuur-data.git
-   $ cd open-cultuur-data/
-
-2. Select and link the correct ``Vagrantfile`` (depending on the Vagrant provider you use)::
-
-   $ ln -s Vagrantfile.virtualbox Vagrantfile
-
-3. Start the Vagrant box and SSH into it::
-
-   $ vagrant up && vagrant ssh
-
-Vagrant will automatically sync your project directory (the directory with the Vagrantfile) between the host and guest machine. Also, it will run a bootstrap script that will take care of installing project dependencies. In the guest, the project directory can be found under ``/vagrant``. For more information, see the Vagrant documentation on `Synced Folders <http://docs.vagrantup.com/v2/synced-folders/index.html>`_.
-
-Manual setup
-============
-
-Pre-requisites
---------------
-
-- Redis
-- Elasticsearch >= 1.1
-- Python(-dev) 2.7
-- liblxml
-- libxslt
-- pip
-- virtualenv (optional)
-
-Installation
-------------
-
-1. Install redis::
-
-   $ sudo add-apt-repository ppa:rwky/redis
-   $ sudo apt-get update
-   $ sudo apt-get install redis-server
-   
-2. Install Java (if it isn't already)::
-   
-   $ sudo apt-get install openjdk-7-jre-headless
-
-3. Install Elasticsearch::
-   
-   $ wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.deb
-   $ sudo dpkg -i elasticsearch-1.4.2.deb
-
-4. Install liblxml, libxslt, libssl, libffi and python-dev::
-
-   $ sudo apt-get install libxml2-dev libxslt1-dev libssl-dev libffi-dev python-dev
-
-5. Install pip and virtualenv::
-
-   $ sudo easy_install pip
-
-6. Create an OCD virtualenv and source it::
-
-   $ virtualenv ocd
-   $ source ocd/bin/activate
-
-7. Clone the OCD git repository and install the required Python packages::
-
-   $ git clone https://github.com/openstate/open-cultuur-data.git
-   $ cd open-cultuur-data/
-   $ pip install -r requirements.txt
-
+   sudo docker-compose up -d
 
 Running an OCD extractor
 ========================
 
 1. First, add the OCD template to the running Elasticsearch instance::
 
-   $ ./manage.py elasticsearch put_template
+   ./manage.py elasticsearch put_template
 
 2. Make the necessary changes to the 'sources' settings file (``ocd_backend/sources.json``). For example, fill out your API key for retrieving data from the Rijksmuseum.
 
 3. Start the extraction process::
 
-   $ ./manage.py extract start openbeelden
+   ./manage.py extract start openbeelden
 
-   You can get an overview of the available sources by running ``./manage.py extract list_sources``.
+You can get an overview of the available sources by running ``./manage.py extract list_sources``.
 
-4. Simultaneously start a worker processes::
+Backup and restore
+==================
 
-   $ celery --app=ocd_backend:celery_app worker --loglevel=info --concurrency=2
+Some commands on how to [backup and restore Elasticsearch indices](https://www.elastic.co/guide/en/elasticsearch/reference/1.4/modules-snapshots.html#_shared_file_system_repository).
+
+The following commands are assumed to be executed in the Docker container. You can enter the container using this command (exit it using ``CTRL+d``)::
+
+   sudo docker exec -it opencultuurdata_c-open-cultuur-data_1 bash
+
+# Create a new backup location (do this on the machine which should be backupped AND the machine where you want to restore the backup) and make sure Elasticsearch can write to it, e.g.::
+
+   mkdir backups
+   chown 102 backups
+   curl -XPUT 'http://localhost:9200/_snapshot/my_backup' -d '{"type": "fs", "settings": {"location": "/opt/ocd/backups"}}'
+
+# Save all indices/cluster with a snapshot::
+
+   curl -XPUT "localhost:9200/_snapshot/my_backup/ocd_backup"
+
+# Copy the ``backups`` directory containing the snapshot into the ``open-cultuur-data`` directory on the other machine (on this other machine, make sure you created a backup location as described above). Restore the permissions to make sure that it is still reacheable by Elasticsearch::
+
+   chown 102 backups
+
+# Close any indices with the same name which are already present on the new machine. On a new install these are ``ocd_resolver`` and ``ocd_usage_logs``::
+
+   curl -XPOST 'localhost:9200/ocd_resolver/_close'
+   curl -XPOST 'localhost:9200/ocd_usage_logs/_close'
+
+
+# Restore the snapshot::
+
+   curl -XPOST "localhost:9200/_snapshot/my_backup/ocd_backup/_restore"
