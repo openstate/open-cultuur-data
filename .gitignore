@@ -50,10 +50,14 @@ local_dumps/
 # IDE/editor
 .idea
 
+# Redis
+dump.rdb
+
+# VIM
+*.swp
+
+log/
+backups/
 dumps/*
 local_dumps/*
 ocd_frontend/.thumbnail-cache/*
-
-backups/
-log/
-dump.rdb
