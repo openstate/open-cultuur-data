@@ -12,25 +12,55 @@ The Open Cultuur Data API is easily installed using `Docker Compose <https://doc
    $ cd open-cultuur-data/docker
 
 (optional) If you're developing then uncomment the ``Development`` and comment the ``Production`` sections in ``docker/nginx/conf.d/default.conf`` and ``conf/supervisor.conf``. You will then use Flask's development webserver instead of uWSGI, which is useful because changes to the code are automatically reloaded.
+You can also remove the lines ``restart: always`` from ``docker/docker-compose.yml`` otherwise the containers will automatically start when you start your machine.
+(optional) In ``docker/docker-compose.yml`` you might want to remove the line containing ``- nginx-load-balancer`` listed in the networks section of the ``c-ocd-nginx`` service as well as the last three lines (shown below) as they are specific to our setup and not needed for general usage:
+   ```
+     nginx-load-balancer:
+       external:
+         name: docker_nginx-load-balancer
+   ```
 
-2. Build and run the image using::
+2. Build and run the image using (only use this once unless you want to rebuild stuff)::
 
    $ sudo docker-compose up -d
+
+On reboots, the docker containers should automatically restart again. If you removed the ``restart: always`` lines from ``docker/docker-compose.yml``, then you can start the containers as follows::
+
+   $ cd open-cultuur-data/docker
+   $ sudo docker-compose start
 
 Running an OCD extractor
 ========================
 
-1. First, add the OCD template to the running Elasticsearch instance::
+1. Make the necessary changes to the 'sources' settings file (``ocd_backend/sources.json``). For example, fill out your API key for retrieving data from the Rijksmuseum.
 
-   $ ./manage.py elasticsearch put_template
+2. Enter the container::
 
-2. Make the necessary changes to the 'sources' settings file (``ocd_backend/sources.json``). For example, fill out your API key for retrieving data from the Rijksmuseum.
+   $ sudo docker exec -it docker_c-ocd-app_1 bash
 
-3. Start the extraction process::
+3. Start the extraction process for a specific source, in this case ``openbeelden``::
 
    $ ./manage.py extract start openbeelden
 
 You can get an overview of the available sources by running ``./manage.py extract list_sources``.
+
+Update code in production
+=========================
+
+Code that is updated in production can be reloaded by restart UWSGi as follows::
+
+   $ cd open-cultuur-data
+   $ touch uwsgi-touch-reload
+
+Development
+===========
+
+Here are some useful tips for development besides the development instructions in the 'Install' section.
+
+After changing code in the backend, enter the container and kill ``celery`` to reload the code (supervisor will automatically restart ``celery``)::
+
+   $ sudo docker exec -it docker_c-ocd-app_1 bash
+   $ kill -9 `ps aux | grep celery | awk '{print $2}'`
 
 Backup and restore
 ==================
