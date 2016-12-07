@@ -509,5 +509,24 @@
         "file_url": "http://static.opencultuurdata.nl/utrechts_archief/saenredam.json",
         "index_name": "utrechts_archief_saenredam",
         "media_base_url": "http://static.opencultuurdata.nl/utrechts_archief/saenredam/"
+    },
+    {
+        "id": "collectie_gelderland",
+        "extractor": "ocd_backend.extractors.oai.OaiExtractor",
+        "transformer": "ocd_backend.transformers.BaseTransformer",
+        "item": "ocd_backend.items.gelderland.GelderlandItem",
+        "enrichers": [
+            [
+                "ocd_backend.enrichers.media_enricher.MediaEnricher",
+                {
+                    "tasks": ["media_type", "image_metadata"]
+                }
+            ]
+        ],
+        "loader": "ocd_backend.loaders.ElasticsearchLoader",
+        "cleanup": "ocd_backend.tasks.CleanupElasticsearch",
+        "oai_base_url": "http://igem.adlibsoft.com/oaix/oai.ashx",
+        "oai_metadata_prefix": "oai_adlib",
+        "index_name": "collectie_gelderland"
     }
   ]
