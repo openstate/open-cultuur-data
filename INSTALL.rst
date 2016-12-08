@@ -79,6 +79,8 @@ After changing code in the backend, enter the container and kill ``celery`` to r
    $ sudo docker exec -it docker_c-ocd-app_1 bash
    $ kill -9 `ps aux | grep celery | awk '{print $2}'`
 
+Make sure to check ``open-cultuur-data/log/celery.err`` when extracting a new source. This log file will most likely contain useful information if anything goes wrong.
+
 Backup and restore
 ==================
 
