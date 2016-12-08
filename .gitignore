@@ -57,6 +57,7 @@ dump.rdb
 *.swp
 
 log/
+backend.log
 backups/
 dumps/*
 local_dumps/*
