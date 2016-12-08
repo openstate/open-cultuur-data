@@ -13,12 +13,10 @@ The Open Cultuur Data API is easily installed using `Docker Compose <https://doc
 
 (optional) If you're developing then uncomment the ``Development`` and comment the ``Production`` sections in ``docker/nginx/conf.d/default.conf`` and ``conf/supervisor.conf``. You will then use Flask's development webserver instead of uWSGI, which is useful because changes to the code are automatically reloaded.
 You can also remove the lines ``restart: always`` from ``docker/docker-compose.yml`` otherwise the containers will automatically start when you start your machine.
-(optional) In ``docker/docker-compose.yml`` you might want to remove the line containing ``- nginx-load-balancer`` listed in the networks section of the ``c-ocd-nginx`` service as well as the last three lines (shown below) as they are specific to our setup and not needed for general usage:
-   ```
-     nginx-load-balancer:
-       external:
-         name: docker_nginx-load-balancer
-   ```
+(optional) In ``docker/docker-compose.yml`` you might want to remove the line containing ``- nginx-load-balancer`` listed in the networks section of the ``c-ocd-nginx`` service as well as the last three lines (shown below) as they are specific to our setup and not needed for general usage::
+  nginx-load-balancer:
+    external:
+      name: docker_nginx-load-balancer
 
 2. Build and run the image using (only use this once unless you want to rebuild stuff)::
 
