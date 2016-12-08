@@ -42,13 +42,32 @@ Running an OCD extractor
 
 You can get an overview of the available sources by running ``./manage.py extract list_sources``.
 
-Update code in production
-=========================
+Useful commands
+===============
 
-Code that is updated in production can be reloaded by restart UWSGi as follows::
+Restart the OCD API::
+
+   $ cd open-cultuur-data/docker
+   $ sudo docker-compose restart
+
+Code that is updated in production can be reloaded by restarting UWSGi as follows::
 
    $ cd open-cultuur-data
    $ touch uwsgi-touch-reload
+
+List all indices::
+
+   $ sudo docker exec -it docker_c-ocd-app_1 bash
+   $ curl 'http://127.0.0.1:9200/_cat/indices?v'
+
+Remove a source, in this case ``collectie_gelderland``::
+
+   $ sudo docker exec -it docker_c-ocd-app_1 bash
+   # Delete the source index
+   # Find the exact index name using the 'list all indices' commands above, this results in ocd_collectie_gelderland_20161208001124
+   $ curl -XDELETE 'http://127.0.0.1:9200/ocd_collectie_gelderland_20161208001124'
+   # Delete the source entries from the combined_index, in this case
+   $ curl -XDELETE 'http://127.0.0.1:9200/ocd_combined_index/item/_query' -d '{"query": {"match": {"meta.source_id": "collectie_gelderland"}}}'
 
 Development
 ===========
