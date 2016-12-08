@@ -68,7 +68,7 @@ COMBINED_INDEX = 'ocd_combined_index'
 # The default prefix used for all ocd data
 DEFAULT_INDEX_PREFIX = 'ocd'
 
-RESOLVER_BASE_URL = 'http://localhost:5000/v0/resolve'
+RESOLVER_BASE_URL = 'http://api.opencultuurdata.nl/v0/resolve'
 RESOLVER_URL_INDEX = 'ocd_resolver'
 
 # The User-Agent that is used when retrieving data from external sources
