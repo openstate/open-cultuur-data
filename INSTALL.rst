@@ -64,9 +64,9 @@ Remove a source, in this case ``collectie_gelderland``::
 
    $ sudo docker exec -it docker_c-ocd-app_1 bash
    # Delete the source index
-   # Find the exact index name using the 'list all indices' commands above, this results in ocd_collectie_gelderland_20161208001124
+   # Find the exact index name using the 'list all indices' commands above, in this case 'ocd_collectie_gelderland_20161208001124'
    $ curl -XDELETE 'http://127.0.0.1:9200/ocd_collectie_gelderland_20161208001124'
-   # Delete the source entries from the combined_index, in this case
+   # Delete the source entries from the combined_index, in this case 'collectie_gelderland'
    $ curl -XDELETE 'http://127.0.0.1:9200/ocd_combined_index/item/_query' -d '{"query": {"match": {"meta.source_id": "collectie_gelderland"}}}'
 
 Development
