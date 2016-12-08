@@ -69,25 +69,25 @@ The following commands are assumed to be executed in the Docker container. You c
 
    $ sudo docker exec -it docker_c-ocd-app_1 bash
 
-# Create a new backup location in the root directory of the OCD repository (do this on the machine which should be backupped AND the machine where you want to restore the backup) and make sure Elasticsearch can write to it, e.g.::
+Create a new backup location in the root directory of the OCD repository (do this on the machine which should be backupped AND the machine where you want to restore the backup) and make sure Elasticsearch can write to it, e.g.::
 
    $ mkdir backups
    $ chown 102 backups
    $ curl -XPUT 'http://localhost:9200/_snapshot/my_backup' -d '{"type": "fs", "settings": {"location": "/opt/ocd/backups"}}'
 
-# Save all indices/cluster with a snapshot::
+Save all indices/cluster with a snapshot::
 
    $ curl -XPUT "localhost:9200/_snapshot/my_backup/ocd_backup"
 
-# Copy the ``backups`` directory containing the snapshot into the ``open-cultuur-data`` directory on the other machine (on this other machine, make sure you created a backup location as described above). Restore the permissions to make sure that it is still reacheable by Elasticsearch::
+Copy the ``backups`` directory containing the snapshot into the ``open-cultuur-data`` directory on the other machine (on this other machine, make sure you created a backup location as described above). Restore the permissions to make sure that it is still reacheable by Elasticsearch::
 
    $ chown 102 backups
 
-# Close any indices with the same name which are already present on the new machine. On a new install these are ``ocd_resolver`` and ``ocd_usage_logs``::
+Close any indices with the same name which are already present on the new machine. On a new install these are ``ocd_resolver`` and ``ocd_usage_logs``::
 
    $ curl -XPOST 'localhost:9200/ocd_resolver/_close'
    $ curl -XPOST 'localhost:9200/ocd_usage_logs/_close'
 
-# Restore the snapshot::
+Restore the snapshot::
 
    $ curl -XPOST "localhost:9200/_snapshot/my_backup/ocd_backup/_restore"
