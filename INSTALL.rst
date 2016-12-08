@@ -13,12 +13,10 @@ The Open Cultuur Data API is easily installed using `Docker Compose <https://doc
 
 (optional) If you're developing then uncomment the ``Development`` and comment the ``Production`` sections in ``docker/nginx/conf.d/default.conf`` and ``conf/supervisor.conf``. You will then use Flask's development webserver instead of uWSGI, which is useful because changes to the code are automatically reloaded.
 You can also remove the lines ``restart: always`` from ``docker/docker-compose.yml`` otherwise the containers will automatically start when you start your machine.
-(optional) In ``docker/docker-compose.yml`` you might want to remove the line containing ``- nginx-load-balancer`` listed in the networks section of the ``c-ocd-nginx`` service as well as the last three lines (shown below) as they are specific to our setup and not needed for general usage:
-   ```
-     nginx-load-balancer:
-       external:
-         name: docker_nginx-load-balancer
-   ```
+(optional) In ``docker/docker-compose.yml`` you might want to remove the line containing ``- nginx-load-balancer`` listed in the networks section of the ``c-ocd-nginx`` service as well as the last three lines (shown below) as they are specific to our setup and not needed for general usage::
+  nginx-load-balancer:
+    external:
+      name: docker_nginx-load-balancer
 
 2. Build and run the image using (only use this once unless you want to rebuild stuff)::
 
@@ -71,25 +69,25 @@ The following commands are assumed to be executed in the Docker container. You c
 
    $ sudo docker exec -it docker_c-ocd-app_1 bash
 
-# Create a new backup location in the root directory of the OCD repository (do this on the machine which should be backupped AND the machine where you want to restore the backup) and make sure Elasticsearch can write to it, e.g.::
+Create a new backup location in the root directory of the OCD repository (do this on the machine which should be backupped AND the machine where you want to restore the backup) and make sure Elasticsearch can write to it, e.g.::
 
    $ mkdir backups
    $ chown 102 backups
    $ curl -XPUT 'http://localhost:9200/_snapshot/my_backup' -d '{"type": "fs", "settings": {"location": "/opt/ocd/backups"}}'
 
-# Save all indices/cluster with a snapshot::
+Save all indices/cluster with a snapshot::
 
    $ curl -XPUT "localhost:9200/_snapshot/my_backup/ocd_backup"
 
-# Copy the ``backups`` directory containing the snapshot into the ``open-cultuur-data`` directory on the other machine (on this other machine, make sure you created a backup location as described above). Restore the permissions to make sure that it is still reacheable by Elasticsearch::
+Copy the ``backups`` directory containing the snapshot into the ``open-cultuur-data`` directory on the other machine (on this other machine, make sure you created a backup location as described above). Restore the permissions to make sure that it is still reacheable by Elasticsearch::
 
    $ chown 102 backups
 
-# Close any indices with the same name which are already present on the new machine. On a new install these are ``ocd_resolver`` and ``ocd_usage_logs``::
+Close any indices with the same name which are already present on the new machine. On a new install these are ``ocd_resolver`` and ``ocd_usage_logs``::
 
    $ curl -XPOST 'localhost:9200/ocd_resolver/_close'
    $ curl -XPOST 'localhost:9200/ocd_usage_logs/_close'
 
-# Restore the snapshot::
+Restore the snapshot::
 
    $ curl -XPOST "localhost:9200/_snapshot/my_backup/ocd_backup/_restore"
