@@ -112,3 +112,6 @@ Close any indices with the same name which are already present on the new machin
 Restore the snapshot::
 
    $ curl -XPOST "localhost:9200/_snapshot/my_backup/ocd_backup/_restore"
+
+
+Besides the Elasticsearch indices, don't forget to backup the ``log`` directory and ``data`` directory containing the cache, dumps and static files.

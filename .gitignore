@@ -44,7 +44,6 @@ docs/_build/
 .coverage
 
 # Dumps
-dumps/
 local_dumps/
 
 # IDE/editor
@@ -56,10 +55,7 @@ dump.rdb
 # VIM
 *.swp
 
-data/
 log/
 backend.log
 backups/
-dumps/*
 local_dumps/*
-ocd_frontend/.thumbnail-cache/*

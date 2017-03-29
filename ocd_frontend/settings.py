@@ -1,5 +1,9 @@
 import os.path
 
+# NOTE: don't forget to change the following line in manage.py if you
+# forked this repo and renamed '/opt/ocd':
+# sys.path.insert(0, '/opt/ocd')
+
 DEBUG = False
 
 # Celery settings
@@ -92,7 +96,7 @@ USAGE_LOGGING_ENABLED = True
 USAGE_LOGGING_INDEX = 'ocd_usage_logs'
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
-DUMPS_DIR = os.path.join(os.path.dirname(ROOT_PATH), 'dumps')
+DUMPS_DIR = os.path.join(os.path.dirname(ROOT_PATH), 'data/dumps')
 LOCAL_DUMPS_DIR = os.path.join(os.path.dirname(ROOT_PATH), 'local_dumps')
 
 # URL where of the API instance that should be used for management commands
@@ -136,7 +140,7 @@ LOGGING = {
 THUMBNAILS_TEMP_DIR = '/tmp'
 
 THUMBNAILS_MEDIA_TYPES = {'image/jpeg', 'image/png', 'image/tiff'}
-THUMBNAILS_DIR = os.path.join(ROOT_PATH, '.thumbnail-cache')
+THUMBNAILS_DIR = os.path.join(ROOT_PATH, '../data/cache')
 
 THUMBNAIL_SMALL = 250
 THUMBNAIL_MEDIUM = 500
@@ -151,7 +155,7 @@ THUMBNAIL_SIZES = {
     'small_sq': {'size': (THUMBNAIL_SMALL, THUMBNAIL_SMALL), 'type': 'crop'},
 }
 
-THUMBNAIL_URL = '/media/'
+THUMBNAIL_URL = 'http://cache.opencultuurdata.nl/'
 
 
 # Allow any settings to be defined in local_settings.py which should be

@@ -11,6 +11,10 @@ import time
 from urlparse import urljoin
 from pprint import pprint
 
+# NOTE: don't forget to change this value if you forked this repo and
+# renamed '/opt/ocd'
+sys.path.insert(0, '/opt/ocd')
+
 import click
 from click.core import Command
 from click.decorators import _make_command
