@@ -165,3 +165,9 @@ try:
     from local_settings import *
 except ImportError:
     pass
+
+# Some settings used by travis to run tests; see run_tests.sh
+try:
+    from travis_settings import *
+except ImportError:
+    pass
