@@ -4,6 +4,6 @@ services:
   - docker
 before_install:
   - docker build -t open-state/open-cultuur-data .
-  - docker run --name c-open-cultuur-data -v `pwd`:/opt/ori -p 9200:9200 -p 5000:5000 open-state/open-cultuur-data
+  - docker run --name c-open-cultuur-data -v `pwd`:/opt/ocd -p 9200:9200 -p 5000:5000 open-state/open-cultuur-data
 # command to run tests
 script: "./run_tests.sh"
