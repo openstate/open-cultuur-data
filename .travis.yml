@@ -4,4 +4,4 @@ services:
 before_install:
   - docker build -t open-state/open-cultuur-data .
   - docker run -d --name c-open-cultuur-data -v `pwd`:/opt/ocd -p 9200:9200 -p 5000:5000 open-state/open-cultuur-data
-script: "docker exec -it c-open-cultuur-data bash -c "source /opt/bin/activate && ./run_tests.sh""
+script: "docker exec -it c-open-cultuur-data bash -c "source /opt/bin/activate && ./run_tests.sh"
