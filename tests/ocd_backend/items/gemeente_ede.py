@@ -42,13 +42,13 @@ class GemeenteEdeItemTestCase(ItemTestCase):
             u'html': u'https://commons.wikimedia.org/wiki/File:GA32573.jpg'
         }
         self.media_urls = [
-            {
-                'original_url': (
-                    u'https://upload.wikimedia.org/wikipedia/commons/b/b1/'
-                    u'Bijgebouw_van_jachthuis._-_A.B._Wigman_-_GA32573.jpg'
-                ),
-                'content_type': 'image/jpeg'
-            }
+            # {
+            #     'original_url': (
+            #         u'https://upload.wikimedia.org/wikipedia/commons/b/b1/'
+            #         u'Bijgebouw_van_jachthuis._-_A.B._Wigman_-_GA32573.jpg'
+            #     ),
+            #     'content_type': 'image/jpeg'
+            # }
         ]
 
     def test_item_collection(self):
