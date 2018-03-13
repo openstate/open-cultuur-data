@@ -1,5 +1,5 @@
 FROM ubuntu:14.04
-MAINTAINER Sicco van Sas <sicco@openstate.eu>
+MAINTAINER Open State Foundation <developers@openstate.eu>
 
 # Use bash as default shell
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
