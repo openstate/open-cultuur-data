@@ -1,14 +1,7 @@
-language: python
-python:
-  - "2.7"
-#  - "3.2"
-#  - "3.3"
-# command to install dependencies
-install: "pip install Cython==0.21.2 && pip install -r requirements.txt"
-# command to run tests
-script: "./run_tests.sh"
-before_install: 
-  - wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.2.deb && sudo dpkg -i --force-confnew elasticsearch-1.4.2.deb
-  - "sudo ./install_pyav_deps.sh"
+sudo: required
 services:
-  - elasticsearch
+  - docker
+before_install:
+  - docker build -t open-state/open-cultuur-data .
+  - docker run -d --name c-open-cultuur-data -v `pwd`:/opt/ocd -p 9200:9200 -p 5000:5000 open-state/open-cultuur-data
+script: "docker exec -it c-open-cultuur-data bash -c \"source /opt/bin/activate && sleep 20 && ./run_tests.sh\""
