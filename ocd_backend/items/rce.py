@@ -48,11 +48,9 @@ class RCEItem(BaseItem):
         return u'Rijkscultureel Erfgoed Beeldbank'
 
     def get_rights(self):
-        rights = self.original_item.find(
-            './/dcterms:rights', namespaces=self.namespaces)
-        return unicode(
-            rights.attrib[
-                '{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource'])
+        # As per http://www.opencultuurdata.nl/wiki/rijksdienst-voor-het-cultureel-erfgoed-beeldbank/
+        # there's a dcterms:rights field as well, but harder to get the right value
+        return u'http://creativecommons.org/licenses/by-sa/3.0/'
 
     def get_combined_index_data(self):
         combined_index_data = {}
