@@ -7,7 +7,7 @@ flexidate==1.0
 Flask==0.10.1
 Flask-Testing==0.4.2
 lxml==3.3.5
-requests==2.5.1
+requests==2.20.0
 mock==1.0.1
 msgpack-python==0.4.2
 ndg-httpsclient==0.3.2
