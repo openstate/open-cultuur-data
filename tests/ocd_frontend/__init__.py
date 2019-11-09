@@ -25,13 +25,13 @@ class RestApiSearchTestCase(OcdRestTestCaseMixin, TestCase):
                              data=json.dumps({'query': 'de'}))
         self.assert_ok_json(response)
 
-    def test_missing_query(self):
-        """Tests if a 400 response is returned when the required
-        ``query`` attribute is missing."""
+    def test_empty_search(self):
+        """Tests if a empty search request responds with a JSON and
+        status 200 OK."""
         url = url_for(self.endpoint_url, **self.endpoint_url_args)
         response = self.post(url, content_type='application/json',
-                             data=json.dumps({'not-a-query': 'de'}))
-        self.assert_bad_request_json(response)
+                             data=json.dumps({}))
+        self.assert_ok_json(response)
 
     def test_sort_option_is_accepted(self):
         """Tests if valid use of the ``sort`` option results in a

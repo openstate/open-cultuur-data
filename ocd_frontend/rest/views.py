@@ -37,8 +37,8 @@ def validate_from_and_size(data):
 def parse_search_request(data, mlt=False):
     # Return an error when no query or an empty query string is provied
     query = data.get('query', None)
-    if not query and not mlt:
-        raise OcdApiError('Missing \'query\'', 400)
+    # if not query and not mlt:
+    #     raise OcdApiError('Missing \'query\'', 400)
 
     # Additional fields requested to include in the response
     include_fields = [f.strip() for f in data.get('include_fields', []) if f.strip()]
@@ -256,7 +256,7 @@ def list_sources():
     return jsonify(format_sources_results(es_r))
 
 
-@bp.route('/search', methods=['POST'])
+@bp.route('/search', methods=['POST', 'GET'])
 @decode_json_post_data
 def search():
     search_req = parse_search_request(request.data)
@@ -298,6 +298,9 @@ def search():
         }
     }
 
+    if not search_req['query']:
+        es_q['query']['filtered']['query'] = {'match_all': {}}
+
     if search_req['filters']:
         es_q['query']['filtered']['filter'] = {
             'bool': {'must': search_req['filters']}
@@ -331,7 +334,7 @@ def search():
     return jsonify(format_search_results(es_r))
 
 
-@bp.route('/<source_id>/search', methods=['POST'])
+@bp.route('/<source_id>/search', methods=['POST', 'GET'])
 @decode_json_post_data
 def search_source(source_id):
     # Disallow searching in multiple indexes by providing a wildcard
@@ -379,6 +382,9 @@ def search_source(source_id):
             'exclude': excluded_fields
         }
     }
+
+    if not search_req['query']:
+        es_q['query']['filtered']['query'] = {'match_all': {}}
 
     if search_req['filters']:
         es_q['query']['filtered']['filter'] = {
