@@ -6,7 +6,7 @@ coverage==4.0a1
 flexidate==1.0
 Flask==0.10.1
 Flask-Testing==0.4.2
-lxml==3.3.5
+lxml==4.6.5
 requests==2.5.1
 mock==1.0.1
 msgpack-python==0.4.2
