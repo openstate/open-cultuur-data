@@ -19,5 +19,5 @@ sphinxcontrib-httpdomain==1.2.1
 sphinx-rtd-theme==0.1.6
 uWSGI==2.0.14
 BeautifulSoup==3.2.1
-Pillow==2.7.0
+Pillow==9.0.1
 -e git+https://github.com/mikeboers/PyAV.git@34d568f924e7dbb49a6f337e7791204c64fd8c52#egg=av
